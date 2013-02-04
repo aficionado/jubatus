@@ -51,9 +51,8 @@ class classifier_serv : public framework::server_base {
   int train(const std::vector<std::pair<std::string, datum> >& data);
   std::vector<std::vector<estimate_result> > classify(
       const std::vector<datum>& data) const;
-
   bool clear();
-
+  std::string check_convert(const datum& data) const;
   void check_set_config() const;
 
  private:
