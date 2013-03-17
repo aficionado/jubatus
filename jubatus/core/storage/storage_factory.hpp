@@ -18,6 +18,7 @@
 #define JUBATUS_CORE_STORAGE_STORAGE_FACTORY_HPP_
 
 #include <string>
+#include <pficommon/text/json/base.h>
 
 namespace jubatus {
 namespace core {

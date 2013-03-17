@@ -57,6 +57,10 @@ string passive_aggressive_2::name() const {
   return string("passive_aggressive_2");
 }
 
+pfi::text::json::json PA2::to_json() const {
+  return classifier_base::get_json(1);
+}
+
 }  // namespace classifier
 }  // namespace core
 }  // namespace jubatus

@@ -95,6 +95,10 @@ string confidence_weighted::name() const {
   return string("confidence_weighted");
 }
 
+pfi::text::json::json CW::to_json() const {
+  return classifier_base::get_json(2);
+}
+
 }  // namespace classifier
 }  // namespace core
 }  // namespase jubatus

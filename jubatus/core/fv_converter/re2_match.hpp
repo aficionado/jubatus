@@ -18,8 +18,14 @@
 #define JUBATUS_CORE_FV_CONVERTER_RE2_MATCH_HPP_
 
 #include <string>
+<<<<<<< HEAD:jubatus/core/fv_converter/re2_match.hpp
 #include <re2/re2.h>
 #include "key_matcher.hpp"
+=======
+#include <pficommon/text/json/base.h>
+
+#include "classifier_base.hpp"
+>>>>>>> catchup:src/classifier/pa1.hpp
 
 namespace jubatus {
 namespace core {
@@ -28,9 +34,7 @@ namespace fv_converter {
 class re2_match : public key_matcher {
  public:
   explicit re2_match(const std::string& regexp);
-
   bool match(const std::string& key);
-
  private:
   re2_match();
 

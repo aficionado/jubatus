@@ -18,6 +18,8 @@
 #define JUBATUS_CORE_CLASSIFIER_CONFIDENCE_WEIGHTED_HPP_
 
 #include <string>
+#include <pficommon/text/json/base.h>
+
 
 #include "classifier_base.hpp"
 
@@ -33,6 +35,7 @@ class confidence_weighted : public classifier_base {
       storage::storage_base* storage);
   void train(const common::sfv_t& fv, const std::string& label);
   std::string name() const;
+  pfi::text::json::json to_json() const;
  private:
   void update(
     const common::sfv_t& fv,

@@ -18,6 +18,7 @@
 #define JUBATUS_CORE_CLASSIFIER_AROW_HPP_
 
 #include <string>
+#include <pficommon/text/json/base.h>
 
 #include "classifier_base.hpp"
 
@@ -31,6 +32,7 @@ class arow : public classifier_base {
   arow(const classifier_config& config, storage::storage_base* stroage);
   void train(const common::sfv_t& fv, const std::string& label);
   std::string name() const;
+  pfi::text::json::json to_json() const;
  private:
   void update(
       const common::sfv_t& fv,

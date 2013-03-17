@@ -102,6 +102,10 @@ std::string normal_herd::name() const {
   return string("normal_herd");
 }
 
+pfi::text::json::json NHERD::to_json() const {
+  return classifier_base::get_json(2);
+}
+
 }  // namespace classifier
 }  // namespace core
 }  // namespace jubatus

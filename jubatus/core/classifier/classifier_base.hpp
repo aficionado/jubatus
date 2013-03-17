@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include <pficommon/text/json/base.h>
+
 #include "../common/type.hpp"
 #include "../storage/storage_base.hpp"
 #include "classifier_type.hpp"
@@ -45,6 +47,7 @@ class classifier_base {
   void clear();
 
   virtual std::string name() const = 0;
+  virtual pfi::text::json::json to_json() const = 0;
 
  protected:
   void update_weight(
@@ -67,6 +70,7 @@ class classifier_base {
       classify_result& scores) const;
 
   static float squared_norm(const common::sfv_t& sfv);
+  pfi::text::json::json get_json(int num) const;
 
   jubatus::core::storage::storage_base* storage_;
   bool use_covars_;

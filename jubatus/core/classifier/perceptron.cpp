@@ -40,6 +40,11 @@ string perceptron::name() const {
   return string("perceptron");
 }
 
+pfi::text::json::json perceptron::to_json() const {
+  return classifier_base::get_json(1);
+}
+
+
 }  // namespace classifier
 }  // namespace core
 }  // namespace jubatus
