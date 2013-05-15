@@ -79,6 +79,9 @@ void classifier::clear() {
   wm_.clear();
 }
 
+pfi::text::json::json classifier::to_json() const {
+  return classifier_->to_json();
+}
 }  // namespace driver
 }  // namespace core
 }  // namespace jubatus
