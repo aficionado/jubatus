@@ -31,6 +31,9 @@ class classifier : public jubatus::server::common::mprpc::rpc_server {
          pfi::lang::_1, pfi::lang::_2));
     rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(&Impl::clear,
          impl, pfi::lang::_1));
+    rpc_server::add<feature_vector(std::string, datum)>("check_convert",
+         pfi::lang::bind(&Impl::check_convert, impl, pfi::lang::_1,
+         pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
         &Impl::save, impl, pfi::lang::_1, pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(

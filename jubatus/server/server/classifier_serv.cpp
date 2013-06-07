@@ -24,6 +24,7 @@
 #include <pficommon/data/optional.h>
 #include <pficommon/lang/shared_ptr.h>
 
+#include "jubatus/core/common/type.hpp"
 #include "jubatus/core/classifier/classifier_factory.hpp"
 #include "jubatus/core/common/vector_util.hpp"
 #include "jubatus/core/common/jsonconfig.hpp"
@@ -69,30 +70,6 @@ core::storage::storage_base* make_model(
     const framework::server_argv& arg) {
   return core::storage::storage_factory::create_storage(
       (arg.is_standalone()) ? "local" : "local_mixture");
-}
-
-static std::string sfv_to_json(const sfv_t& sfv) {
-  using pfi::text::json::json;
-  using pfi::text::json::json_string;
-  using pfi::text::json::json_object;
-  using pfi::text::json::json_array;
-  using pfi::text::json::json_float;
-  json dst(new json_object);
-  {
-    json features(new json_array);
-    for(sfv_t::const_iterator it = sfv.begin();
-        it != sfv.end();
-        ++it) {
-      json one_fv(new json_object);
-      one_fv["feature"] = new json_string(it->first);
-      one_fv["value"] = new json_float(it->second);
-      features.add(one_fv);
-    }
-    dst["feature_vector"] = features;
-  }
-  std::stringstream outstring;
-  dst.pretty(outstring, false);
-  return outstring.str();
 }
 
 }  // namespace
@@ -207,12 +184,13 @@ bool classifier_serv::clear() {
   return true;
 }
 
-std::string classifier_serv::check_convert(const datum& target) const {
-  fv_converter::datum src;
-  convert<datum, fv_converter::datum>(target, src);
-  sfv_t dst;
-  converter_->convert(src, dst);
-  return sfv_to_json(dst);
+feature_vector classifier_serv::check_convert(const datum& target) const {
+  core::fv_converter::datum converted;
+  convert<datum, core::fv_converter::datum>(target, converted);
+  core::common::sfv_t fv = classifier_->check_convert(converted);
+  feature_vector result;
+  result.swap(fv);
+  return result;
 }
 
 void classifier_serv::check_set_config() const {

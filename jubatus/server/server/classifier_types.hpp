@@ -29,6 +29,8 @@ struct estimate_result {
   double score;
 };
 
+typedef std::vector<std::pair<std::string, float> > feature_vector;
+
 }  // namespace jubatus
 
 #endif  // JUBATUS_SERVER_SERVER_CLASSIFIER_TYPES_HPP_

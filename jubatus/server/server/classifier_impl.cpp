@@ -43,6 +43,11 @@ class classifier_impl_ : public classifier<classifier_impl_> {
     return get_p()->clear();
   }
 
+  feature_vector check_convert(std::string name, datum data) {
+    JRLOCK_(p_);
+    return get_p()->check_convert(data);
+  }
+
   bool save(std::string name, std::string id) {
     JWLOCK_(p_);
     return get_p()->save(id);

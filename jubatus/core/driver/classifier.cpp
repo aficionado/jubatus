@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "jubatus/core/common/type.hpp"
 #include "../classifier/classifier_factory.hpp"
 #include "../common/vector_util.hpp"
 #include "../fv_converter/datum.hpp"
@@ -77,6 +78,12 @@ jubatus::core::classifier::classify_result classifier::classify(
 void classifier::clear() {
   classifier_->clear();
   wm_.clear();
+}
+
+core::common::sfv_t classifier::check_convert(const fv_converter::datum& target) const {
+  core::common::sfv_t dst;
+  converter_->convert(target, dst);
+  return dst;
 }
 
 }  // namespace driver

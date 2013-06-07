@@ -22,6 +22,7 @@
 #include <vector>
 #include <pficommon/lang/shared_ptr.h>
 #include "jubatus/core/driver/classifier.hpp"
+#include "jubatus/server/server/classifier_types.hpp"
 #include "classifier_types.hpp"
 #include "../framework/server_base.hpp"
 
@@ -52,7 +53,7 @@ class classifier_serv : public framework::server_base {
   std::vector<std::vector<estimate_result> > classify(
       const std::vector<datum>& data) const;
   bool clear();
-  std::string check_convert(const datum& data) const;
+  feature_vector check_convert(const datum& data) const;
   void check_set_config() const;
 
  private:

@@ -24,6 +24,8 @@ message estimate_result {
   1: double score
 }
 
+type feature_vector = list<tuple<string, float> >
+
 service classifier {
 
   #@random #@analysis #@pass
@@ -58,6 +60,9 @@ service classifier {
 
   #@broadcast #@update #@all_and
   bool clear(0: string name) # //@broadcast
+
+  #@random #@analysis #@pass
+  feature_vector check_convert(0: string name, 1:datum data)
 
   #@broadcast #@update #@all_and
   bool save(0: string name, 1: string id) # //@broadcast

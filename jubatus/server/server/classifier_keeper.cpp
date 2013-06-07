@@ -26,6 +26,7 @@ int run_keeper(int argc, char* argv[]) {
          std::vector<datum> >("classify");
     k.register_async_broadcast<bool>("clear", pfi::lang::function<bool(bool,
          bool)>(&jubatus::server::framework::all_and));
+    k.register_async_random<feature_vector, datum>("check_convert");
     k.register_async_broadcast<bool, std::string>("save",
          pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::all_and));

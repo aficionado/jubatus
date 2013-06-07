@@ -56,6 +56,8 @@ class classifier {
 
   void clear();
 
+  core::common::sfv_t check_convert(const fv_converter::datum& target) const;
+
  private:
   pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder_;
 
