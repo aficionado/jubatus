@@ -67,6 +67,9 @@ let gen_call func args =
   func ^ gen_args args
 ;;
 
+let gen_list vars =
+  "[" ^ String.concat ", " vars ^ "]"
+
 let rec gen_type = function
   | Object -> "TObject()"
   | Bool -> "TBool()"
@@ -81,27 +84,31 @@ let rec gen_type = function
   | Nullable(t) -> gen_call "TNulallable" [gen_type t]
 ;;
 
-let gen_client_call func args =
-  let args' = gen_string_literal func :: args in
-  gen_call "self.client.call" args'
+let gen_client_call m =
+  let name = m.method_name in
+  let args = List.map (fun f -> f.field_name) m.method_arguments in
+  let arg_types = List.map (fun f -> f.field_type) m.method_arguments in
+
+  let args' = gen_list args in
+  let ret_type' = match m.method_return_type with
+    | None -> "None"
+    | Some t -> gen_type t in
+  let arg_types' = gen_list (List.map gen_type arg_types) in
+  let call_arg = [gen_string_literal name; args'; ret_type'; arg_types'] in
+  gen_call "self.jubatus_client.call" call_arg
 ;;
 
 let gen_client_method m =
   let name = m.method_name in
-  let arg_vars = List.map (fun f -> f.field_name) m.method_arguments in
-  let args = List.map (fun f ->
-    let t = (gen_type f.field_type) ^ ".to_msgpack" in
-    gen_call t [f.field_name]) m.method_arguments in 
+  let args = List.map (fun f -> f.field_name) m.method_arguments in
   match m.method_return_type with
   | None ->
-    [ (0, gen_def name arg_vars);
-      (1,   gen_client_call name args);
+    [ (0, gen_def name args);
+      (1,   gen_client_call m);
     ]
   | Some typ ->
-    let ret_type = gen_type typ in
-    [ (0, gen_def name arg_vars);
-      (1,   "retval = " ^ gen_client_call name args);
-      (1,   "return " ^ ret_type ^ ".from_msgpack(retval)");
+    [ (0, gen_def name args);
+      (1,   "return " ^ gen_client_call m);
     ]
 ;;
 
@@ -111,6 +118,7 @@ let gen_client s =
     (0, "def __init__ (self, host, port):");
     (1,   "address = msgpackrpc.Address(host, port)");
     (1,   "self.client = msgpackrpc.Client(address)");
+    (1,   "self.jubatus_client = Client(self.client)");
     (0, "");
     (0, "def get_client (self):");
     (1,   "return self.client")
@@ -124,18 +132,20 @@ let gen_client s =
     ]
 ;;
 
+let gen_message_type field_types =
+  "TYPE = " ^ gen_type (Tuple field_types)
+;;
+
 let gen_self_without_comma field_names =
   (List.map (fun s -> (0, "self." ^ s ^ " = " ^ s)) field_names)
 ;;
 
 let gen_to_msgpack field_names field_types =
-  let types = List.map gen_type field_types in
-  let tuple = gen_call "TTuple" types in
   let vars = List.map (fun v -> "self." ^ v) field_names in
   List.concat [
     [(0, "def to_msgpack (self):")];
     [(1,   "t = " ^ gen_call "" vars)];
-    [(1,   "return " ^ gen_call (tuple ^ ".to_msgpack") ["t"])];
+    [(1,   "return " ^ gen_call "self.__class__.TYPE.to_msgpack" ["t"])];
   ]
 ;;
 
@@ -168,12 +178,10 @@ let rec gen_from_msgpack_types field_types =
 ;;
 
 let gen_from_msgpack field_names field_types s =
-  let types = List.map gen_type field_types in
-  let tuple = gen_call "TTuple" types in
   [
-    (0, "@staticmethod");
-    (0, "def from_msgpack(arg):");
-    (1,   "val = " ^ tuple ^ ".from_msgpack(arg)");
+    (0, "@classmethod");
+    (0, "def from_msgpack(cls, arg):");
+    (1,   "val = cls.TYPE.from_msgpack(arg)");
     (1,   "return " ^ gen_call s ["*val"]);
   ]
 ;;
@@ -184,7 +192,9 @@ let gen_message m =
   List.concat [
     [
       (0, "class " ^ m.message_name ^ ":");
-      (1, gen_def "__init__" field_names);
+      (1,   gen_message_type field_types);
+      (0,   "");
+      (1,   gen_def "__init__" field_names);
     ];
     indent_lines 2 (gen_self_without_comma field_names);
     [(0, "")];
