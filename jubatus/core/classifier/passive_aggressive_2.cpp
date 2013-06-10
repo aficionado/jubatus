@@ -57,7 +57,7 @@ string passive_aggressive_2::name() const {
   return string("passive_aggressive_2");
 }
 
-pfi::text::json::json PA2::to_json() const {
+pfi::text::json::json passive_aggressive_2::to_json() const {
   return classifier_base::get_json(1);
 }
 

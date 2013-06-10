@@ -18,14 +18,8 @@
 #define JUBATUS_CORE_FV_CONVERTER_RE2_MATCH_HPP_
 
 #include <string>
-<<<<<<< HEAD:jubatus/core/fv_converter/re2_match.hpp
 #include <re2/re2.h>
 #include "key_matcher.hpp"
-=======
-#include <pficommon/text/json/base.h>
-
-#include "classifier_base.hpp"
->>>>>>> catchup:src/classifier/pa1.hpp
 
 namespace jubatus {
 namespace core {

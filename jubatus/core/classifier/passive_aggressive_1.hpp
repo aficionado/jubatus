@@ -33,6 +33,7 @@ class passive_aggressive_1 : public classifier_base {
       storage::storage_base* storage);
   void train(const common::sfv_t& fv, const std::string& label);
   std::string name() const;
+  pfi::text::json::json to_json() const;
  private:
   classifier_config config_;
 };

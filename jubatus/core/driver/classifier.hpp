@@ -55,6 +55,7 @@ class classifier {
       const fv_converter::datum& data) const;
 
   void clear();
+  pfi::text::json::json to_json() const;
 
  private:
   pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder_;

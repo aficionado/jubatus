@@ -38,7 +38,7 @@ class classifier_impl_ : public classifier<classifier_impl_> {
     return get_p()->classify(data);
   }
   std::string dump(std::string name, const std::string& format) const {
-    JRLOCK__(p_);
+    JRLOCK_(p_);
     return get_p()->dump(format);
   }
 
@@ -64,8 +64,8 @@ class classifier_impl_ : public classifier<classifier_impl_> {
   }
   int run() { return p_->start(*this); }
 
-  common::cshared_ptr<classifier_serv> get_p() { return p_->server(); }
-  const common::cshared_ptr<classifier_serv> get_p() const { return p_->server(); }
+  pfi::lang::shared_ptr<classifier_serv> get_p() { return p_->server(); }
+  const pfi::lang::shared_ptr<classifier_serv> get_p() const { return p_->server(); }
 
  private:
   pfi::lang::shared_ptr<jubatus::server::framework::server_helper<classifier_serv> > p_;

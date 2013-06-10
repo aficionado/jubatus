@@ -89,7 +89,7 @@ void arow::update(
 string arow::name() const {
   return string("arow");
 }
-pfi::text::json::json AROW::to_json() const {
+pfi::text::json::json arow::to_json() const {
   return classifier_base::get_json(2);
 }
 
