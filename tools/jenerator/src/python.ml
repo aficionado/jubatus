@@ -142,10 +142,10 @@ let gen_self_without_comma field_names =
 
 let gen_to_msgpack field_names field_types =
   let vars = List.map (fun v -> "self." ^ v) field_names in
-  List.concat [
-    [(0, "def to_msgpack (self):")];
-    [(1,   "t = " ^ gen_call "" vars)];
-    [(1,   "return " ^ gen_call "self.__class__.TYPE.to_msgpack" ["t"])];
+  [
+    (0, "def to_msgpack (self):");
+    (1,   "t = " ^ gen_call "" vars);
+    (1,   "return " ^ gen_call "self.__class__.TYPE.to_msgpack" ["t"]);
   ]
 ;;
 
