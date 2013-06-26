@@ -39,32 +39,30 @@ class nearest_neighbor {
     return f.get<bool>();
   }
 
-  std::vector<std::pair<std::string, float> > neighbor_row_from_id(
-      const std::string& name, const std::string& id, uint32_t size) {
+  std::vector<scored_id> neighbor_row_from_id(const std::string& name,
+       const std::string& id, uint32_t size) {
     msgpack::rpc::future f = c_.call("neighbor_row_from_id", name, id, size);
-    return f.get<std::vector<std::pair<std::string, float> > >();
+    return f.get<std::vector<scored_id> >();
   }
 
-  std::vector<std::pair<std::string, float> > neighbor_row_from_data(
-      const std::string& name, const jubatus::core::fv_converter::datum& query,
-       uint32_t size) {
+  std::vector<scored_id> neighbor_row_from_data(const std::string& name,
+       const jubatus::core::fv_converter::datum& query, uint32_t size) {
     msgpack::rpc::future f = c_.call("neighbor_row_from_data", name, query,
          size);
-    return f.get<std::vector<std::pair<std::string, float> > >();
+    return f.get<std::vector<scored_id> >();
   }
 
-  std::vector<std::pair<std::string, float> > similar_row_from_id(
-      const std::string& name, const std::string& id, int32_t ret_num) {
+  std::vector<scored_id> similar_row_from_id(const std::string& name,
+       const std::string& id, int32_t ret_num) {
     msgpack::rpc::future f = c_.call("similar_row_from_id", name, id, ret_num);
-    return f.get<std::vector<std::pair<std::string, float> > >();
+    return f.get<std::vector<scored_id> >();
   }
 
-  std::vector<std::pair<std::string, float> > similar_row_from_data(
-      const std::string& name, const jubatus::core::fv_converter::datum& query,
-       int32_t ret_num) {
+  std::vector<scored_id> similar_row_from_data(const std::string& name,
+       const jubatus::core::fv_converter::datum& query, int32_t ret_num) {
     msgpack::rpc::future f = c_.call("similar_row_from_data", name, query,
          ret_num);
-    return f.get<std::vector<std::pair<std::string, float> > >();
+    return f.get<std::vector<scored_id> >();
   }
 
   bool save(const std::string& name, const std::string& id) {

@@ -25,7 +25,7 @@ class anomaly : public jubatus::server::common::mprpc::rpc_server {
         &Impl::get_config, impl, pfi::lang::_1));
     rpc_server::add<bool(std::string, std::string)>("clear_row",
          pfi::lang::bind(&Impl::clear_row, impl, pfi::lang::_1, pfi::lang::_2));
-    rpc_server::add<std::pair<std::string, float>(std::string,
+    rpc_server::add<id_with_score(std::string,
          jubatus::core::fv_converter::datum)>("add", pfi::lang::bind(&Impl::add,
          impl, pfi::lang::_1, pfi::lang::_2));
     rpc_server::add<float(std::string, std::string,

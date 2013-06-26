@@ -27,8 +27,7 @@ class classifier_impl_ : public classifier<classifier_impl_> {
   }
 
   int32_t train(const std::string& name,
-       const std::vector<std::pair<std::string,
-       jubatus::core::fv_converter::datum> >& data) {
+       const std::vector<labeled_datum>& data) {
     JWLOCK_(p_);
     return get_p()->train(data);
   }

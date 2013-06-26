@@ -23,9 +23,8 @@ class classifier : public jubatus::server::common::mprpc::rpc_server {
     Impl* impl = static_cast<Impl*>(this);
     rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
         &Impl::get_config, impl, pfi::lang::_1));
-    rpc_server::add<int32_t(std::string, std::vector<std::pair<std::string,
-         jubatus::core::fv_converter::datum> >)>("train", pfi::lang::bind(
-        &Impl::train, impl, pfi::lang::_1, pfi::lang::_2));
+    rpc_server::add<int32_t(std::string, std::vector<labeled_datum>)>("train",
+         pfi::lang::bind(&Impl::train, impl, pfi::lang::_1, pfi::lang::_2));
     rpc_server::add<std::vector<std::vector<estimate_result> >(std::string,
          std::vector<jubatus::core::fv_converter::datum>)>("classify",
          pfi::lang::bind(&Impl::classify, impl, pfi::lang::_1, pfi::lang::_2));

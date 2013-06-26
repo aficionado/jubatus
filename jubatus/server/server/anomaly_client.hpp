@@ -32,10 +32,10 @@ class anomaly {
     return f.get<bool>();
   }
 
-  std::pair<std::string, float> add(const std::string& name,
+  id_with_score add(const std::string& name,
        const jubatus::core::fv_converter::datum& row) {
     msgpack::rpc::future f = c_.call("add", name, row);
-    return f.get<std::pair<std::string, float> >();
+    return f.get<id_with_score>();
   }
 
   float update(const std::string& name, const std::string& id,

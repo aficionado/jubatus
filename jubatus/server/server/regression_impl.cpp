@@ -26,8 +26,8 @@ class regression_impl_ : public regression<regression_impl_> {
     return get_p()->get_config();
   }
 
-  int32_t train(const std::string& name, const std::vector<std::pair<float,
-       jubatus::core::fv_converter::datum> >& train_data) {
+  int32_t train(const std::string& name,
+       const std::vector<scored_datum>& train_data) {
     JWLOCK_(p_);
     return get_p()->train(train_data);
   }

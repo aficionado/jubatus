@@ -23,9 +23,8 @@ class regression : public jubatus::server::common::mprpc::rpc_server {
     Impl* impl = static_cast<Impl*>(this);
     rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
         &Impl::get_config, impl, pfi::lang::_1));
-    rpc_server::add<int32_t(std::string, std::vector<std::pair<float,
-         jubatus::core::fv_converter::datum> >)>("train", pfi::lang::bind(
-        &Impl::train, impl, pfi::lang::_1, pfi::lang::_2));
+    rpc_server::add<int32_t(std::string, std::vector<scored_datum>)>("train",
+         pfi::lang::bind(&Impl::train, impl, pfi::lang::_1, pfi::lang::_2));
     rpc_server::add<std::vector<float>(std::string,
          std::vector<jubatus::core::fv_converter::datum>)>("estimate",
          pfi::lang::bind(&Impl::estimate, impl, pfi::lang::_1, pfi::lang::_2));

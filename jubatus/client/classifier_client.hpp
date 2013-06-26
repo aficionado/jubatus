@@ -29,8 +29,7 @@ class classifier {
   }
 
   int32_t train(const std::string& name,
-       const std::vector<std::pair<std::string,
-       jubatus::core::fv_converter::datum> >& data) {
+       const std::vector<labeled_datum>& data) {
     msgpack::rpc::future f = c_.call("train", name, data);
     return f.get<int32_t>();
   }

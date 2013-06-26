@@ -30,7 +30,7 @@ class anomaly_impl_ : public anomaly<anomaly_impl_> {
     return get_p()->clear_row(id);
   }
 
-  std::pair<std::string, float> add(const std::string& name,
+  id_with_score add(const std::string& name,
        const jubatus::core::fv_converter::datum& row) {
     NOLOCK_(p_);
     return get_p()->add(row);

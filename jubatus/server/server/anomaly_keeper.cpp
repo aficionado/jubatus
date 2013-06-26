@@ -22,8 +22,8 @@ int run_keeper(int argc, char* argv[]) {
     k.register_async_random<std::string>("get_config");
     k.register_async_cht<2, bool>("clear_row", pfi::lang::function<bool(bool,
          bool)>(&jubatus::server::framework::all_and));
-    k.register_async_random<std::pair<std::string, float>,
-         jubatus::core::fv_converter::datum>("add");
+    k.register_async_random<id_with_score, jubatus::core::fv_converter::datum>(
+        "add");
     k.register_async_cht<2, float, jubatus::core::fv_converter::datum>("update",
          pfi::lang::function<float(float, float)>(
         &jubatus::server::framework::pass<float>));

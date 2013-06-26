@@ -25,11 +25,18 @@ struct node {
   std::vector<uint64_t> out_edges;
 };
 
+struct query {
+ public:
+  MSGPACK_DEFINE(from_id, to_id);
+  std::string from_id;
+  std::string to_id;
+};
+
 struct preset_query {
  public:
   MSGPACK_DEFINE(edge_query, node_query);
-  std::vector<std::pair<std::string, std::string> > edge_query;
-  std::vector<std::pair<std::string, std::string> > node_query;
+  std::vector<query> edge_query;
+  std::vector<query> node_query;
 };
 
 struct edge {

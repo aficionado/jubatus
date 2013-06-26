@@ -23,6 +23,13 @@ struct estimate_result {
   double score;
 };
 
+struct labeled_datum {
+ public:
+  MSGPACK_DEFINE(label, data);
+  std::string label;
+  jubatus::core::fv_converter::datum data;
+};
+
 }  // namespace jubatus
 
 #endif  // JUBATUS_SERVER_SERVER_CLASSIFIER_TYPES_HPP_

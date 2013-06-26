@@ -17,6 +17,13 @@
 namespace jubatus {
 namespace regression {
 
+struct scored_datum {
+ public:
+  MSGPACK_DEFINE(score, data);
+  float score;
+  jubatus::common::datum data;
+};
+
 }  // namespace regression
 }  // namespace jubatus
 

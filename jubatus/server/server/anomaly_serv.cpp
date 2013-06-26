@@ -156,7 +156,7 @@ bool anomaly_serv::clear_row(const string& id) {
 }
 
 // nolock, random
-pair<string, float> anomaly_serv::add(const datum& data) {
+id_with_score anomaly_serv::add(const datum& data) {
   check_set_config();
 
   uint64_t id = idgen_->generate();
@@ -167,7 +167,12 @@ pair<string, float> anomaly_serv::add(const datum& data) {
 #endif
     pfi::concurrent::scoped_wlock lk(rw_mutex());
     event_model_updated();
-    return anomaly_->add(id_str, data);
+    // TODO(unno): remove conversion code
+    pair<string, float> res = anomaly_->add(id_str, data);
+    id_with_score result;
+    result.id = res.first;
+    result.score = res.second;
+    return result;
 #ifdef HAVE_ZOOKEEPER_H
   } else {
     return add_zk(id_str, data);
@@ -175,7 +180,7 @@ pair<string, float> anomaly_serv::add(const datum& data) {
 #endif
 }
 
-pair<string, float> anomaly_serv::add_zk(const string&id_str, const datum& d) {
+id_with_score anomaly_serv::add_zk(const string&id_str, const datum& d) {
   vector<pair<string, int> > nodes;
   float score = 0;
   find_from_cht(id_str, 2, nodes);
@@ -198,7 +203,10 @@ pair<string, float> anomaly_serv::add_zk(const string&id_str, const datum& d) {
     }
   }
   DLOG(INFO) << "point added: " << id_str;
-  return make_pair(id_str, score);
+  id_with_score result;
+  result.id = id_str;
+  result.score = score;
+  return result;
 }
 
 float anomaly_serv::update(const string& id, const datum& data) {

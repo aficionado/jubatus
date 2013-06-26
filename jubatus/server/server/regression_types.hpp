@@ -16,6 +16,13 @@
 
 namespace jubatus {
 
+struct scored_datum {
+ public:
+  MSGPACK_DEFINE(score, data);
+  float score;
+  jubatus::core::fv_converter::datum data;
+};
+
 }  // namespace jubatus
 
 #endif  // JUBATUS_SERVER_SERVER_REGRESSION_TYPES_HPP_

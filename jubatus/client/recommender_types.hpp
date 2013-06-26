@@ -17,6 +17,13 @@
 namespace jubatus {
 namespace recommender {
 
+struct id_with_score {
+ public:
+  MSGPACK_DEFINE(id, score);
+  std::string id;
+  float score;
+};
+
 }  // namespace recommender
 }  // namespace jubatus
 

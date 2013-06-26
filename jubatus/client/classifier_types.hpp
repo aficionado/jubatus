@@ -24,6 +24,13 @@ struct estimate_result {
   double score;
 };
 
+struct labeled_datum {
+ public:
+  MSGPACK_DEFINE(label, data);
+  std::string label;
+  jubatus::common::datum data;
+};
+
 }  // namespace classifier
 }  // namespace jubatus
 

@@ -28,8 +28,8 @@ class regression {
     return f.get<std::string>();
   }
 
-  int32_t train(const std::string& name, const std::vector<std::pair<float,
-       jubatus::core::fv_converter::datum> >& train_data) {
+  int32_t train(const std::string& name,
+       const std::vector<scored_datum>& train_data) {
     msgpack::rpc::future f = c_.call("train", name, train_data);
     return f.get<int32_t>();
   }

@@ -118,15 +118,16 @@ string regression_serv::get_config() {
   return config_;
 }
 
-int regression_serv::train(const vector<pair<float, datum> >& data) {
+int regression_serv::train(const vector<scored_datum>& data) {
   check_set_config();
 
   int count = 0;
 
   core::fv_converter::datum d;
   for (size_t i = 0; i < data.size(); ++i) {
-    regression_->train(data[i]);
-    DLOG(INFO) << "trained: " << data[i].first;
+    // TODO(unno): change interface of driver?
+    regression_->train(std::make_pair(data[i].score, data[i].data));
+    DLOG(INFO) << "trained: " << data[i].score;
     count++;
   }
   // TODO(kuenishi): send count incrementation to mixer

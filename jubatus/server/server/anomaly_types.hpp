@@ -16,6 +16,13 @@
 
 namespace jubatus {
 
+struct id_with_score {
+ public:
+  MSGPACK_DEFINE(id, score);
+  std::string id;
+  float score;
+};
+
 }  // namespace jubatus
 
 #endif  // JUBATUS_SERVER_SERVER_ANOMALY_TYPES_HPP_

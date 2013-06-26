@@ -18,6 +18,13 @@
 
 namespace jubatus {
 
+struct query {
+ public:
+  MSGPACK_DEFINE(from_id, to_id);
+  std::string from_id;
+  std::string to_id;
+};
+
 struct edge {
  public:
   MSGPACK_DEFINE(property, source, target);

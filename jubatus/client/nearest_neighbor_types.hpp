@@ -17,6 +17,13 @@
 namespace jubatus {
 namespace nearest_neighbor {
 
+struct scored_id {
+ public:
+  MSGPACK_DEFINE(id, score);
+  std::string id;
+  float score;
+};
+
 }  // namespace nearest_neighbor
 }  // namespace jubatus
 

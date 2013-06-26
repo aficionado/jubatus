@@ -123,16 +123,16 @@ string classifier_serv::get_config() {
   return config_;
 }
 
-int classifier_serv::train(
-    const vector<pair<string, jubatus::core::fv_converter::datum> >& data) {
+int classifier_serv::train(const vector<labeled_datum>& data) {
   check_set_config();
 
   int count = 0;
 
   for (size_t i = 0; i < data.size(); ++i) {
-    classifier_->train(data[i]);
+    // TODO(unno): change interface of driver?
+    classifier_->train(make_pair(data[i].label, data[i].data));
 
-    DLOG(INFO) << "trained: " << data[i].first;
+    DLOG(INFO) << "trained: " << data[i].label;
     count++;
   }
   // TODO(kuenishi): send count incrementation to mixer
