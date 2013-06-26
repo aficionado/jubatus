@@ -14,6 +14,11 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+message id_with_score {
+  0: string id
+  1: float score
+}
+
 service recommender {
 
   #@random #@analysis #@pass
@@ -35,10 +40,10 @@ service recommender {
   datum complete_row_from_datum(0: string name, 1: datum row) # //@random
 
   #@cht #@analysis #@pass
-  list<tuple<string, float> > similar_row_from_id(0: string name, 1: string id, 2: uint size) # //@cht
+  list<id_with_score> similar_row_from_id(0: string name, 1: string id, 2: uint size) # //@cht
 
   #@random #@analysis #@pass
-  list<tuple<string, float> > similar_row_from_datum(0: string name, 1: datum row, 2: uint size) # //@random
+  list<id_with_score> similar_row_from_datum(0: string name, 1: datum row, 2: uint size) # //@random
 
   #@cht #@analysis #@pass
   datum decode_row(0: string name, 1: string id) # //@cht

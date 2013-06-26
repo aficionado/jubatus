@@ -19,6 +19,11 @@ message estimate_result {
   1: double score
 }
 
+message labeled_datum {
+  0: string label
+  1: datum data
+}
+
 service classifier {
 
   #@random #@analysis #@pass
@@ -36,7 +41,7 @@ service classifier {
   #- Training model at a server chosen randomly. ``tuple<string, datum>`` is a tuple of datum and it's label. 
   #- This function is designed to allow bulk update with list of tuple of label and datum.
   #@random #@update #@pass
-  int train(0: string name, 1: list<tuple<string, datum> > data) # //@random
+  int train(0: string name, 1: list<labeled_datum> data) # //@random
 
   #- - Parameters:
   #- 

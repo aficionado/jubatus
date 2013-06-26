@@ -22,12 +22,17 @@ message node(jubatus::core::graph::node_info) {
   2: list<ulong>  out_edges
 }
 
+message query {
+  0: string from_id
+  1: string to_id
+}
+
 # query: { key => value }
 # matches if all keys exist on the property and all value are equal
 # or, empty list matches all node/edge with any property
 message preset_query(jubatus::core::graph::preset_query) {
-  0: list<tuple<string, string> > edge_query
-  1: list<tuple<string, string> > node_query
+  0: list<query> edge_query
+  1: list<query> node_query
 }
 
 message edge {

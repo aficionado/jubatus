@@ -35,6 +35,11 @@
 #-     }
 #-    }
 
+message id_with_score {
+  0: string id
+  1: float score
+}
+
 service anomaly {
 
   #@random #@analysis #@pass
@@ -46,7 +51,7 @@ service anomaly {
 
   #- add a point.
   #@random #@nolock #@pass
-  tuple<string, float> add(0: string name, 1: datum row) # //@random
+  id_with_score add(0: string name, 1: datum row) # //@random
 
   #- update a point.
   #@cht #@update #@pass
