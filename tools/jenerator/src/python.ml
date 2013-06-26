@@ -118,7 +118,7 @@ let gen_client s =
     (0, "def __init__ (self, host, port):");
     (1,   "address = msgpackrpc.Address(host, port)");
     (1,   "self.client = msgpackrpc.Client(address)");
-    (1,   "self.jubatus_client = Client(self.client)");
+    (1,   "self.jubatus_client = jubatus.common.Client(self.client)");
     (0, "");
     (0, "def get_client (self):");
     (1,   "return self.client")
@@ -242,7 +242,7 @@ let gen_client_file conf source services =
       (0, "import msgpackrpc");
       (0, "import jubatus.common");
       (0, "from types import *");
-      (0, "from mpidl import *")
+      (0, "from jubatus.common.types import *")
     ];
     (concat_blocks clients)
   ]
@@ -257,7 +257,8 @@ let gen_type_file conf source idl =
     (0, "");
     (0, "import sys");
     (0, "import msgpack");
-    (0, "import jubatus.common")
+    (0, "import jubatus.common");
+    (0, "from jubatus.common.types import *");
   ] in
   let content = concat_blocks [
     includes;
