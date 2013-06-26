@@ -89,7 +89,6 @@ type exception_type = {
 
 type statement =
   | Include of string
-  | Typedef of string * decl_type
   | Enum of enum_type
   | Message of message_type
   | Exception of exception_type
