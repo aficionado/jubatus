@@ -35,13 +35,6 @@
 #-     }
 #-    }
 
-%include "../../core/fv_converter/datum.hpp"
-
-message datum(jubatus::core::fv_converter::datum) {
-  0: list<tuple<string, string> >  string_values
-  1: list<tuple<string, double> >  num_values
-}
-
 service anomaly {
 
   #@random #@analysis #@pass
