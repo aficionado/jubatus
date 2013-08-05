@@ -56,7 +56,7 @@ let gen_typename_with_bar name num =
 
 let rec gen_type t name num = match t with
   | Object -> raise (Unknown_type("Object is not supported"))
-  | Bool | Int(_, _) | Float(_) | Raw | String -> 
+  | Bool | Int(_, _) | Float(_) | Raw | String | Datum -> 
     gen_typename_with_paren name num
   | Struct s  -> s ^ ".from_msgpack(" ^ gen_typename_with_paren name num ^ ")"
   | List t -> 

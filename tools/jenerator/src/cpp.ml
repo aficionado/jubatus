@@ -79,6 +79,7 @@ and gen_type names = function
   | Float true -> "double"
   | Raw -> "std::string"
   | String -> "std::string"
+  | Datum -> "jubatus::common::datum"
   | Struct s ->
     if Hashtbl.mem names s then
       Hashtbl.find names s

@@ -25,6 +25,15 @@ let _ = run_test_tt_main begin "java.ml" >::: [
       (include_list (Map(Bool, List Bool)))
   end;
 
+  "test_include_map" >:: begin fun() ->
+    assert_equal
+      true
+      (include_map (Map(Bool, Bool)));
+    assert_equal
+      true
+      (include_map (List(Map(Bool, Bool))))
+  end;
+
   "test_gen_type" >:: begin fun() ->
     assert_equal
       "int"
@@ -49,6 +58,10 @@ let _ = run_test_tt_main begin "java.ml" >::: [
     assert_equal
       "String"
       (gen_type String);
+
+    assert_equal
+      "Datum"
+      (gen_type Datum);
 
     assert_equal
       "List<Float >"

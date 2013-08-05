@@ -61,7 +61,7 @@ let gen_def = function
 
 let rec gen_type t name = match t with
   | Object -> raise (Unknown_type("Object is not supported"))
-  | Bool | Int(_, _) | Float(_) | Raw | String -> 
+  | Bool | Int(_, _) | Float(_) | Raw | String | Datum ->
       name
   | Struct s  -> (String.capitalize s) ^ ".from_tuple(" ^ name ^ ")"
   | List t -> 

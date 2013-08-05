@@ -97,6 +97,7 @@ a_type:
    | "double" -> Float true
    | "raw"    -> Raw
    | "string" -> String
+   | "datum"  -> Datum
    | s -> Struct(s)
  }
  | LITERAL LBRACE types RBRACE {

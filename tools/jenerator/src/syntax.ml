@@ -24,6 +24,7 @@ type decl_type =
   | Float of bool
   | Raw
   | String
+  | Datum
   | Struct of string
   | List of decl_type
   | Map of decl_type * decl_type
@@ -159,4 +160,14 @@ let decorator_to_string = function
   | Reqtype(r) -> "Reqtype(" ^ reqtype_to_string r ^ ")"
   | Routing(r) -> "Routing(" ^ routing_to_string r ^ ")"
   | Aggtype(r) -> "Aggtype(" ^ aggtype_to_string r ^ ")"
+;;
+
+let rec type_exists f typ =
+  f typ ||
+  match typ with
+  | List t -> type_exists f t
+  | Map(k, v) -> type_exists f k || type_exists f v
+  | Tuple ts -> List.exists (type_exists f) ts
+  | Nullable t -> type_exists f t
+  | _ -> false
 ;;

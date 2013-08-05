@@ -51,7 +51,6 @@ let rename_without_underbar st =
   loop st true
 ;;
 
-
 let gen_public_class name content =
   List.concat [
     [(0, "public class " ^ (rename_without_underbar name) ^ " {")];
@@ -60,25 +59,31 @@ let gen_public_class name content =
   ]
 ;;
 
-let rec include_list = function
-  | Map(key, value) ->
-    (include_list key) || (include_list value)
-  | List t -> true
-  | Tuple [t1; t2] ->
-    (include_list t1) || (include_list t2)
-  | Tuple(ts) -> raise (Unknown_type "Tuple is not supported")
-  | Nullable(t) -> raise (Unknown_type "Nullable is not supported")
-  | _ -> false
+let include_list t =
+  type_exists (function 
+  | List _ -> true
+  | _ -> false) t
 ;;
 
-let rec include_map = function
-  | Map(_) -> true
-  | List(t) -> include_map t
-  | Tuple [t1; t2] ->
-    (include_map t1) || (include_map t2)
-  | Tuple(ts) -> raise (Unknown_type "Tuple is not supported")
-  | Nullable(t) -> raise (Unknown_type "Nullable is not supported")
-  | _ -> false
+let include_map t =
+  type_exists (function 
+  | Map _ -> true
+  | _ -> false) t
+;;
+
+let include_datum t =
+  type_exists (function
+  | Datum -> true
+  | _ -> false) t
+;;
+
+let gen_import ts =
+  (if List.exists include_map ts then [(0, "import java.util.Map;")]
+   else [])
+  @ (if List.exists include_list ts then [(0, "import java.util.List;")]
+    else [])
+  @ (if List.exists include_datum ts then [(0, "import us.jubat.common.Datum;")]
+    else [])
 ;;
 
 let rec gen_type = function
@@ -89,6 +94,7 @@ let rec gen_type = function
   | Float(true) -> "double"
   | Raw -> raise (Unknown_type("Raw is not supported"))
   | String -> "String"
+  | Datum -> "Datum"
   | Struct s  ->
     (try (gen_type (List.assoc s (!type_defs)))
      with Not_found -> (rename_without_underbar s))
@@ -131,16 +137,10 @@ let gen_types_file name t conf source =
   let filename = rename_without_underbar name ^ ".java" in
   let path = make_path conf filename in
   let (t1, t2) = t in
-  let t' = Tuple([t1; t2]) in
   let header = List.concat [
     gen_package conf;
-
-    (if include_map t' then [(0, "import java.util.Map;")]
-     else []);
-    (if include_list t' then [(0, "import java.util.List;")]
-     else []);
-    [(0, "import org.msgpack.MessagePack;");
-     (0, "import org.msgpack.annotation.Message;");
+    gen_import [t1; t2];
+    [(0, "import org.msgpack.annotation.Message;");
      (0, "")]
   ] in
   let content =
@@ -273,13 +273,8 @@ let gen_message m conf source =
   let header =
     List.concat
       [gen_package conf;
-
-       (if (List.exists include_map field_types) 
-        then [(0, "import java.util.Map;")] else []);
-       (if (List.exists include_list field_types) 
-        then [(0, "import java.util.List;")] else []);
-       [(0, "import org.msgpack.MessagePack;");
-        (0, "import org.msgpack.annotation.Message;");
+       gen_import field_types;
+       [(0, "import org.msgpack.annotation.Message;");
         (0, "")]
       ] in
   let field_defs = List.map gen_message_field m.message_fields in
@@ -305,15 +300,15 @@ let gen_typedef stat conf source =
     ()
 ;;
 
-let map_search' f m = 
-  (List.exists (fun k -> f k.field_type) m.method_arguments) ||
-    (match (m.method_return_type) with
-    | None -> false
-    | Some(t) -> f t)  
+let collect_types_of_method m =
+  let arg_types = List.map (fun f -> f.field_type) m.method_arguments in
+  match m.method_return_type with
+  | None -> arg_types
+  | Some(t) -> t::arg_types
 ;;
 
-let map_search f s =
-  (List.exists (fun x -> map_search' f x) s.service_methods)
+let collect_types_of_service s =
+  List.concat (List.map collect_types_of_method s.service_methods)
 ;;
 
 let gen_client_file conf source services =
@@ -321,14 +316,10 @@ let gen_client_file conf source services =
   let filename = (rename_without_underbar base) ^ "Client.java" in
   let path = make_path conf filename in
   let clients = List.map (fun x -> gen_client x (rename_without_underbar base)) services  in
+  let types = List.concat (List.map collect_types_of_service services) in
   let content = concat_blocks [
     gen_package conf;
-
-    (if (List.exists (map_search include_map) services) 
-     then [(0, "import java.util.Map;")]
-     else []);     
-    (if (List.exists (map_search include_list) services) 
-     then [(0, "import java.util.List;")] else []);
+    gen_import types;
     [(0, "import org.msgpack.rpc.Client;");
      (0, "import org.msgpack.rpc.loop.EventLoop;")];
     (concat_blocks clients)
