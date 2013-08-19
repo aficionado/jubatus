@@ -44,6 +44,16 @@ let gen_jubatus_include conf file =
   "#include " ^ path
 ;;
 
+let gen_jubatus_client_include conf file =
+  let path =
+    if conf.Config.internal then
+      "\"" ^ file ^ "\""
+    else
+      "<jubatus/client/" ^ file ^ ">"
+  in
+  "#include " ^ path
+;;
+
 let parse_namespace namespace =
   Str.split (Str.regexp "::") namespace
 ;;
@@ -299,7 +309,7 @@ let gen_client_file conf names source services =
       (0, "#include <vector>");
       (0, "#include <utility>");
       (0, "#include <jubatus/msgpack/rpc/client.h>");
-      (0, "#include \"datum.hpp\"");
+      (0, gen_jubatus_client_include conf "datum.hpp");
       (0, "#include \"" ^ base ^ "_types.hpp\"");
     ];
     make_namespace namespace (concat_blocks clients)
@@ -329,7 +339,7 @@ let gen_type_file conf names source idl =
     (0, "#include <vector>");
     (0, "#include <utility>");
     (0, "");
-    (0, "#include \"datum.hpp\"");
+    (0, gen_jubatus_client_include conf "datum.hpp");
     (0, "#include <msgpack.hpp>");
   ] in
 
