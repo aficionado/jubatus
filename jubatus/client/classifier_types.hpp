@@ -11,17 +11,11 @@
 #include <vector>
 #include <utility>
 
+#include "datum.hpp"
 #include <msgpack.hpp>
 
 namespace jubatus {
 namespace classifier {
-
-struct datum {
- public:
-  MSGPACK_DEFINE(string_values, num_values);
-  std::vector<std::pair<std::string, std::string> > string_values;
-  std::vector<std::pair<std::string, double> > num_values;
-};
 
 struct estimate_result {
  public:
