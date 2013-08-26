@@ -61,8 +61,9 @@ let gen_def = function
 
 let rec gen_type t name = match t with
   | Object -> raise (Unknown_type("Object is not supported"))
-  | Bool | Int(_, _) | Float(_) | Raw | String | Datum ->
+  | Bool | Int(_, _) | Float(_) | Raw | String ->
       name
+  | Datum -> "Jubatus::Common::Datum.from_tuple(" ^ name ^ ")"
   | Struct s  -> (String.capitalize s) ^ ".from_tuple(" ^ name ^ ")"
   | List t -> 
       (match t with

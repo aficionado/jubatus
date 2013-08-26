@@ -56,8 +56,9 @@ let gen_typename_with_bar name num =
 
 let rec gen_type t name num = match t with
   | Object -> raise (Unknown_type("Object is not supported"))
-  | Bool | Int(_, _) | Float(_) | Raw | String | Datum -> 
+  | Bool | Int(_, _) | Float(_) | Raw | String -> 
     gen_typename_with_paren name num
+  | Datum -> "jubatus.common.datum.from_msgpack(" ^ gen_typename_with_paren name num ^ ")"
   | Struct s  -> s ^ ".from_msgpack(" ^ gen_typename_with_paren name num ^ ")"
   | List t -> 
     let name_bar = "elem_" ^ (gen_typename_with_bar name num) in
@@ -238,6 +239,7 @@ let gen_client_file conf source services =
     [
       (0, "");
       (0, "import msgpackrpc");
+      (0, "import jubatus.common");
       (0, "from types import *");
     ];
     (concat_blocks clients)
