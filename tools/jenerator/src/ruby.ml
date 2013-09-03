@@ -49,7 +49,7 @@ let gen_retval func args typ = match typ with
       | Struct (st) ->
         (String.capitalize st) ^ ".from_tuple(" ^ gen_retval' func args ^ ")"
       | Datum ->
-        "Jubatus::Common::Datum.from_tuple(" ^ gen_retval' args ^ ")"
+        "Jubatus::Common::Datum.from_tuple(" ^ gen_retval' func args ^ ")"
       | _ -> gen_retval' func args
       (* TODO(unno): use gen_type *)
       )      
