@@ -43,6 +43,8 @@ let gen_retval args typ = match typ with
       (match t with
       | Struct (st) ->
         (String.capitalize st) ^ ".from_tuple(" ^ gen_retval' args ^ ")"
+      | Datum ->
+        "Jubatus::Common::Datum.from_tuple(" ^ gen_retval' args ^ ")"
       | Bool | Float(_) | String | Map(_) | List(_) -> gen_retval' args
       | _ -> gen_retval' args
       (* TODO: OK? *)
