@@ -274,8 +274,6 @@ let gen_message names m =
 
   
 let gen_typedef names = function
-  | Typedef(name, typ) ->
-    [ (0, "typedef " ^ gen_type names typ ^ " " ^ name ^ ";") ]
   | Message m ->
     begin match m.message_raw with
     | Some raw when Hashtbl.mem names m.message_name -> []

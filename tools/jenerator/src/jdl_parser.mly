@@ -31,7 +31,6 @@ let parse_error s = print ("parse_error->"^s);;
 
 %}
 
-%token TYPEDEF
 %token MESSAGE
 %token EXCEPTION
 %token SERVICE
@@ -61,7 +60,6 @@ input:
 
 exp0:
  | include_file { $1 }
- | typedef { $1 }
  | enum    { $1 }
  | msg     { $1 }
  | ex      { $1 }
@@ -70,11 +68,6 @@ exp0:
 
 include_file:
  | INCLUDE STRING { Include($2) }
-;
-
-typedef:
- | TYPEDEF LITERAL DEFINE a_type {
-   Typedef($2, $4) }
 ;
 
 a_type:

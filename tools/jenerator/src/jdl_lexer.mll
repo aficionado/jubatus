@@ -56,7 +56,6 @@ rule token = parse
   | "%include" { INCLUDE }
   | "exception" { EXCEPTION }
   | "message" { MESSAGE }
-  | "type" { TYPEDEF }
   | "enum" { ENUM }
   | "service" { SERVICE }
   | literal as s { LITERAL(s) }

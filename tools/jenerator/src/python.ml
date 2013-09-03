@@ -202,28 +202,7 @@ let gen_message m =
   ]
 ;;
 
-let gen_from_msgpack_for_typedef typ =
-  let arg = gen_type typ "arg" "" in
-  [
-    (0, "@staticmethod");
-    (0, "def from_msgpack (arg):");
-    (1,   "return " ^ arg);
-  ]
-;;
-
-let gen_typedef' name typ = 
-  List.concat [
-    [
-      (0, "class " ^ name ^ ":");
-    ];
-    indent_lines 1 (gen_from_msgpack_for_typedef typ);
-  ]
-;;
-
-
 let gen_typedef = function
-  | Typedef(name, typ) ->
-      gen_typedef' name typ
   | Message m ->
     gen_message m
   | _ ->
