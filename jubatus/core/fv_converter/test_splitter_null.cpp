@@ -14,33 +14,20 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef JUBATUS_CORE_DRIVER_MIXABLE_WEIGHT_MANAGER_HPP_
-#define JUBATUS_CORE_DRIVER_MIXABLE_WEIGHT_MANAGER_HPP_
-
-#include "../framework/mixable.hpp"
-#include "../fv_converter/weight_manager.hpp"
+#include <map>
+#include <string>
+#include "word_splitter.hpp"
 
 namespace jubatus {
 namespace core {
-namespace driver {
+namespace fv_converter {
 
-class mixable_weight_manager : public framework::mixable<
-    fv_converter::weight_manager,
-    fv_converter::keyword_weights> {
- public:
-  fv_converter::keyword_weights get_diff_impl() const;
+extern "C" {
+word_splitter* create(const std::map<std::string, std::string>& params) {
+  return 0;
+}
+}
 
-  void put_diff_impl(const fv_converter::keyword_weights& diff);
-
-  void mix_impl(
-      const fv_converter::keyword_weights& lhs,
-      const fv_converter::keyword_weights& rhs,
-      fv_converter::keyword_weights& acc) const;
-  void clear();
-};
-
-}  // namespace driver
+}  // namespace fv_converter
 }  // namespace core
 }  // namespace jubatus
-
-#endif  // JUBATUS_CORE_DRIVER_MIXABLE_WEIGHT_MANAGER_HPP_
