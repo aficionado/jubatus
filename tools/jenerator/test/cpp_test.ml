@@ -24,7 +24,9 @@ let _ = run_test_tt_main begin "cpp.ml" >::: [
     Hashtbl.add names "t" "name::t";
     assert_equal
       "name::t"
-      (gen_type names (Struct "t"))
+      (gen_type names (Struct "t"));
+
+    assert_equal "jubatus::common::datum" (gen_type names Datum);
   end;
 
   "test_gen_argument_type" >:: begin fun() ->
@@ -37,6 +39,7 @@ let _ = run_test_tt_main begin "cpp.ml" >::: [
     assert_equal "bool" (gen Bool);
     assert_equal "int8_t" (gen (Int(true, 1)));
     assert_equal "float" (gen (Float false));
+    assert_equal "const jubatus::common::datum&" (gen Datum);
   end;
 
   "test_gen_string_literal" >:: begin fun() ->
