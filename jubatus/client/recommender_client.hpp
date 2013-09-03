@@ -34,7 +34,7 @@ class recommender {
   }
 
   bool update_row(const std::string& name, const std::string& id,
-       jubatus::common::datum row) {
+       const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("update_row", name, id, row);
     return f.get<bool>();
   }
@@ -51,7 +51,7 @@ class recommender {
   }
 
   jubatus::common::datum complete_row_from_datum(const std::string& name,
-       jubatus::common::datum row) {
+       const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("complete_row_from_datum", name, row);
     return f.get<jubatus::common::datum>();
   }
@@ -63,7 +63,7 @@ class recommender {
   }
 
   similar_result similar_row_from_datum(const std::string& name,
-       jubatus::common::datum row, uint32_t size) {
+       const jubatus::common::datum& row, uint32_t size) {
     msgpack::rpc::future f = c_.call("similar_row_from_datum", name, row, size);
     return f.get<similar_result>();
   }
@@ -79,13 +79,14 @@ class recommender {
     return f.get<std::vector<std::string> >();
   }
 
-  float calc_similarity(const std::string& name, jubatus::common::datum lhs,
-       jubatus::common::datum rhs) {
+  float calc_similarity(const std::string& name,
+       const jubatus::common::datum& lhs, const jubatus::common::datum& rhs) {
     msgpack::rpc::future f = c_.call("calc_similarity", name, lhs, rhs);
     return f.get<float>();
   }
 
-  float calc_l2norm(const std::string& name, jubatus::common::datum row) {
+  float calc_l2norm(const std::string& name,
+       const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("calc_l2norm", name, row);
     return f.get<float>();
   }

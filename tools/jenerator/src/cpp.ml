@@ -105,6 +105,7 @@ and gen_type names = function
 let gen_argument_type names = function
   | Raw
   | String
+  | Datum
   | Struct _
   | List _
   | Map(_, _)

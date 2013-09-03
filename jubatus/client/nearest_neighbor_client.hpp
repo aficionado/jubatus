@@ -34,7 +34,7 @@ class nearest_neighbor {
   }
 
   bool set_row(const std::string& name, const std::string& id,
-       jubatus::common::datum d) {
+       const jubatus::common::datum& d) {
     msgpack::rpc::future f = c_.call("set_row", name, id, d);
     return f.get<bool>();
   }
@@ -46,7 +46,7 @@ class nearest_neighbor {
   }
 
   neighbor_result neighbor_row_from_data(const std::string& name,
-       jubatus::common::datum query, uint32_t size) {
+       const jubatus::common::datum& query, uint32_t size) {
     msgpack::rpc::future f = c_.call("neighbor_row_from_data", name, query,
          size);
     return f.get<neighbor_result>();
@@ -59,7 +59,7 @@ class nearest_neighbor {
   }
 
   neighbor_result similar_row_from_data(const std::string& name,
-       jubatus::common::datum query, int32_t ret_num) {
+       const jubatus::common::datum& query, int32_t ret_num) {
     msgpack::rpc::future f = c_.call("similar_row_from_data", name, query,
          ret_num);
     return f.get<neighbor_result>();

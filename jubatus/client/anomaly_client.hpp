@@ -34,19 +34,19 @@ class anomaly {
   }
 
   std::pair<std::string, float> add(const std::string& name,
-       jubatus::common::datum row) {
+       const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("add", name, row);
     return f.get<std::pair<std::string, float> >();
   }
 
   float update(const std::string& name, const std::string& id,
-       jubatus::common::datum row) {
+       const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("update", name, id, row);
     return f.get<float>();
   }
 
   float overwrite(const std::string& name, const std::string& id,
-       jubatus::common::datum row) {
+       const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("overwrite", name, id, row);
     return f.get<float>();
   }
@@ -56,7 +56,7 @@ class anomaly {
     return f.get<bool>();
   }
 
-  float calc_score(const std::string& name, jubatus::common::datum row) {
+  float calc_score(const std::string& name, const jubatus::common::datum& row) {
     msgpack::rpc::future f = c_.call("calc_score", name, row);
     return f.get<float>();
   }
