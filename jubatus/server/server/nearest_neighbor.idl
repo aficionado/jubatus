@@ -23,10 +23,10 @@ service nearest_neighbor {
   list<tuple<string, float> > neighbor_row_from_data(0: string name, 1: datum query, 2: uint size)
 
   #@random #@analysis #@pass
-  neighbor_result similar_row_from_id(0: string name, 1: string id, 2: int ret_num)
+  list<tuple<string, float> > similar_row_from_id(0: string name, 1: string id, 2: int ret_num)
 
   #@random #@analysis #@pass
-  neighbor_result similar_row_from_data(0: string name, 1: datum query, 2: int ret_num)
+  list<tuple<string, float> > similar_row_from_data(0: string name, 1: datum query, 2: int ret_num)
 
   #@broadcast #@nolock #@all_and
   bool save(0: string name, 1: string id) # #@broadcast
