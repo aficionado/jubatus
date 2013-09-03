@@ -15,6 +15,9 @@ let _ = run_test_tt_main begin "cpp.ml" >::: [
       "T.from_tuple(@cli.call(:func))"
       (gen_retval "func" [] (Some (Struct "t")));
     assert_equal
+      "Jubatus::Common::Datum.from_tuple(@cli.call(:func))"
+      (gen_retval "func" [] (Some (Struct "t")));
+    assert_equal
       "@cli.call(:func)"
       (gen_retval "func" [] (Some String));
     assert_equal
