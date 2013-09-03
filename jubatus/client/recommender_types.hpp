@@ -16,8 +16,6 @@
 namespace jubatus {
 namespace recommender {
 
-typedef std::vector<std::pair<std::string, float> > similar_result;
-
 struct datum {
  public:
   MSGPACK_DEFINE(string_values, num_values);
