@@ -261,23 +261,7 @@ let gen_message m =
   ]
 ;;
 
-let gen_typedef' name typ = 
-  [
-    (0, "class " ^ (String.capitalize name));
-    (1, gen_def (String.capitalize name ^ ".from_tuple") ["tuple"]);
-    (2, (gen_type typ "tuple"));
-    (1, "end");
-    (1, gen_def "to_tuple" ["o"]);
-    (2, "o");
-    (1, "end");
-    (0, "end")
-  ]
-;;
-    
-
 let gen_typedef = function
-  | Typedef(name, typ) ->
-      gen_typedef' name typ
   | Message m ->
       gen_message m
   | _ ->

@@ -17,8 +17,6 @@
 namespace jubatus {
 namespace recommender {
 
-typedef std::vector<std::pair<std::string, float> > similar_result;
-
 }  // namespace recommender
 }  // namespace jubatus
 

@@ -17,8 +17,6 @@
 namespace jubatus {
 namespace nearest_neighbor {
 
-typedef std::vector<std::pair<std::string, float> > neighbor_result;
-
 }  // namespace nearest_neighbor
 }  // namespace jubatus
 

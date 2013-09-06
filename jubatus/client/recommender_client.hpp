@@ -56,16 +56,17 @@ class recommender {
     return f.get<jubatus::common::datum>();
   }
 
-  similar_result similar_row_from_id(const std::string& name,
-       const std::string& id, uint32_t size) {
+  std::vector<std::pair<std::string, float> > similar_row_from_id(
+      const std::string& name, const std::string& id, uint32_t size) {
     msgpack::rpc::future f = c_.call("similar_row_from_id", name, id, size);
-    return f.get<similar_result>();
+    return f.get<std::vector<std::pair<std::string, float> > >();
   }
 
-  similar_result similar_row_from_datum(const std::string& name,
-       const jubatus::common::datum& row, uint32_t size) {
+  std::vector<std::pair<std::string, float> > similar_row_from_datum(
+      const std::string& name, const jubatus::common::datum& row,
+       uint32_t size) {
     msgpack::rpc::future f = c_.call("similar_row_from_datum", name, row, size);
-    return f.get<similar_result>();
+    return f.get<std::vector<std::pair<std::string, float> > >();
   }
 
   jubatus::common::datum decode_row(const std::string& name,

@@ -35,7 +35,6 @@ let make_header conf source filename content =
 ;;
 
 let type_files = ref S.empty;;
-let type_defs = ref [];;
 
 (* rename : e.g., "rename_without_underbar" -> "RenameWithoutUnderbar" *) 
 let rename_without_underbar st = 
@@ -96,8 +95,7 @@ let rec gen_type = function
   | String -> "String"
   | Datum -> "Datum"
   | Struct s  ->
-    (try (gen_type (List.assoc s (!type_defs)))
-     with Not_found -> (rename_without_underbar s))
+    rename_without_underbar s
   | List t -> 
     "List<" ^ gen_object_type t ^ " >"
   | Map(key, value) -> 
@@ -320,8 +318,6 @@ let gen_message m conf source =
 
 let gen_typedef stat conf source =
   match stat with
-  | Typedef(name, typ) ->
-    type_defs := (name, typ) :: !type_defs
   | Message m ->
     gen_message m conf source
   | _ ->

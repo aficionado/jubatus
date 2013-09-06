@@ -1,6 +1,3 @@
-
-type neighbor_result = list<tuple<string, float> >
-
 service nearest_neighbor {
   #@broadcast #@update #@pass
   bool init_table(0: string name)
@@ -12,16 +9,16 @@ service nearest_neighbor {
   bool set_row(0: string name, 1: string id, 2: datum d)
 
   #@random #@analysis #@pass
-  neighbor_result neighbor_row_from_id(0: string name, 1: string id, 2: uint size)
+  list<tuple<string, float> > neighbor_row_from_id(0: string name, 1: string id, 2: uint size)
 
   #@random #@analysis #@pass
-  neighbor_result neighbor_row_from_data(0: string name, 1: datum query, 2: uint size)
+  list<tuple<string, float> > neighbor_row_from_data(0: string name, 1: datum query, 2: uint size)
 
   #@random #@analysis #@pass
-  neighbor_result similar_row_from_id(0: string name, 1: string id, 2: int ret_num)
+  list<tuple<string, float> > similar_row_from_id(0: string name, 1: string id, 2: int ret_num)
 
   #@random #@analysis #@pass
-  neighbor_result similar_row_from_data(0: string name, 1: datum query, 2: int ret_num)
+  list<tuple<string, float> > similar_row_from_data(0: string name, 1: datum query, 2: int ret_num)
 
   #@broadcast #@nolock #@all_and
   bool save(0: string name, 1: string id) # #@broadcast
