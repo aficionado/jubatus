@@ -18,7 +18,7 @@ namespace client {
 
 class anomaly {
  public:
-  anomaly(const std::string& host, uint64_t port, double timeout_sec)
+  anomaly(const std::string& host, uint64_t port, unsigned int timeout_sec)
       : c_(host, port) {
     c_.set_timeout(timeout_sec);
   }
