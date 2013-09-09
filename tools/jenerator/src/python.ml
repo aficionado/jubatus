@@ -77,10 +77,10 @@ let rec gen_type = function
   | Float(_) -> "TFloat()"
   | Raw -> "TRaw()"
   | String -> "TString()"
+  | Datum -> "TDatum()"
   | Struct s  -> gen_call "TUserDef" [s]
   | List t -> gen_call "TList" [gen_type t]
   | Map(key, value) -> gen_call "TMap" [gen_type key; gen_type value]
-  | Tuple ts -> gen_call "TTuple" (List.map gen_type ts)
   | Nullable(t) -> gen_call "TNulallable" [gen_type t]
 ;;
 
@@ -133,7 +133,7 @@ let gen_client s =
 ;;
 
 let gen_message_type field_types =
-  "TYPE = " ^ gen_type (Tuple field_types)
+  "TYPE = " ^ gen_call "TTuple" (List.map gen_type field_types)
 ;;
 
 let gen_self_without_comma field_names =
@@ -171,10 +171,6 @@ let mapi f lst =
     | [] -> []
     | x::xs -> f i x :: mapi_impl f (i + 1) xs in
   mapi_impl f 0 lst
-;;
-
-let rec gen_from_msgpack_types field_types =
-  mapi (fun i t -> gen_type t "arg" (string_of_int i)) field_types
 ;;
 
 let gen_from_msgpack field_names field_types s =
