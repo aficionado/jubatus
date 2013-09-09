@@ -2,7 +2,9 @@ open OUnit
 open Ruby
 open Syntax
 
-let _ = run_test_tt_main begin "cpp.ml" >::: [
+let assert_equal = OUnit.assert_equal ~printer: Std.dump;;
+
+let _ = run_test_tt_main begin "ruby.ml" >::: [
 
   "test_gen_retval'" >:: begin fun() ->
     assert_equal "@cli.call(:func)" (gen_retval' "func" []);
@@ -16,7 +18,7 @@ let _ = run_test_tt_main begin "cpp.ml" >::: [
       (gen_retval "func" [] (Some (Struct "t")));
     assert_equal
       "Jubatus::Common::Datum.from_tuple(@cli.call(:func))"
-      (gen_retval "func" [] (Some (Struct "t")));
+      (gen_retval "func" [] (Some Datum));
     assert_equal
       "@cli.call(:func)"
       (gen_retval "func" [] (Some String));
