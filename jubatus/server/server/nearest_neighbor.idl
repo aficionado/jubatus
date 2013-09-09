@@ -1,4 +1,4 @@
-message scored_id {
+message scored_id("std::pair<std::string, float>") {
   0: string id
   1: float score
 }

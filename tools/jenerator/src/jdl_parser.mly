@@ -147,11 +147,8 @@ msg:
 ;
 
 cpp_type:
- | LITERAL {
+ | STRING {
    $1
- }
- | LITERAL COLON_COLON cpp_type {
-   $1 ^ "::" ^ $3
  }
 ;
 

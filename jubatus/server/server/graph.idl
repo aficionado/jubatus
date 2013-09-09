@@ -16,7 +16,7 @@
 
 %include "../../core/graph/graph_type.hpp"
 
-message node(jubatus::core::graph::node_info) {
+message node("jubatus::core::graph::node_info") {
   0: map<string, string>  property
   1: list<ulong>  in_edges
   2: list<ulong>  out_edges
@@ -30,7 +30,7 @@ message query {
 # query: { key => value }
 # matches if all keys exist on the property and all value are equal
 # or, empty list matches all node/edge with any property
-message preset_query(jubatus::core::graph::preset_query) {
+message preset_query("jubatus::core::graph::preset_query") {
   0: list<query> edge_query
   1: list<query> node_query
 }

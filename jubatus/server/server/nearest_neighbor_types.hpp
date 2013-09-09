@@ -16,13 +16,6 @@
 
 namespace jubatus {
 
-struct scored_id {
- public:
-  MSGPACK_DEFINE(id, score);
-  std::string id;
-  float score;
-};
-
 }  // namespace jubatus
 
 #endif  // JUBATUS_SERVER_SERVER_NEAREST_NEIGHBOR_TYPES_HPP_

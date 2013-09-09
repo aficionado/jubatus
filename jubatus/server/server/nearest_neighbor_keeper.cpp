@@ -27,14 +27,14 @@ int run_keeper(int argc, char* argv[]) {
     k.register_async_cht<1, bool, jubatus::core::fv_converter::datum>("set_row",
          pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::pass<bool>));
-    k.register_async_random<std::vector<scored_id>, std::string, uint32_t>(
-        "neighbor_row_from_id");
-    k.register_async_random<std::vector<scored_id>,
+    k.register_async_random<std::vector<std::pair<std::string, float> >,
+         std::string, uint32_t>("neighbor_row_from_id");
+    k.register_async_random<std::vector<std::pair<std::string, float> >,
          jubatus::core::fv_converter::datum, uint32_t>(
         "neighbor_row_from_data");
-    k.register_async_random<std::vector<scored_id>, std::string, int32_t>(
-        "similar_row_from_id");
-    k.register_async_random<std::vector<scored_id>,
+    k.register_async_random<std::vector<std::pair<std::string, float> >,
+         std::string, int32_t>("similar_row_from_id");
+    k.register_async_random<std::vector<std::pair<std::string, float> >,
          jubatus::core::fv_converter::datum, int32_t>("similar_row_from_data");
     k.register_async_broadcast<bool, std::string>("save",
          pfi::lang::function<bool(bool, bool)>(
