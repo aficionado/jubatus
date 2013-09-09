@@ -20,43 +20,43 @@ class classifier {
  public:
   classifier(const std::string& host, uint64_t port, const std::string& name,
        double timeout_sec)
-      : c_(host, port) {
+      : c_(host, port), name_(name) {
     c_.set_timeout(timeout_sec);
   }
 
   std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config");
+    msgpack::rpc::future f = c_.call("get_config", name_);
     return f.get<std::string>();
   }
 
   int32_t train(const std::vector<labeled_datum>& data) {
-    msgpack::rpc::future f = c_.call("train", data);
+    msgpack::rpc::future f = c_.call("train", name_, data);
     return f.get<int32_t>();
   }
 
   std::vector<std::vector<estimate_result> > classify(
-      const std::vector<jubatus::core::fv_converter::datum>& data) {
-    msgpack::rpc::future f = c_.call("classify", data);
+      const std::vector<jubatus::common::datum>& data) {
+    msgpack::rpc::future f = c_.call("classify", name_, data);
     return f.get<std::vector<std::vector<estimate_result> > >();
   }
 
   bool clear() {
-    msgpack::rpc::future f = c_.call("clear");
+    msgpack::rpc::future f = c_.call("clear", name_);
     return f.get<bool>();
   }
 
   bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", id);
+    msgpack::rpc::future f = c_.call("save", name_, id);
     return f.get<bool>();
   }
 
   bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", id);
+    msgpack::rpc::future f = c_.call("load", name_, id);
     return f.get<bool>();
   }
 
   std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status");
+    msgpack::rpc::future f = c_.call("get_status", name_);
     return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 
@@ -66,6 +66,7 @@ class classifier {
 
  private:
   msgpack::rpc::client c_;
+  std::string name_;
 };
 
 }  // namespace client

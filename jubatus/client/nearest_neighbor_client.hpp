@@ -20,67 +20,68 @@ class nearest_neighbor {
  public:
   nearest_neighbor(const std::string& host, uint64_t port,
        const std::string& name, double timeout_sec)
-      : c_(host, port) {
+      : c_(host, port), name_(name) {
     c_.set_timeout(timeout_sec);
   }
 
   bool init_table() {
-    msgpack::rpc::future f = c_.call("init_table");
+    msgpack::rpc::future f = c_.call("init_table", name_);
     return f.get<bool>();
   }
 
   bool clear() {
-    msgpack::rpc::future f = c_.call("clear");
+    msgpack::rpc::future f = c_.call("clear", name_);
     return f.get<bool>();
   }
 
-  bool set_row(const std::string& id,
-       const jubatus::core::fv_converter::datum& d) {
-    msgpack::rpc::future f = c_.call("set_row", id, d);
+  bool set_row(const std::string& id, const jubatus::common::datum& d) {
+    msgpack::rpc::future f = c_.call("set_row", name_, id, d);
     return f.get<bool>();
   }
 
   std::vector<scored_id> neighbor_row_from_id(const std::string& id,
        uint32_t size) {
-    msgpack::rpc::future f = c_.call("neighbor_row_from_id", id, size);
+    msgpack::rpc::future f = c_.call("neighbor_row_from_id", name_, id, size);
     return f.get<std::vector<scored_id> >();
   }
 
   std::vector<scored_id> neighbor_row_from_data(
-      const jubatus::core::fv_converter::datum& query, uint32_t size) {
-    msgpack::rpc::future f = c_.call("neighbor_row_from_data", query, size);
+      const jubatus::common::datum& query, uint32_t size) {
+    msgpack::rpc::future f = c_.call("neighbor_row_from_data", name_, query,
+         size);
     return f.get<std::vector<scored_id> >();
   }
 
   std::vector<scored_id> similar_row_from_id(const std::string& id,
        int32_t ret_num) {
-    msgpack::rpc::future f = c_.call("similar_row_from_id", id, ret_num);
+    msgpack::rpc::future f = c_.call("similar_row_from_id", name_, id, ret_num);
     return f.get<std::vector<scored_id> >();
   }
 
   std::vector<scored_id> similar_row_from_data(
-      const jubatus::core::fv_converter::datum& query, int32_t ret_num) {
-    msgpack::rpc::future f = c_.call("similar_row_from_data", query, ret_num);
+      const jubatus::common::datum& query, int32_t ret_num) {
+    msgpack::rpc::future f = c_.call("similar_row_from_data", name_, query,
+         ret_num);
     return f.get<std::vector<scored_id> >();
   }
 
   bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", id);
+    msgpack::rpc::future f = c_.call("save", name_, id);
     return f.get<bool>();
   }
 
   bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", id);
+    msgpack::rpc::future f = c_.call("load", name_, id);
     return f.get<bool>();
   }
 
   std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status");
+    msgpack::rpc::future f = c_.call("get_status", name_);
     return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 
   std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config");
+    msgpack::rpc::future f = c_.call("get_config", name_);
     return f.get<std::string>();
   }
 
@@ -90,6 +91,7 @@ class nearest_neighbor {
 
  private:
   msgpack::rpc::client c_;
+  std::string name_;
 };
 
 }  // namespace client

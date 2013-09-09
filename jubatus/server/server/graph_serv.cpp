@@ -304,11 +304,13 @@ edge_id_t graph_serv::create_edge(const std::string& id, const edge& ei) {
       try {
         if (nodes[i].first == argv().eth && nodes[i].second == argv().port) {
         } else {
-          client::graph c(
-              nodes[i].first, nodes[i].second, argv().interconnect_timeout);
+          client::graph c(nodes[i].first,
+                          nodes[i].second,
+                          argv().name,
+                          argv().interconnect_timeout);
           DLOG(INFO) << "request to "
               << nodes[i].first << ":" << nodes[i].second;
-          c.create_edge_here(argv().name, eid, ei);
+          c.create_edge_here(eid, ei);
         }
       } catch (const core::graph::local_node_exists& e) {  // pass through
       } catch (const core::graph::global_node_exists& e) {  // pass through
