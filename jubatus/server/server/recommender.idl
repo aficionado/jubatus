@@ -22,47 +22,47 @@ message id_with_score {
 service recommender {
 
   #@random #@analysis #@pass
-  string get_config(0: string name) # //@random
+  string get_config() # //@random
 
   #@cht #@update #@all_and
-  bool clear_row(0: string name, 1: string id) # //@cht
+  bool clear_row(0: string id) # //@cht
 
   #@cht #@update #@all_and
-  bool update_row(0: string name, 1: string id, 2: datum row) # //@cht
+  bool update_row(0: string id, 1: datum row) # //@cht
 
   #@broadcast #@update #@all_and
-  bool clear(0: string name) # //@broadcast
+  bool clear() # //@broadcast
 
   #@cht #@analysis #@pass
-  datum complete_row_from_id(0: string name, 1: string id) # //@cht
+  datum complete_row_from_id(0: string id) # //@cht
 
   #@random #@analysis #@pass
-  datum complete_row_from_datum(0: string name, 1: datum row) # //@random
+  datum complete_row_from_datum(0: datum row) # //@random
 
   #@cht #@analysis #@pass
-  list<id_with_score> similar_row_from_id(0: string name, 1: string id, 2: uint size) # //@cht
+  list<id_with_score> similar_row_from_id(0: string id, 1: uint size) # //@cht
 
   #@random #@analysis #@pass
-  list<id_with_score> similar_row_from_datum(0: string name, 1: datum row, 2: uint size) # //@random
+  list<id_with_score> similar_row_from_datum(0: datum row, 1: uint size) # //@random
 
   #@cht #@analysis #@pass
-  datum decode_row(0: string name, 1: string id) # //@cht
+  datum decode_row(0: string id) # //@cht
 
   #@broadcast #@analysis #@concat
-  list<string>  get_all_rows(0: string name) # //@broadcast
+  list<string>  get_all_rows() # //@broadcast
 
   #@random #@analysis #@pass
-  float calc_similarity(0: string name, 1: datum lhs, 2:datum rhs) # //@random
+  float calc_similarity(0: datum lhs, 1:datum rhs) # //@random
 
   #@random #@analysis #@pass
-  float calc_l2norm(0: string name, 1: datum row) # //@random
+  float calc_l2norm(0: datum row) # //@random
 
   #@broadcast #@update #@all_and
-  bool save(0: string name, 1: string id) # //@broadcast
+  bool save(0: string id) # //@broadcast
 
   #@broadcast #@update #@all_and
-  bool load(0: string name, 1: string id) # //@broadcast
+  bool load(0: string id) # //@broadcast
 
   #@broadcast #@analysis #@merge
-  map<string, map<string, string> >  get_status(0: string name) # //@broadcast
+  map<string, map<string, string> >  get_status() # //@broadcast
 }

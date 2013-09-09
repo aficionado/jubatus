@@ -275,8 +275,8 @@ float anomaly_serv::selective_update(
     event_model_updated();
     return this->update(id, d);
   } else {  // needs no lock
-    client::anomaly c(host, port, argv().interconnect_timeout);
-    return c.update(argv().name, id, d);
+    client::anomaly c(host, port, argv().name, argv().interconnect_timeout);
+    return c.update(id, d);
   }
 }
 

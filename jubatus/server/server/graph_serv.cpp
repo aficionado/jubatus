@@ -493,8 +493,11 @@ void graph_serv::selective_create_node_(
     this->create_node_here(nid_str);
   } else {
     // must not lock here
-    client::graph c(target.first, target.second, argv().interconnect_timeout);
-    c.create_node_here(argv().name, nid_str);
+    client::graph c(target.first,
+                    target.second,
+                    argv().name,
+                    argv().interconnect_timeout);
+    c.create_node_here(nid_str);
   }
 }
 

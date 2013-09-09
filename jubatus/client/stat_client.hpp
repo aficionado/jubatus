@@ -18,70 +18,69 @@ namespace client {
 
 class stat {
  public:
-  stat(const std::string& host, uint64_t port, double timeout_sec)
+  stat(const std::string& host, uint64_t port, const std::string& name,
+       double timeout_sec)
       : c_(host, port) {
     c_.set_timeout(timeout_sec);
   }
 
-  std::string get_config(const std::string& name) {
-    msgpack::rpc::future f = c_.call("get_config", name);
+  std::string get_config() {
+    msgpack::rpc::future f = c_.call("get_config");
     return f.get<std::string>();
   }
 
-  bool push(const std::string& name, const std::string& key, double value) {
-    msgpack::rpc::future f = c_.call("push", name, key, value);
+  bool push(const std::string& key, double value) {
+    msgpack::rpc::future f = c_.call("push", key, value);
     return f.get<bool>();
   }
 
-  double sum(const std::string& name, const std::string& key) {
-    msgpack::rpc::future f = c_.call("sum", name, key);
+  double sum(const std::string& key) {
+    msgpack::rpc::future f = c_.call("sum", key);
     return f.get<double>();
   }
 
-  double stddev(const std::string& name, const std::string& key) {
-    msgpack::rpc::future f = c_.call("stddev", name, key);
+  double stddev(const std::string& key) {
+    msgpack::rpc::future f = c_.call("stddev", key);
     return f.get<double>();
   }
 
-  double max(const std::string& name, const std::string& key) {
-    msgpack::rpc::future f = c_.call("max", name, key);
+  double max(const std::string& key) {
+    msgpack::rpc::future f = c_.call("max", key);
     return f.get<double>();
   }
 
-  double min(const std::string& name, const std::string& key) {
-    msgpack::rpc::future f = c_.call("min", name, key);
+  double min(const std::string& key) {
+    msgpack::rpc::future f = c_.call("min", key);
     return f.get<double>();
   }
 
-  double entropy(const std::string& name, const std::string& key) {
-    msgpack::rpc::future f = c_.call("entropy", name, key);
+  double entropy(const std::string& key) {
+    msgpack::rpc::future f = c_.call("entropy", key);
     return f.get<double>();
   }
 
-  double moment(const std::string& name, const std::string& key, int32_t degree,
-       double center) {
-    msgpack::rpc::future f = c_.call("moment", name, key, degree, center);
+  double moment(const std::string& key, int32_t degree, double center) {
+    msgpack::rpc::future f = c_.call("moment", key, degree, center);
     return f.get<double>();
   }
 
-  bool clear(const std::string& name) {
-    msgpack::rpc::future f = c_.call("clear", name);
+  bool clear() {
+    msgpack::rpc::future f = c_.call("clear");
     return f.get<bool>();
   }
 
-  bool save(const std::string& name, const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", name, id);
+  bool save(const std::string& id) {
+    msgpack::rpc::future f = c_.call("save", id);
     return f.get<bool>();
   }
 
-  bool load(const std::string& name, const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", name, id);
+  bool load(const std::string& id) {
+    msgpack::rpc::future f = c_.call("load", id);
     return f.get<bool>();
   }
 
-  std::map<std::string, std::map<std::string, std::string> > get_status(
-      const std::string& name) {
-    msgpack::rpc::future f = c_.call("get_status", name);
+  std::map<std::string, std::map<std::string, std::string> > get_status() {
+    msgpack::rpc::future f = c_.call("get_status");
     return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 

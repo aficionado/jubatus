@@ -21,40 +21,38 @@ class regression_impl_ : public regression<regression_impl_> {
     p_(new jubatus::server::framework::server_helper<regression_serv>(a,
          false)) {
   }
-  std::string get_config(const std::string& name) {
+  std::string get_config() {
     JRLOCK_(p_);
     return get_p()->get_config();
   }
 
-  int32_t train(const std::string& name,
-       const std::vector<scored_datum>& train_data) {
+  int32_t train(const std::vector<scored_datum>& train_data) {
     JWLOCK_(p_);
     return get_p()->train(train_data);
   }
 
-  std::vector<float> estimate(const std::string& name,
-       const std::vector<jubatus::core::fv_converter::datum>& estimate_data) {
+  std::vector<float> estimate(
+      const std::vector<jubatus::core::fv_converter::datum>& estimate_data) {
     JRLOCK_(p_);
     return get_p()->estimate(estimate_data);
   }
 
-  bool clear(const std::string& name) {
+  bool clear() {
     JWLOCK_(p_);
     return get_p()->clear();
   }
 
-  bool save(const std::string& name, const std::string& id) {
+  bool save(const std::string& id) {
     JWLOCK_(p_);
     return get_p()->save(id);
   }
 
-  bool load(const std::string& name, const std::string& id) {
+  bool load(const std::string& id) {
     JWLOCK_(p_);
     return get_p()->load(id);
   }
 
-  std::map<std::string, std::map<std::string, std::string> > get_status(
-      const std::string& name) {
+  std::map<std::string, std::map<std::string, std::string> > get_status() {
     JRLOCK_(p_);
     return p_->get_status();
   }
