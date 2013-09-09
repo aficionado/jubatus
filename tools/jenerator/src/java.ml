@@ -20,21 +20,12 @@
 open Syntax
 open Lib
 
-module S =
-  Set.Make
-    (struct
-      type t = decl_type * decl_type
-      let compare = compare
-     end)
-
 let comment_out_head = "//"
 ;;
 
 let make_header conf source filename content =
   make_source conf source filename content comment_out_head
 ;;
-
-let type_files = ref S.empty;;
 
 (* rename : e.g., "rename_without_underbar" -> "RenameWithoutUnderbar" *) 
 let rename_without_underbar st = 
@@ -100,10 +91,6 @@ let rec gen_type = function
     "List<" ^ gen_object_type t ^ " >"
   | Map(key, value) -> 
     "Map<" ^ gen_object_type key ^ ", " ^ gen_object_type value ^ " >"
-  | Tuple [t1; t2] -> 
-    type_files := S.add (t1, t2) (!type_files);
-    "Tuple" ^ gen_object_type t1 ^ gen_object_type t2
-  | Tuple(ts) -> raise (Unknown_type "Tuple is not supported")
   | Nullable(t) -> raise (Unknown_type "Nullable is not supported")
 and gen_object_type = function
   | Bool -> "Boolean"
@@ -358,9 +345,5 @@ let gen_typedef_file conf source idl =
 let generate conf source idl =
   let services = get_services idl in
   gen_typedef_file conf source idl;
-  let _ = gen_client_file conf source services in
-  let tf = !type_files in
-  S.iter (fun t -> 
-    let (t1, t2) = t in
-    gen_types_file (gen_type (Tuple([t1; t2]))) t conf source) tf
+  gen_client_file conf source services
 ;;

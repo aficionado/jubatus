@@ -28,7 +28,6 @@ type decl_type =
   | Struct of string
   | List of decl_type
   | Map of decl_type * decl_type
-  | Tuple of decl_type list
   | Nullable of decl_type
 ;;
 
@@ -166,7 +165,6 @@ let rec type_exists f typ =
   match typ with
   | List t -> type_exists f t
   | Map(k, v) -> type_exists f k || type_exists f v
-  | Tuple ts -> List.exists (type_exists f) ts
   | Nullable t -> type_exists f t
   | _ -> false
 ;;

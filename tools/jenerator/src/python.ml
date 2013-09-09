@@ -73,9 +73,6 @@ let rec gen_type t name num = match t with
     "{" ^ t1' ^ " : " ^ t2' ^ " for " ^ 
       ("k_" ^ new_name_bar)  ^ "," ^ ("v_" ^ new_name_bar) ^ 
       " in " ^ new_name_paren ^ ".items()" ^ "}"
-  | Tuple [t1; t2] -> 
-    " (" ^ gen_type t1 (name ^ "[0]") num ^ ", " ^ gen_type t2 (name ^ "[1]") num ^") "
-  | Tuple(ts) -> raise (Unknown_type "Tuple is not supported")
   | Nullable(t) -> raise (Unknown_type "Nullable is not supported")
 ;;
 

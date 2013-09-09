@@ -100,8 +100,6 @@ a_type:
      let left = List.hd $3 in
      let right = List.hd (List.tl $3) in
      Map(left, right);
-   | "tuple" -> Tuple($3);
-   (* user defined types?   hoge<hage, int> *)
    | s ->
      print ("unknown container: " ^ s);
      raise (Syntax.Unknown_type s)

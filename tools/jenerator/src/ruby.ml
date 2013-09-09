@@ -77,9 +77,6 @@ let rec gen_type t name = match t with
         name ^ ".map {|x|  [" ^ gen_type t "x" ^ "] }")
   | Map(key, value) -> 
       name ^ ".each_with_object({}) {|(k,v),h| h[k] = v}" (* TODO: OK? *)
-  | Tuple [t1; t2] ->
-      gen_type t1 (name ^ "[0]") ^ ", " ^ gen_type t2 (name ^ "[1], ")
-  | Tuple(ts) -> raise (Unknown_type "Tuple is not supported")
   | Nullable(t) -> raise (Unknown_type "Nullable is not supported")
 ;;
 

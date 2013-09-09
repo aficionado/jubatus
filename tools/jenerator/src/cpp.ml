@@ -114,8 +114,6 @@ and gen_type names server = function
       s
   | List typ -> gen_template names server "std::vector" [typ]
   | Map(key, value) -> gen_template names server "std::map" [key; value]
-  | Tuple [t1; t2] -> gen_template names server "std::pair" [t1; t2]
-  | Tuple typs ->  raise (Unknown_type "Tuple is not supported")
   | Nullable typ ->  raise (Unknown_type "Nullable is not supported")
 ;;
 
@@ -126,8 +124,6 @@ let gen_argument_type names server = function
   | Struct _
   | List _
   | Map(_, _)
-  | Tuple _ as t ->
-    "const " ^ gen_type names server t ^ "&"
   | _ as t ->
     gen_type names server t
 ;;
