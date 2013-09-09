@@ -22,6 +22,11 @@ struct scored_id {
   MSGPACK_DEFINE(id, score);
   std::string id;
   float score;
+  scored_id() {
+  }
+  scored_id(const std::string& id, float score)
+    : id(id), score(score) {
+  }
 };
 
 }  // namespace nearest_neighbor

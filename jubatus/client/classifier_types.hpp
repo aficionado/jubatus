@@ -22,6 +22,11 @@ struct estimate_result {
   MSGPACK_DEFINE(label, score);
   std::string label;
   double score;
+  estimate_result() {
+  }
+  estimate_result(const std::string& label, double score)
+    : label(label), score(score) {
+  }
 };
 
 struct labeled_datum {
@@ -29,6 +34,11 @@ struct labeled_datum {
   MSGPACK_DEFINE(label, data);
   std::string label;
   jubatus::common::datum data;
+  labeled_datum() {
+  }
+  labeled_datum(const std::string& label, const jubatus::common::datum& data)
+    : label(label), data(data) {
+  }
 };
 
 }  // namespace classifier

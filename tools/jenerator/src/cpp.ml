@@ -289,6 +289,22 @@ let gen_message names server m =
   let fields = List.map (gen_message_field names server) m.message_fields in
   let field_names = List.map (fun f -> f.field_name) m.message_fields in
   let msgpack_define = gen_call "MSGPACK_DEFINE" field_names in
+  let default_constructor = [
+    (0, m.message_name ^ "() {");
+    (0, "}");
+  ] in
+  let args_def = gen_function_args_def names server m.message_fields in
+  let assigns = List.map (fun f -> f.field_name ^ "(" ^ f.field_name ^ ")") m.message_fields in
+  let explicit =
+    if List.length m.message_fields = 1 then
+      "explicit "
+    else
+      "" in
+  let constructor = [
+    (0, explicit ^ m.message_name ^ args_def);
+    (1,   ": " ^ String.concat ", " assigns ^ " {");
+    (0, "}");
+  ] in
   List.concat [
     [
       (0, "struct " ^ m.message_name ^ " {");
@@ -296,6 +312,8 @@ let gen_message names server m =
       (1,   msgpack_define);
     ];
     indent_lines 1 fields;
+    indent_lines 1 default_constructor;
+    indent_lines 1 constructor;
     [ (0, "};")]
   ]
 ;;
