@@ -22,23 +22,23 @@ message scored_datum {
 service regression {
 
   #@random #@analysis #@pass
-  string get_config(0: string name) # //@random
+  string get_config() # //@random
 
   #@random #@update #@pass
-  int train(0: string name, 1: list<scored_datum> train_data) # //@random
+  int train(0: list<scored_datum> train_data) # //@random
 
   #@random #@analysis #@pass
-  list<float>  estimate(0: string name, 1: list<datum>  estimate_data) # //@random
+  list<float>  estimate(0: list<datum>  estimate_data) # //@random
 
   #@broadcast #@update #@all_and
-  bool clear(0: string name) # //@broadcast
+  bool clear() # //@broadcast
 
   #@broadcast #@update #@all_and
-  bool save(0: string name, 1: string id) # //@broadcast
+  bool save(0: string id) # //@broadcast
 
   #@broadcast #@update #@all_and
-  bool load(0: string name, 1: string id) # //@broadcast
+  bool load(0: string id) # //@broadcast
 
   #@broadcast #@analysis #@merge
-  map<string, map<string, string> >  get_status(0: string name) # //@broadcast
+  map<string, map<string, string> >  get_status() # //@broadcast
 }

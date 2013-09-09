@@ -253,7 +253,7 @@ let gen_client_method names server m =
 let gen_client names server s =
   let methods = List.map (gen_client_method names server) s.service_methods in
   let constructor = [
-    (0, s.service_name ^ "(const std::string& host, uint64_t port, unsigned int timeout_sec)");
+    (0, s.service_name ^ "(const std::string& host, uint64_t port, const std::string& name, unsigned int timeout_sec)");
     (2,     ": c_(host, port) {");
     (1,   "c_.set_timeout(timeout_sec);");
     (0, "}");
@@ -481,7 +481,7 @@ let gen_aggregator_function names ret_type aggregator =
 ;;
 
 let gen_keeper_register names m ret_type =
-  let arg_types = List.map (fun f -> f.field_type) (List.tl m.method_arguments) in
+  let arg_types = List.map (fun f -> f.field_type) m.method_arguments in
   let method_name_str = gen_string_literal m.method_name in
   let routing, _, agg = get_decorator m in
   match routing with
@@ -491,7 +491,7 @@ let gen_keeper_register names m ret_type =
     [ (0, call) ]
 
   | Cht i ->
-    let args = List.tl arg_types in
+    let args = arg_types in
     let arg_strs = List.map (gen_type names true) (ret_type::args) in
     (* TODO(unnonouno): Is this number really required to be a template argument? *)
     let num = string_of_int i in
@@ -577,7 +577,7 @@ let gen_impl_method names m =
   let name = m.method_name in
   let args_def = gen_function_args_def names m.method_arguments in
   (* Do not use the first argument. It is used for keepers. *)
-  let args = List.map (fun f -> f.field_name) (List.tl m.method_arguments) in
+  let args = List.map (fun f -> f.field_name) m.method_arguments in
   let ret_type = gen_ret_type names true m.method_return_type in
 
   let _, request, _ = get_decorator m in
@@ -692,7 +692,7 @@ let gen_const m =
 
 let gen_server_template_header_method names m =
   let name = m.method_name in
-  let args_def = gen_function_reference_args_def names (List.tl m.method_arguments) in
+  let args_def = gen_function_reference_args_def names m.method_arguments in
   let ret_type = gen_ret_type names true m.method_return_type in
   let const = gen_const m in
   [ (0, Printf.sprintf "%s %s%s%s;" ret_type name args_def const) ]
@@ -761,7 +761,7 @@ let gen_server_template_source_method names s m =
   let serv_name = s.service_name ^ "_serv" in
 
   let name = m.method_name in
-  let args_def = gen_function_reference_args_def names (List.tl m.method_arguments) in
+  let args_def = gen_function_reference_args_def names m.method_arguments in
   let ret_type = gen_ret_type names true m.method_return_type in
   let const = gen_const m in
   [

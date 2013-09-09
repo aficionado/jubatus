@@ -18,6 +18,7 @@
 #define JUBATUS_SERVER_SERVER_NEAREST_NEIGHBOR_SERV_HPP_
 
 #include <string>
+#include <utility>
 #include <vector>
 #include "jubatus/core/driver/nearest_neighbor.hpp"
 #include "jubatus/core/table/column/column_table.hpp"

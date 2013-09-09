@@ -22,65 +22,62 @@ class nearest_neighbor_impl_ : public nearest_neighbor<nearest_neighbor_impl_> {
     p_(new jubatus::server::framework::server_helper<nearest_neighbor_serv>(a,
          true)) {
   }
-  bool init_table(const std::string& name) {
+  bool init_table() {
     JWLOCK_(p_);
     return get_p()->init_table();
   }
 
-  bool clear(const std::string& name) {
+  bool clear() {
     JWLOCK_(p_);
     return get_p()->clear();
   }
 
-  bool set_row(const std::string& name, const std::string& id,
+  bool set_row(const std::string& id,
        const jubatus::core::fv_converter::datum& d) {
     JWLOCK_(p_);
     return get_p()->set_row(id, d);
   }
 
   std::vector<std::pair<std::string, float> > neighbor_row_from_id(
-      const std::string& name, const std::string& id, uint32_t size) {
+      const std::string& id, uint32_t size) {
     JRLOCK_(p_);
     return get_p()->neighbor_row_from_id(id, size);
   }
 
   std::vector<std::pair<std::string, float> > neighbor_row_from_data(
-      const std::string& name, const jubatus::core::fv_converter::datum& query,
-       uint32_t size) {
+      const jubatus::core::fv_converter::datum& query, uint32_t size) {
     JRLOCK_(p_);
     return get_p()->neighbor_row_from_data(query, size);
   }
 
   std::vector<std::pair<std::string, float> > similar_row_from_id(
-      const std::string& name, const std::string& id, int32_t ret_num) {
+      const std::string& id, int32_t ret_num) {
     JRLOCK_(p_);
     return get_p()->similar_row_from_id(id, ret_num);
   }
 
   std::vector<std::pair<std::string, float> > similar_row_from_data(
-      const std::string& name, const jubatus::core::fv_converter::datum& query,
-       int32_t ret_num) {
+      const jubatus::core::fv_converter::datum& query, int32_t ret_num) {
     JRLOCK_(p_);
     return get_p()->similar_row_from_data(query, ret_num);
   }
 
-  bool save(const std::string& name, const std::string& id) {
+  bool save(const std::string& id) {
     NOLOCK_(p_);
     return get_p()->save(id);
   }
 
-  bool load(const std::string& name, const std::string& id) {
+  bool load(const std::string& id) {
     JWLOCK_(p_);
     return get_p()->load(id);
   }
 
-  std::map<std::string, std::map<std::string, std::string> > get_status(
-      const std::string& name) {
+  std::map<std::string, std::map<std::string, std::string> > get_status() {
     JRLOCK_(p_);
     return p_->get_status();
   }
 
-  std::string get_config(const std::string& name) {
+  std::string get_config() {
     JRLOCK_(p_);
     return get_p()->get_config();
   }
