@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include "datum.hpp"
+#include <jubatus/client/datum.hpp>
 #include "classifier_types.hpp"
 
 namespace jubatus {
@@ -30,13 +30,13 @@ class classifier {
 
   int32_t train(const std::string& name,
        const std::vector<std::pair<std::string,
-       jubatus::common::datum> >& data) {
+       jubatus::core::fv_converter::datum> >& data) {
     msgpack::rpc::future f = c_.call("train", name, data);
     return f.get<int32_t>();
   }
 
   std::vector<std::vector<estimate_result> > classify(const std::string& name,
-       const std::vector<jubatus::common::datum>& data) {
+       const std::vector<jubatus::core::fv_converter::datum>& data) {
     msgpack::rpc::future f = c_.call("classify", name, data);
     return f.get<std::vector<std::vector<estimate_result> > >();
   }

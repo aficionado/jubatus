@@ -54,14 +54,15 @@ class recommender_impl_ : public recommender<recommender_impl_> {
     return get_p()->complete_row_from_datum(row);
   }
 
-  similar_result similar_row_from_id(const std::string& name,
-       const std::string& id, uint32_t size) {
+  std::vector<std::pair<std::string, float> > similar_row_from_id(
+      const std::string& name, const std::string& id, uint32_t size) {
     JRLOCK_(p_);
     return get_p()->similar_row_from_id(id, size);
   }
 
-  similar_result similar_row_from_datum(const std::string& name,
-       const jubatus::core::fv_converter::datum& row, uint32_t size) {
+  std::vector<std::pair<std::string, float> > similar_row_from_datum(
+      const std::string& name, const jubatus::core::fv_converter::datum& row,
+       uint32_t size) {
     JRLOCK_(p_);
     return get_p()->similar_row_from_datum(row, size);
   }

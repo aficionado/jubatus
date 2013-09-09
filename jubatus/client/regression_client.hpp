@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include "datum.hpp"
+#include <jubatus/client/datum.hpp>
 #include "regression_types.hpp"
 
 namespace jubatus {
@@ -29,13 +29,13 @@ class regression {
   }
 
   int32_t train(const std::string& name, const std::vector<std::pair<float,
-       jubatus::common::datum> >& train_data) {
+       jubatus::core::fv_converter::datum> >& train_data) {
     msgpack::rpc::future f = c_.call("train", name, train_data);
     return f.get<int32_t>();
   }
 
   std::vector<float> estimate(const std::string& name,
-       const std::vector<jubatus::common::datum>& estimate_data) {
+       const std::vector<jubatus::core::fv_converter::datum>& estimate_data) {
     msgpack::rpc::future f = c_.call("estimate", name, estimate_data);
     return f.get<std::vector<float> >();
   }

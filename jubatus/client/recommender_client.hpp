@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include "datum.hpp"
+#include <jubatus/client/datum.hpp>
 #include "recommender_types.hpp"
 
 namespace jubatus {
@@ -34,7 +34,7 @@ class recommender {
   }
 
   bool update_row(const std::string& name, const std::string& id,
-       const jubatus::common::datum& row) {
+       const jubatus::core::fv_converter::datum& row) {
     msgpack::rpc::future f = c_.call("update_row", name, id, row);
     return f.get<bool>();
   }
@@ -51,7 +51,7 @@ class recommender {
   }
 
   jubatus::common::datum complete_row_from_datum(const std::string& name,
-       const jubatus::common::datum& row) {
+       const jubatus::core::fv_converter::datum& row) {
     msgpack::rpc::future f = c_.call("complete_row_from_datum", name, row);
     return f.get<jubatus::common::datum>();
   }
@@ -63,7 +63,7 @@ class recommender {
   }
 
   std::vector<std::pair<std::string, float> > similar_row_from_datum(
-      const std::string& name, const jubatus::common::datum& row,
+      const std::string& name, const jubatus::core::fv_converter::datum& row,
        uint32_t size) {
     msgpack::rpc::future f = c_.call("similar_row_from_datum", name, row, size);
     return f.get<std::vector<std::pair<std::string, float> > >();
@@ -81,13 +81,14 @@ class recommender {
   }
 
   float calc_similarity(const std::string& name,
-       const jubatus::common::datum& lhs, const jubatus::common::datum& rhs) {
+       const jubatus::core::fv_converter::datum& lhs,
+       const jubatus::core::fv_converter::datum& rhs) {
     msgpack::rpc::future f = c_.call("calc_similarity", name, lhs, rhs);
     return f.get<float>();
   }
 
   float calc_l2norm(const std::string& name,
-       const jubatus::common::datum& row) {
+       const jubatus::core::fv_converter::datum& row) {
     msgpack::rpc::future f = c_.call("calc_l2norm", name, row);
     return f.get<float>();
   }

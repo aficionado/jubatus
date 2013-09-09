@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include "datum.hpp"
+#include <jubatus/client/datum.hpp>
 #include "nearest_neighbor_types.hpp"
 
 namespace jubatus {
@@ -34,7 +34,7 @@ class nearest_neighbor {
   }
 
   bool set_row(const std::string& name, const std::string& id,
-       const jubatus::common::datum& d) {
+       const jubatus::core::fv_converter::datum& d) {
     msgpack::rpc::future f = c_.call("set_row", name, id, d);
     return f.get<bool>();
   }
@@ -46,7 +46,7 @@ class nearest_neighbor {
   }
 
   std::vector<std::pair<std::string, float> > neighbor_row_from_data(
-      const std::string& name, const jubatus::common::datum& query,
+      const std::string& name, const jubatus::core::fv_converter::datum& query,
        uint32_t size) {
     msgpack::rpc::future f = c_.call("neighbor_row_from_data", name, query,
          size);
@@ -60,7 +60,7 @@ class nearest_neighbor {
   }
 
   std::vector<std::pair<std::string, float> > similar_row_from_data(
-      const std::string& name, const jubatus::common::datum& query,
+      const std::string& name, const jubatus::core::fv_converter::datum& query,
        int32_t ret_num) {
     msgpack::rpc::future f = c_.call("similar_row_from_data", name, query,
          ret_num);

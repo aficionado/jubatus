@@ -44,6 +44,19 @@ let gen_jubatus_include conf file =
   "#include " ^ path
 ;;
 
+let gen_datum_include conf server =
+  let path =
+    if server then
+      if conf.Config.internal then
+        "\"jubatus/core/fv_converter/datum.hpp\""
+      else
+        "<jubatus/core/fv_converter/datum.hpp>"
+    else
+      "<jubatus/client/datum.hpp>"
+  in
+  "#include " ^ path
+;;
+
 let gen_jubatus_client_include conf file =
   let path =
     if conf.Config.internal then
@@ -58,8 +71,8 @@ let parse_namespace namespace =
   Str.split (Str.regexp "::") namespace
 ;;
 
-let rec gen_template names typ args =
-  let arg_strs = List.map (gen_type names) args in
+let rec gen_template names server typ args =
+  let arg_strs = List.map (gen_type names server) args in
   gen_template_with_strs typ arg_strs
 
 and gen_template_with_strs typ arg_strs =
@@ -70,7 +83,7 @@ and gen_template_with_strs typ arg_strs =
   else
     typ ^ "<" ^ s ^ ">"
 
-and gen_type names = function
+and gen_type names server = function
   | Object -> raise (Unknown_type "Object is not supported")
   | Bool -> "bool"
   | Int(signed, bytes) -> begin
@@ -89,20 +102,24 @@ and gen_type names = function
   | Float true -> "double"
   | Raw -> "std::string"
   | String -> "std::string"
-  | Datum -> "jubatus::common::datum"
+  | Datum ->
+    if server then
+      "jubatus::core::fv_converter::datum"
+    else
+      "jubatus::common::datum"
   | Struct s ->
     if Hashtbl.mem names s then
       Hashtbl.find names s
     else
       s
-  | List typ -> gen_template names "std::vector" [typ]
-  | Map(key, value) -> gen_template names "std::map" [key; value]
-  | Tuple [t1; t2] -> gen_template names "std::pair" [t1; t2]
+  | List typ -> gen_template names server "std::vector" [typ]
+  | Map(key, value) -> gen_template names server "std::map" [key; value]
+  | Tuple [t1; t2] -> gen_template names server "std::pair" [t1; t2]
   | Tuple typs ->  raise (Unknown_type "Tuple is not supported")
   | Nullable typ ->  raise (Unknown_type "Nullable is not supported")
 ;;
 
-let gen_argument_type names = function
+let gen_argument_type names server = function
   | Raw
   | String
   | Datum
@@ -110,9 +127,9 @@ let gen_argument_type names = function
   | List _
   | Map(_, _)
   | Tuple _ as t ->
-    "const " ^ gen_type names t ^ "&"
+    "const " ^ gen_type names server t ^ "&"
   | _ as t ->
-    gen_type names t
+    gen_type names server t
 ;;
 
 let gen_bool_literal = function
@@ -129,11 +146,11 @@ let gen_args args =
 ;;
 
 let gen_arg_def names f =
-  (gen_argument_type names f.field_type) ^ " " ^ f.field_name
+  (gen_argument_type names true f.field_type) ^ " " ^ f.field_name
 ;;
 
-let gen_field_def names f =
-  (gen_type names f.field_type) ^ " " ^ f.field_name
+let gen_field_def names server f =
+  (gen_type names server f.field_type) ^ " " ^ f.field_name
 ;;
 
 let gen_function_args_def names args =
@@ -142,7 +159,7 @@ let gen_function_args_def names args =
 ;;
 
 let gen_reference_arg_def names f =
-  let typ = gen_type names f.field_type in
+  let typ = gen_type names true f.field_type in
   let ref_type =
     match f.field_type with
     | Bool | Int _ | Float _ -> typ
@@ -161,9 +178,9 @@ let gen_call func args =
   func ^ gen_args args ^ ";"
 ;;
 
-let gen_ret_type names = function
+let gen_ret_type names server  = function
   | None -> "void"
-  | Some typ -> gen_type names typ
+  | Some typ -> gen_type names server typ
 ;;
 
 let make_guard_name filename =
@@ -209,12 +226,12 @@ let rec make_namespace ns content =
     ]
 ;;
 
-let gen_client_method names m =
+let gen_client_method names server m =
   let name = m.method_name in
   let args_def = gen_function_args_def names m.method_arguments in
   let args = gen_string_literal name
     :: List.map (fun f -> f.field_name) m.method_arguments in
-  let ret_type = gen_ret_type names m.method_return_type in
+  let ret_type = gen_ret_type names server m.method_return_type in
   
   let call =
     match m.method_return_type with
@@ -223,7 +240,7 @@ let gen_client_method names m =
     | Some typ ->
       [
         (0, gen_call "msgpack::rpc::future f = c_.call" args);
-        (0, "return " ^ (gen_template names "f.get" [typ]) ^ "();");
+        (0, "return " ^ (gen_template names false "f.get" [typ]) ^ "();");
       ] in
   List.concat [
     [
@@ -236,8 +253,8 @@ let gen_client_method names m =
   ]
 ;;
 
-let gen_client names s =
-  let methods = List.map (gen_client_method names) s.service_methods in
+let gen_client names server s =
+  let methods = List.map (gen_client_method names server) s.service_methods in
   let constructor = [
     (0, s.service_name ^ "(const std::string& host, uint64_t port, double timeout_sec)");
     (2,     ": c_(host, port) {");
@@ -265,12 +282,12 @@ let gen_client names s =
   ]
 ;;
 
-let gen_message_field names f =
-  (0, gen_field_def names f ^ ";")
+let gen_message_field names server f =
+  (0, gen_field_def names server f ^ ";")
 ;;
 
-let gen_message names m =
-  let fields = List.map (gen_message_field names) m.message_fields in
+let gen_message names server m =
+  let fields = List.map (gen_message_field names server) m.message_fields in
   let field_names = List.map (fun f -> f.field_name) m.message_fields in
   let msgpack_define = gen_call "MSGPACK_DEFINE" field_names in
   List.concat [
@@ -285,11 +302,11 @@ let gen_message names m =
 ;;
 
   
-let gen_typedef names = function
+let gen_typedef names server = function
   | Message m ->
     begin match m.message_raw with
     | Some raw when Hashtbl.mem names m.message_name -> []
-    | _ -> gen_message names m
+    | _ -> gen_message names server m
     end
   | _ ->
     []
@@ -308,14 +325,14 @@ let collect_names prog =
   map
 ;;
 
-let gen_client_file conf names source services =
+let gen_client_file conf names server source services =
   let base = File_util.take_base source in
   (* TODO(unnonouno): smarter way? *)
   let filename = base ^ "_client.hpp" in
 
   let namespace = parse_namespace conf.Config.namespace in
   let namespace = List.append namespace ["client"] in
-  let clients = List.map (gen_client names) services in
+  let clients = List.map (gen_client names server) services in
 
   let content = concat_blocks [
     [
@@ -324,7 +341,7 @@ let gen_client_file conf names source services =
       (0, "#include <vector>");
       (0, "#include <utility>");
       (0, "#include <jubatus/msgpack/rpc/client.h>");
-      (0, gen_jubatus_client_include conf "datum.hpp");
+      (0, gen_datum_include conf server);
       (0, "#include \"" ^ base ^ "_types.hpp\"");
     ];
     make_namespace namespace (concat_blocks clients)
@@ -341,11 +358,11 @@ let make_includes idl =
      ) idl)
 ;;
 
-let gen_type_file conf names source idl =
+let gen_type_file conf names server source idl =
   let base = File_util.take_base source in
   let name = base ^ "_types.hpp" in
   let namespace = parse_namespace conf.Config.namespace in
-  let types = List.map (gen_typedef names) idl in
+  let types = List.map (gen_typedef names server) idl in
   let includes = [
     (0, "#include <stdint.h>");
     (0, "");
@@ -354,7 +371,7 @@ let gen_type_file conf names source idl =
     (0, "#include <vector>");
     (0, "#include <utility>");
     (0, "");
-    (0, gen_jubatus_client_include conf "datum.hpp");
+    (0, gen_datum_include conf server);
     (0, "#include <msgpack.hpp>");
   ] in
 
@@ -370,8 +387,8 @@ let gen_type_file conf names source idl =
 ;;
 
 let get_func_type names m =
-  let ret_type = gen_ret_type names m.method_return_type in
-  let arg_types = List.map (fun f -> gen_type names f.field_type) m.method_arguments in
+  let ret_type = gen_ret_type names true m.method_return_type in
+  let arg_types = List.map (fun f -> gen_type names true f.field_type) m.method_arguments in
   let args = gen_args arg_types in
   ret_type ^ args
 ;;
@@ -444,22 +461,22 @@ let gen_aggregator names ret_type aggregator =
   | Bool, All_or ->
     "jubatus::server::framework::all_or"
   | List t, Concat ->
-    gen_template names "jubatus::server::framework::concat" [t]
+    gen_template names true "jubatus::server::framework::concat" [t]
   | Map (k, v), Merge ->
-    gen_template names "jubatus::server::framework::merge" [k; v]
+    gen_template names true "jubatus::server::framework::merge" [k; v]
   | _, Pass ->
-    gen_template names "jubatus::server::framework::pass" [ret_type]
+    gen_template names true "jubatus::server::framework::pass" [ret_type]
   | _, _ ->
     (* TODO(unnonouno): Are other combinations really illegal?*)
     let msg = Printf.sprintf
       "invalid combination of return type and aggretator type: %s and %s"
-      (gen_type names ret_type) (aggtype_to_string aggregator) in
+      (gen_type names true ret_type) (aggtype_to_string aggregator) in
     raise (Invalid_argument msg)
 ;;
 
 let gen_aggregator_function names ret_type aggregator =
   let agg = gen_aggregator names ret_type aggregator in
-  let r = gen_type names ret_type in
+  let r = gen_type names true ret_type in
   (* TODO(unnonouno): Too complicated. Make it simple! *)
   let func = Printf.sprintf
     "pfi::lang::function<%s(%s, %s)>" r r r in
@@ -472,13 +489,13 @@ let gen_keeper_register names m ret_type =
   let routing, _, agg = get_decorator m in
   match routing with
   | Random ->
-    let func = gen_template names "k.register_async_random" (ret_type::arg_types) in
+    let func = gen_template names true "k.register_async_random" (ret_type::arg_types) in
     let call = gen_call func [method_name_str] in
     [ (0, call) ]
 
   | Cht i ->
     let args = List.tl arg_types in
-    let arg_strs = List.map (gen_type names) (ret_type::args) in
+    let arg_strs = List.map (gen_type names true) (ret_type::args) in
     (* TODO(unnonouno): Is this number really required to be a template argument? *)
     let num = string_of_int i in
     let func = gen_template_with_strs "k.register_async_cht" (num::arg_strs) in
@@ -486,7 +503,7 @@ let gen_keeper_register names m ret_type =
     [ (0, call) ]
 
   | Broadcast ->
-    let func = gen_template names "k.register_async_broadcast" (ret_type::arg_types) in
+    let func = gen_template names true "k.register_async_broadcast" (ret_type::arg_types) in
     let call = gen_call func [method_name_str; gen_aggregator_function names ret_type agg] in
     [ (0, call) ]
 
@@ -564,7 +581,7 @@ let gen_impl_method names m =
   let args_def = gen_function_args_def names m.method_arguments in
   (* Do not use the first argument. It is used for keepers. *)
   let args = List.map (fun f -> f.field_name) (List.tl m.method_arguments) in
-  let ret_type = gen_ret_type names m.method_return_type in
+  let ret_type = gen_ret_type names true m.method_return_type in
 
   let _, request, _ = get_decorator m in
   let lock_type =
@@ -679,7 +696,7 @@ let gen_const m =
 let gen_server_template_header_method names m =
   let name = m.method_name in
   let args_def = gen_function_reference_args_def names (List.tl m.method_arguments) in
-  let ret_type = gen_ret_type names m.method_return_type in
+  let ret_type = gen_ret_type names true m.method_return_type in
   let const = gen_const m in
   [ (0, Printf.sprintf "%s %s%s%s;" ret_type name args_def const) ]
 ;;
@@ -748,7 +765,7 @@ let gen_server_template_source_method names s m =
 
   let name = m.method_name in
   let args_def = gen_function_reference_args_def names (List.tl m.method_arguments) in
-  let ret_type = gen_ret_type names m.method_return_type in
+  let ret_type = gen_ret_type names true m.method_return_type in
   let const = gen_const m in
   [
     (0, Printf.sprintf "%s %s::%s%s%s {" ret_type serv_name name args_def const);
@@ -817,8 +834,8 @@ let generate_server conf source idl =
   let services = get_services idl in
   let names = collect_names idl in
 
-  gen_type_file conf names source idl;
-  gen_client_file conf names source services;
+  gen_type_file conf names true source idl;
+  gen_client_file conf names true source services;
   gen_server_file conf names source services;
   gen_keeper_file conf names source services;
   gen_impl_file conf names source services;
@@ -835,6 +852,6 @@ let generate_client conf source idl =
   (* Remove include lines that are only for servers *)
   let idl = List.filter (function Include _ -> false | _ -> true) idl in
 
-  gen_type_file conf empty_names source idl;
-  gen_client_file conf empty_names source services;
+  gen_type_file conf empty_names false source idl;
+  gen_client_file conf empty_names false source services;
 ;;

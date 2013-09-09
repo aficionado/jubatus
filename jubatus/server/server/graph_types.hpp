@@ -11,6 +11,7 @@
 #include <vector>
 #include <utility>
 
+#include "jubatus/core/fv_converter/datum.hpp"
 #include <msgpack.hpp>
 
 #include "../../core/graph/graph_type.hpp"

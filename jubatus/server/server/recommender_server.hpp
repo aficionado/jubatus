@@ -37,10 +37,11 @@ class recommender : public jubatus::server::common::mprpc::rpc_server {
          jubatus::core::fv_converter::datum)>("complete_row_from_datum",
          pfi::lang::bind(&Impl::complete_row_from_datum, impl, pfi::lang::_1,
          pfi::lang::_2));
-    rpc_server::add<similar_result(std::string, std::string, uint32_t)>(
-        "similar_row_from_id", pfi::lang::bind(&Impl::similar_row_from_id, impl,
-         pfi::lang::_1, pfi::lang::_2, pfi::lang::_3));
-    rpc_server::add<similar_result(std::string,
+    rpc_server::add<std::vector<std::pair<std::string, float> >(std::string,
+         std::string, uint32_t)>("similar_row_from_id", pfi::lang::bind(
+        &Impl::similar_row_from_id, impl, pfi::lang::_1, pfi::lang::_2,
+         pfi::lang::_3));
+    rpc_server::add<std::vector<std::pair<std::string, float> >(std::string,
          jubatus::core::fv_converter::datum, uint32_t)>(
         "similar_row_from_datum", pfi::lang::bind(&Impl::similar_row_from_datum,
          impl, pfi::lang::_1, pfi::lang::_2, pfi::lang::_3));

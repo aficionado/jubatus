@@ -35,11 +35,16 @@ int run_keeper(int argc, char* argv[]) {
         &jubatus::server::framework::pass<jubatus::core::fv_converter::datum>));
     k.register_async_random<jubatus::core::fv_converter::datum,
          jubatus::core::fv_converter::datum>("complete_row_from_datum");
-    k.register_async_cht<2, similar_result, uint32_t>("similar_row_from_id",
-         pfi::lang::function<similar_result(similar_result, similar_result)>(
-        &jubatus::server::framework::pass<similar_result>));
-    k.register_async_random<similar_result, jubatus::core::fv_converter::datum,
-         uint32_t>("similar_row_from_datum");
+    k.register_async_cht<2, std::vector<std::pair<std::string, float> >,
+         uint32_t>("similar_row_from_id",
+         pfi::lang::function<std::vector<std::pair<std::string, float> >(
+        std::vector<std::pair<std::string, float> >,
+         std::vector<std::pair<std::string, float> >)>(
+        &jubatus::server::framework::pass<std::vector<std::pair<std::string,
+         float> > >));
+    k.register_async_random<std::vector<std::pair<std::string, float> >,
+         jubatus::core::fv_converter::datum, uint32_t>(
+        "similar_row_from_datum");
     k.register_async_cht<2, jubatus::core::fv_converter::datum>("decode_row",
          pfi::lang::function<jubatus::core::fv_converter::datum(
         jubatus::core::fv_converter::datum,

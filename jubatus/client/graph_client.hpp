@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include "datum.hpp"
+#include <jubatus/client/datum.hpp>
 #include "graph_types.hpp"
 
 namespace jubatus {

@@ -28,6 +28,8 @@
 namespace jubatus {
 namespace server {
 
+typedef std::vector<std::pair<std::string, float> > similar_result;
+
 class recommender_serv : public framework::server_base {
  public:
   recommender_serv(

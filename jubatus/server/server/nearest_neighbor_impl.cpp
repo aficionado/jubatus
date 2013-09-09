@@ -38,26 +38,28 @@ class nearest_neighbor_impl_ : public nearest_neighbor<nearest_neighbor_impl_> {
     return get_p()->set_row(id, d);
   }
 
-  neighbor_result neighbor_row_from_id(const std::string& name,
-       const std::string& id, uint32_t size) {
+  std::vector<std::pair<std::string, float> > neighbor_row_from_id(
+      const std::string& name, const std::string& id, uint32_t size) {
     JRLOCK_(p_);
     return get_p()->neighbor_row_from_id(id, size);
   }
 
-  neighbor_result neighbor_row_from_data(const std::string& name,
-       const jubatus::core::fv_converter::datum& query, uint32_t size) {
+  std::vector<std::pair<std::string, float> > neighbor_row_from_data(
+      const std::string& name, const jubatus::core::fv_converter::datum& query,
+       uint32_t size) {
     JRLOCK_(p_);
     return get_p()->neighbor_row_from_data(query, size);
   }
 
-  neighbor_result similar_row_from_id(const std::string& name,
-       const std::string& id, int32_t ret_num) {
+  std::vector<std::pair<std::string, float> > similar_row_from_id(
+      const std::string& name, const std::string& id, int32_t ret_num) {
     JRLOCK_(p_);
     return get_p()->similar_row_from_id(id, ret_num);
   }
 
-  neighbor_result similar_row_from_data(const std::string& name,
-       const jubatus::core::fv_converter::datum& query, int32_t ret_num) {
+  std::vector<std::pair<std::string, float> > similar_row_from_data(
+      const std::string& name, const jubatus::core::fv_converter::datum& query,
+       int32_t ret_num) {
     JRLOCK_(p_);
     return get_p()->similar_row_from_data(query, ret_num);
   }
