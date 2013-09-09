@@ -22,6 +22,11 @@ struct scored_datum {
   MSGPACK_DEFINE(score, data);
   float score;
   jubatus::common::datum data;
+  scored_datum() {
+  }
+  scored_datum(float score, const jubatus::common::datum& data)
+    : score(score), data(data) {
+  }
 };
 
 }  // namespace regression

@@ -142,16 +142,16 @@ let gen_args args =
   "(" ^ String.concat ", " args ^ ")"
 ;;
 
-let gen_arg_def names f =
-  (gen_argument_type names true f.field_type) ^ " " ^ f.field_name
+let gen_arg_def names server f =
+  (gen_argument_type names server f.field_type) ^ " " ^ f.field_name
 ;;
 
 let gen_field_def names server f =
   (gen_type names server f.field_type) ^ " " ^ f.field_name
 ;;
 
-let gen_function_args_def names args =
-  let vars = List.map (gen_arg_def names) args in
+let gen_function_args_def names server args =
+  let vars = List.map (gen_arg_def names server) args in
   gen_args vars
 ;;
 
@@ -225,8 +225,9 @@ let rec make_namespace ns content =
 
 let gen_client_method names server m =
   let name = m.method_name in
-  let args_def = gen_function_args_def names m.method_arguments in
+  let args_def = gen_function_args_def names server m.method_arguments in
   let args = gen_string_literal name
+    :: "name_"
     :: List.map (fun f -> f.field_name) m.method_arguments in
   let ret_type = gen_ret_type names server m.method_return_type in
   
@@ -237,7 +238,7 @@ let gen_client_method names server m =
     | Some typ ->
       [
         (0, gen_call "msgpack::rpc::future f = c_.call" args);
-        (0, "return " ^ (gen_template names false "f.get" [typ]) ^ "();");
+        (0, "return " ^ (gen_template names server "f.get" [typ]) ^ "();");
       ] in
   List.concat [
     [
@@ -274,6 +275,7 @@ let gen_client names server s =
       (0, "");
       (0, " private:");
       (1,   "msgpack::rpc::client c_;");
+      (1,   "std::string name_;");
       (0, "};")
     ]
   ]
@@ -287,6 +289,22 @@ let gen_message names server m =
   let fields = List.map (gen_message_field names server) m.message_fields in
   let field_names = List.map (fun f -> f.field_name) m.message_fields in
   let msgpack_define = gen_call "MSGPACK_DEFINE" field_names in
+  let default_constructor = [
+    (0, m.message_name ^ "() {");
+    (0, "}");
+  ] in
+  let args_def = gen_function_args_def names server m.message_fields in
+  let assigns = List.map (fun f -> f.field_name ^ "(" ^ f.field_name ^ ")") m.message_fields in
+  let explicit =
+    if List.length m.message_fields = 1 then
+      "explicit "
+    else
+      "" in
+  let constructor = [
+    (0, explicit ^ m.message_name ^ args_def);
+    (1,   ": " ^ String.concat ", " assigns ^ " {");
+    (0, "}");
+  ] in
   List.concat [
     [
       (0, "struct " ^ m.message_name ^ " {");
@@ -294,6 +312,8 @@ let gen_message names server m =
       (1,   msgpack_define);
     ];
     indent_lines 1 fields;
+    indent_lines 1 default_constructor;
+    indent_lines 1 constructor;
     [ (0, "};")]
   ]
 ;;
@@ -385,7 +405,9 @@ let gen_type_file conf names server source idl =
 
 let get_func_type names m =
   let ret_type = gen_ret_type names true m.method_return_type in
-  let arg_types = List.map (fun f -> gen_type names true f.field_type) m.method_arguments in
+  let ts = List.map (fun f -> f.field_type) m.method_arguments in
+  (* Insert String to the first argument, which represents the cluster name *)
+  let arg_types = List.map (fun t -> gen_type names true t) (String::ts) in
   let args = gen_args arg_types in
   ret_type ^ args
 ;;
@@ -394,7 +416,8 @@ let gen_bind m =
   let num_args = List.length m.method_arguments in
   let func = "&Impl::" ^ m.method_name in
   let this = "impl" in
-  let nums = Array.init num_args (fun n -> Printf.sprintf "pfi::lang::_%d" (n + 1)) in
+  (* Ignore the first argument as it is cluster name *)
+  let nums = Array.init num_args (fun n -> Printf.sprintf "pfi::lang::_%d" (n + 2)) in
   let args = func::this::(Array.to_list nums) in
   "pfi::lang::bind" ^ gen_args args
 ;;
@@ -575,8 +598,7 @@ let gen_keeper_file conf names source services =
 
 let gen_impl_method names m =
   let name = m.method_name in
-  let args_def = gen_function_args_def names m.method_arguments in
-  (* Do not use the first argument. It is used for keepers. *)
+  let args_def = gen_function_args_def names true m.method_arguments in
   let args = List.map (fun f -> f.field_name) m.method_arguments in
   let ret_type = gen_ret_type names true m.method_return_type in
 

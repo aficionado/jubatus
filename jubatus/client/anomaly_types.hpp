@@ -22,6 +22,11 @@ struct id_with_score {
   MSGPACK_DEFINE(id, score);
   std::string id;
   float score;
+  id_with_score() {
+  }
+  id_with_score(const std::string& id, float score)
+    : id(id), score(score) {
+  }
 };
 
 }  // namespace anomaly

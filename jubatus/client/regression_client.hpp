@@ -25,38 +25,38 @@ class regression {
   }
 
   std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config");
+    msgpack::rpc::future f = c_.call("get_config", name_);
     return f.get<std::string>();
   }
 
   int32_t train(const std::vector<scored_datum>& train_data) {
-    msgpack::rpc::future f = c_.call("train", train_data);
+    msgpack::rpc::future f = c_.call("train", name_, train_data);
     return f.get<int32_t>();
   }
 
   std::vector<float> estimate(
-      const std::vector<jubatus::core::fv_converter::datum>& estimate_data) {
-    msgpack::rpc::future f = c_.call("estimate", estimate_data);
+      const std::vector<jubatus::common::datum>& estimate_data) {
+    msgpack::rpc::future f = c_.call("estimate", name_, estimate_data);
     return f.get<std::vector<float> >();
   }
 
   bool clear() {
-    msgpack::rpc::future f = c_.call("clear");
+    msgpack::rpc::future f = c_.call("clear", name_);
     return f.get<bool>();
   }
 
   bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", id);
+    msgpack::rpc::future f = c_.call("save", name_, id);
     return f.get<bool>();
   }
 
   bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", id);
+    msgpack::rpc::future f = c_.call("load", name_, id);
     return f.get<bool>();
   }
 
   std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status");
+    msgpack::rpc::future f = c_.call("get_status", name_);
     return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 
@@ -66,6 +66,7 @@ class regression {
 
  private:
   msgpack::rpc::client c_;
+  std::string name_;
 };
 
 }  // namespace client

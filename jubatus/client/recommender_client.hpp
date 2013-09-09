@@ -25,82 +25,82 @@ class recommender {
   }
 
   std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config");
+    msgpack::rpc::future f = c_.call("get_config", name_);
     return f.get<std::string>();
   }
 
   bool clear_row(const std::string& id) {
-    msgpack::rpc::future f = c_.call("clear_row", id);
+    msgpack::rpc::future f = c_.call("clear_row", name_, id);
     return f.get<bool>();
   }
 
-  bool update_row(const std::string& id,
-       const jubatus::core::fv_converter::datum& row) {
-    msgpack::rpc::future f = c_.call("update_row", id, row);
+  bool update_row(const std::string& id, const jubatus::common::datum& row) {
+    msgpack::rpc::future f = c_.call("update_row", name_, id, row);
     return f.get<bool>();
   }
 
   bool clear() {
-    msgpack::rpc::future f = c_.call("clear");
+    msgpack::rpc::future f = c_.call("clear", name_);
     return f.get<bool>();
   }
 
   jubatus::common::datum complete_row_from_id(const std::string& id) {
-    msgpack::rpc::future f = c_.call("complete_row_from_id", id);
+    msgpack::rpc::future f = c_.call("complete_row_from_id", name_, id);
     return f.get<jubatus::common::datum>();
   }
 
   jubatus::common::datum complete_row_from_datum(
-      const jubatus::core::fv_converter::datum& row) {
-    msgpack::rpc::future f = c_.call("complete_row_from_datum", row);
+      const jubatus::common::datum& row) {
+    msgpack::rpc::future f = c_.call("complete_row_from_datum", name_, row);
     return f.get<jubatus::common::datum>();
   }
 
   std::vector<id_with_score> similar_row_from_id(const std::string& id,
        uint32_t size) {
-    msgpack::rpc::future f = c_.call("similar_row_from_id", id, size);
+    msgpack::rpc::future f = c_.call("similar_row_from_id", name_, id, size);
     return f.get<std::vector<id_with_score> >();
   }
 
   std::vector<id_with_score> similar_row_from_datum(
-      const jubatus::core::fv_converter::datum& row, uint32_t size) {
-    msgpack::rpc::future f = c_.call("similar_row_from_datum", row, size);
+      const jubatus::common::datum& row, uint32_t size) {
+    msgpack::rpc::future f = c_.call("similar_row_from_datum", name_, row,
+         size);
     return f.get<std::vector<id_with_score> >();
   }
 
   jubatus::common::datum decode_row(const std::string& id) {
-    msgpack::rpc::future f = c_.call("decode_row", id);
+    msgpack::rpc::future f = c_.call("decode_row", name_, id);
     return f.get<jubatus::common::datum>();
   }
 
   std::vector<std::string> get_all_rows() {
-    msgpack::rpc::future f = c_.call("get_all_rows");
+    msgpack::rpc::future f = c_.call("get_all_rows", name_);
     return f.get<std::vector<std::string> >();
   }
 
-  float calc_similarity(const jubatus::core::fv_converter::datum& lhs,
-       const jubatus::core::fv_converter::datum& rhs) {
-    msgpack::rpc::future f = c_.call("calc_similarity", lhs, rhs);
+  float calc_similarity(const jubatus::common::datum& lhs,
+       const jubatus::common::datum& rhs) {
+    msgpack::rpc::future f = c_.call("calc_similarity", name_, lhs, rhs);
     return f.get<float>();
   }
 
-  float calc_l2norm(const jubatus::core::fv_converter::datum& row) {
-    msgpack::rpc::future f = c_.call("calc_l2norm", row);
+  float calc_l2norm(const jubatus::common::datum& row) {
+    msgpack::rpc::future f = c_.call("calc_l2norm", name_, row);
     return f.get<float>();
   }
 
   bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", id);
+    msgpack::rpc::future f = c_.call("save", name_, id);
     return f.get<bool>();
   }
 
   bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", id);
+    msgpack::rpc::future f = c_.call("load", name_, id);
     return f.get<bool>();
   }
 
   std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status");
+    msgpack::rpc::future f = c_.call("get_status", name_);
     return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 
@@ -110,6 +110,7 @@ class recommender {
 
  private:
   msgpack::rpc::client c_;
+  std::string name_;
 };
 
 }  // namespace client
