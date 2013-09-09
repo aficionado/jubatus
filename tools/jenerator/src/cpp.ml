@@ -123,7 +123,8 @@ let gen_argument_type names server = function
   | Datum
   | Struct _
   | List _
-  | Map(_, _)
+  | Map(_, _) as t ->
+    "const " ^ gen_type names server t ^ "&"    
   | _ as t ->
     gen_type names server t
 ;;
