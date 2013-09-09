@@ -115,9 +115,9 @@ let gen_client_method m =
 let gen_client s =
   let methods = List.map gen_client_method s.service_methods in
   let constructor = [
-    (0, "def __init__ (self, host, port):");
+    (0, "def __init__ (self, host, port, timeout=10):");
     (1,   "address = msgpackrpc.Address(host, port)");
-    (1,   "self.client = msgpackrpc.Client(address)");
+    (1,   "self.client = msgpackrpc.Client(address, timeout=timeout)");
     (1,   "self.jubatus_client = jubatus.common.Client(self.client)");
     (0, "");
     (0, "def get_client (self):");
