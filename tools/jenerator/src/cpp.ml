@@ -254,7 +254,7 @@ let gen_client_method names server m =
 let gen_client names server s =
   let methods = List.map (gen_client_method names server) s.service_methods in
   let constructor = [
-    (0, s.service_name ^ "(const std::string& host, uint64_t port, const std::string& name, double timeout_sec)");
+    (0, s.service_name ^ "(const std::string& host, uint64_t port, const std::string& name, unsigned int timeout_sec)");
     (2,     ": c_(host, port), name_(name) {");
     (1,   "c_.set_timeout(timeout_sec);");
     (0, "}");

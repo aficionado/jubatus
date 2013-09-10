@@ -19,7 +19,7 @@ namespace client {
 class graph {
  public:
   graph(const std::string& host, uint64_t port, const std::string& name,
-       double timeout_sec)
+       unsigned int timeout_sec)
       : c_(host, port), name_(name) {
     c_.set_timeout(timeout_sec);
   }
