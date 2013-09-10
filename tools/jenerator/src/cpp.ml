@@ -52,7 +52,7 @@ let gen_datum_include conf server =
       else
         "<jubatus/core/fv_converter/datum.hpp>"
     else
-      "<jubatus/client/datum.hpp>"
+      "<jubatus/client/common/datum.hpp>"
   in
   "#include " ^ path
 ;;
