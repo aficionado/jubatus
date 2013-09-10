@@ -67,12 +67,28 @@ let include_datum t =
   | _ -> false) t
 ;;
 
-let gen_import ts =
-  (if List.exists include_map ts then [(0, "import java.util.Map;")]
+let gen_import_for_client ts =
+  (if List.exists include_map ts then
+      [ (0, "import java.util.Map;"); ]
    else [])
-  @ (if List.exists include_list ts then [(0, "import java.util.List;")]
+  @ (if List.exists include_list ts then
+      [ (0, "import java.util.List;"); ]
     else [])
-  @ (if List.exists include_datum ts then [(0, "import us.jubat.common.Datum;")]
+  @ (if List.exists include_datum ts then
+      [ (0, "import us.jubat.common.Datum;") ]
+    else [])
+;;
+let gen_import_for_message ts =
+  (if List.exists include_map ts then
+      [ (0, "import java.util.Map;");
+        (0, "import java.util.HashMap;"); ]
+   else [])
+  @ (if List.exists include_list ts then
+      [ (0, "import java.util.List;");
+        (0, "import java.util.ArrayList;"); ]
+    else [])
+  @ (if List.exists include_datum ts then
+      [ (0, "import us.jubat.common.Datum;") ]
     else [])
 ;;
 
@@ -320,13 +336,12 @@ let gen_message m conf source =
   let header =
     List.concat
       [gen_package conf;
-       gen_import field_types;
+       gen_import_for_message field_types;
        [
-         (0, "import java.util.ArrayList;");
-         (0, "import java.util.HashMap;");
          (0, "import org.msgpack.annotation.Message;");
          (0, "import us.jubat.common.MessageStringGenerator;");
-         (0, "import us.jubat.common.*;");
+         (0, "import us.jubat.common.UserDefinedMessage;");
+         (0, "import us.jubat.common.type.*;");
          (0, "");
        ]
       ] in
@@ -376,12 +391,12 @@ let gen_client_file conf source services =
   let types = List.concat (List.map collect_types_of_service services) in
   let content = concat_blocks [
     gen_package conf;
-    gen_import types;
+    gen_import_for_client types;
     [
       (0, "import java.net.UnknownHostException;");
       (0, "import org.msgpack.rpc.Client;");
       (0, "import org.msgpack.rpc.loop.EventLoop;");
-      (0, "import us.jubat.common.*;");
+      (0, "import us.jubat.common.type.*;");
     ];
     (concat_blocks clients)
   ]
