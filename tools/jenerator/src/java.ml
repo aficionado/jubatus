@@ -43,9 +43,9 @@ let rename_without_underbar st =
 
 let gen_public_class name content =
   List.concat [
-    [(0, "public class " ^ (rename_without_underbar name) ^ " {")];
+    [ (0, "public class " ^ (rename_without_underbar name) ^ " implements UserDefinedMessage {") ];
     indent_lines 1 content;
-    [(0, "};")]
+    [ (0, "};") ]
   ]
 ;;
 
@@ -76,6 +76,19 @@ let gen_import ts =
     else [])
 ;;
 
+let gen_args args = 
+  "(" ^ String.concat ", " args ^ ")"
+;;
+
+let gen_call func args =
+  (* TODO(unnonouno): format for long lines *)
+  func ^ gen_args args
+;;
+
+let gen_template typ args =
+  typ ^ "<" ^ String.concat ", " args ^ ">"
+;;
+
 let rec gen_type = function
   | Object -> raise (Unknown_type("Object is not supported"))
   | Bool -> "boolean"
@@ -87,11 +100,11 @@ let rec gen_type = function
   | Datum -> "Datum"
   | Struct s  ->
     rename_without_underbar s
-  | List t -> 
-    "List<" ^ gen_object_type t ^ " >"
+  | List t ->
+    gen_template "List" [gen_object_type t]
   | Map(key, value) -> 
-    "Map<" ^ gen_object_type key ^ ", " ^ gen_object_type value ^ " >"
-  | Nullable(t) -> raise (Unknown_type "Nullable is not supported")
+    gen_template "Map" [gen_object_type key; gen_object_type value]
+  | Nullable(t) -> gen_object_type t
 and gen_object_type = function
   | Bool -> "Boolean"
   | Int(_, n) ->
@@ -99,6 +112,47 @@ and gen_object_type = function
   | Float(false) -> "Float"
   | Float(true) -> "Double"
   | t -> gen_type t
+;;
+
+let rec gen_type_class = function
+  | Object -> Some "TObject.instance"
+  | Bool
+  | Int _
+  | Float _ -> None
+  | Raw -> Some "TRaw.instance"
+  | String -> Some "TString.instance"
+  | Datum -> Some "TDatum.instance"
+  | Struct s ->
+    let t = rename_without_underbar s in
+    Some (gen_call ("new " ^ gen_template "TUserDef" [t]) [])
+  | List t ->
+    Some (gen_call ("new " ^ gen_template "TList" [gen_object_type t]) [gen_object_type_class t])
+  | Map(key, value) ->
+    Some (gen_call ("new " ^ gen_template "TMap" [gen_object_type key; gen_object_type value]) [gen_object_type_class key; gen_object_type_class value])
+  | Nullable t -> Some (gen_call "new TNullable" [gen_object_type_class t])
+and gen_object_type_class = function
+  | Bool -> "TBool.instance"
+  | Int(_, n) -> if n <= 4 then "TInt.instance" else "TLong.instance"
+  | Float false -> "TFloat.instance"
+  | Float true -> "TDouble.instance"
+  | _ as t ->
+    match gen_type_class t with
+    | Some t -> t
+    | None -> ""
+;;
+
+let gen_default_value = function
+  | Object -> "null"
+  | Bool -> "false"
+  | Int _ -> "0"
+  | Float _ -> "0"
+  | Raw -> "null"
+  | String -> "\"\""
+  | Datum -> "null"
+  | Struct _ -> "null"
+  | List t -> "new " ^ gen_template "ArrayList" [gen_object_type t] ^ "()"
+  | Map(k, v) -> "new " ^ gen_template "HashMap" [gen_object_type k; gen_object_type v] ^ "()"
+  | Nullable _ -> "null"
 ;;
 
 let gen_package conf =
@@ -118,148 +172,104 @@ let make_path conf filename =
   File_util.concat_path (package @ [filename])
 ;;
 
-let gen_types_file name t conf source = 
-  let filename = rename_without_underbar name ^ ".java" in
-  let path = make_path conf filename in
-  let (t1, t2) = t in
-  let header = List.concat [
-    gen_package conf;
-    gen_import [t1; t2];
-    [(0, "import org.msgpack.annotation.Message;");
-     (0, "")]
-  ] in
-  let content =
-    (0, "@Message") :: 
-      (gen_public_class name 
-         [(0, "public " ^ (gen_type t1) ^ " first;");
-          (0, "public " ^ (gen_type t2) ^ " second;")]) in
-  make_header conf source path (header @ content)
-;;
-
 let gen_ret_type = function
   | None -> "void"
   | Some typ -> gen_type typ
 ;;
 
-let gen_args args = 
-  "(" ^ String.concat ", " args ^ ")"
-;;
-
-let gen_args_with_type args = 
-  "(" ^ String.concat ", " (List.map (fun (st, t) -> (gen_type t) ^ " "^ st) args) ^ ")"
+let gen_arg_def f =
+  gen_type f.field_type ^ " " ^ f.field_name
 ;;
 
 let gen_string_literal s =
   "\"" ^ String.escaped s ^ "\""
 ;;
 
-let gen_public ret_typ name args opt content = 
+let gen_public ret_typ name args opt content =
+  let ret = gen_ret_type ret_typ in
+  let args = List.map gen_arg_def args in
   List.concat
     [
-      [(0, "public " ^ (gen_ret_type ret_typ) ^ " " ^ 
-        name ^ (gen_args_with_type args) ^ opt ^ " {")];
+      [ (0, "public " ^ ret ^ " " ^ gen_call name args ^ opt ^ " {")];
       content;
-      [(0, "}"); (0, "")]
+      [ (0, "}") ]
     ]
 ;;
 
-let gen_arg_def f =
-  (gen_type f.field_type) ^ " " ^ f.field_name
-;;
-
-let gen_call func args =
-  (* TODO(unnonouno): format for long lines *)
-  func ^ gen_args args ^ ";"
-;;
-
-let gen_return function_name args =
-  "return iface_." ^ function_name ^ gen_args args ^ ";"
-;;  
-
 let gen_client_method m =
   let name = m.method_name in
-  let args = List.map (fun f -> (f.field_name, f.field_type)) m.method_arguments in 
-  let vars = List.map (fun f -> f.field_name) m.method_arguments in
-  let call = match m.method_return_type with
+  let args = m.method_arguments in
+  let checks = ExtList.List.filter_map (fun f ->
+    match gen_type_class f.field_type with
+    | None -> None
+    | Some t -> Some (1, gen_call (t ^ ".check") [f.field_name] ^ ";")) args in
+  let vars = "this.name":: (List.map (fun f -> f.field_name) m.method_arguments) in
+  let call = [
+    match m.method_return_type with
     | None ->
-      gen_call ("iface_." ^ name) vars
-    | Some _ ->
-      gen_return name vars
-  in
-  gen_public m.method_return_type name args "" [ (1, call) ]
+      (1, gen_call ("iface."^ name) vars ^ ";");
+    | Some ret ->
+      (1, "return " ^ gen_call ("iface."^ name)  vars ^ ";");
+  ] in
+  gen_public m.method_return_type name args ""  (checks @ call)
 ;;
 
 let gen_interface m = 
   let name = m.method_name in
-  let args = List.map (fun f -> (f.field_name, f.field_type)) m.method_arguments in 
-  let interface = (gen_ret_type m.method_return_type) ^ " " ^ name ^ (gen_args_with_type args) ^ ";" in
-  interface
+  let args = List.map gen_arg_def m.method_arguments in
+  let ret = gen_ret_type m.method_return_type in
+  ret ^ " " ^ gen_call name ("String name"::args) ^ ";"
 ;;  
 
 let gen_client s name =
   let constructor = [
-    (0, "public " ^ name ^ "Client(String host, int port, double timeout_sec) throws Exception {");
-    (1, "EventLoop loop = EventLoop.defaultEventLoop();"); 
-    (1, "c_ = new Client(host, port, loop);");
-    (1, "c_.setRequestTimeout((int) timeout_sec);");
-    (1, "iface_ = c_.proxy(RPCInterface.class);");
+    (0, "public " ^ name ^ "Client(String host, int port, String name, int timeout_sec) throws UnknownHostException {");
+    (1,   "EventLoop loop = EventLoop.defaultEventLoop();"); 
+    (1,   "this.client = new Client(host, port, loop);");
+    (1,   "this.client.setRequestTimeout(timeout_sec);");
+    (1,   "this.iface = this.client.proxy(RPCInterface.class);");
+    (1,   "this.name = name;");
     (0, "}");
     (0, "")
   ] in
   let interfaces = 
     List.concat [
-      [(0, "public static interface RPCInterface {")];
+      [ (0, "public static interface RPCInterface {") ];
       List.map (fun i -> (1, gen_interface i)) s.service_methods;
-      [(0, "}"); (0, "")]
+      [ (0, "}"); ]
     ] in
   let methods = List.map gen_client_method s.service_methods in
-  let content = List.concat methods in
-  List.concat [
+  let content = concat_blocks methods in
+  concat_blocks [
     [
       (0, "public class " ^ (rename_without_underbar s.service_name) ^ "Client {");
     ];
     indent_lines 1 constructor;
     indent_lines 1 interfaces;
     indent_lines 1 content;
-    (indent_lines 1 
-       [(0, "public Client get_client() {");
-        (1, "return c_;");
-        (0, "}");
-        (0, "")
-       ]);
-    [(1, "private Client c_;");
-     (1, "private RPCInterface iface_;");
-     (0, "};")]
+    [
+      (1,   "public Client get_client() {");
+      (2,     "return client;");
+      (1,   "}");
+      (0, "");
+      (1,   "private Client client;");
+      (1,   "private RPCInterface iface;");
+      (1,   "private String name;");
+      (0, "};")
+    ]
   ]
 ;;
 
 let gen_message_field f =
-  (0, "public " ^ gen_arg_def f ^ ";")
-;;
-
-let gen_self_with_comma field_names =
-  (List.map (fun s -> (0, "self." ^ s ^ ",")) field_names)
-;;
-
-let gen_self_without_comma field_names =
-  (List.map (fun s -> (0, "self." ^ s ^ " = " ^ s)) field_names)
-;;
-
-let gen_to_msgpack field_names =
-  List.concat [
-    [(0, "def to_msgpack (self):")];
-    [(1, "return (")];
-    indent_lines 2 (gen_self_with_comma field_names);
-    [(1, "  )")]
-  ]
+  (0, "public " ^ gen_arg_def f ^ " = " ^ gen_default_value f.field_type ^ ";")
 ;;
 
 let gen_to_string m =
   let add_fields = List.map (fun f ->
     let key = gen_string_literal f.field_name in
-    gen_call "gen.add" [key; f.field_name]
+    gen_call "gen.add" [key; f.field_name] ^ ";"
   ) m.message_fields in
-  let call_open = gen_call "gen.open" [gen_string_literal m.message_name] in
+  let call_open = gen_call "gen.open" [gen_string_literal m.message_name] ^ ";" in
   List.concat [
     [ (0, "public String toString() {");
       (1,   "MessageStringGenerator gen = new MessageStringGenerator();");
@@ -272,6 +282,36 @@ let gen_to_string m =
   ]
 ;;
 
+let gen_message_check m =
+  let calls = ExtList.List.filter_map (fun f ->
+    match gen_type_class f.field_type with
+    | None -> None
+    | Some t ->
+      Some (1, gen_call (t ^ ".check") [f.field_name] ^ ";")
+  ) m.message_fields in
+
+  List.concat [
+    [ (0, "public void check() {"); ];
+    calls;
+    [ (0, "}"); ]
+  ]
+;;
+
+let gen_message_constructor m =
+  let s = rename_without_underbar m.message_name in
+  let args = m.message_fields in
+  let content = List.map (fun f ->
+    (1, "this." ^ f.field_name ^ " = " ^ f.field_name ^ ";")
+  ) args in
+
+  let args = List.map gen_arg_def args in
+  List.concat [
+    [ (0, "public " ^ gen_call s args ^ " {")];
+    content;
+    [ (0, "}") ]
+  ]
+;;
+
 let gen_message m conf source =
   let field_types = List.map (fun f -> f.field_type) m.message_fields in
   let class_name = rename_without_underbar m.message_name in
@@ -281,19 +321,25 @@ let gen_message m conf source =
     List.concat
       [gen_package conf;
        gen_import field_types;
-       [(0, "import org.msgpack.annotation.Message;");
-        (0, "import us.jubat.common.MessageStringGenerator;"); ]
+       [
+         (0, "import java.util.ArrayList;");
+         (0, "import java.util.HashMap;");
+         (0, "import org.msgpack.annotation.Message;");
+         (0, "import us.jubat.common.MessageStringGenerator;");
+         (0, "import us.jubat.common.*;");
+         (0, "");
+       ]
       ] in
   let field_defs = List.map gen_message_field m.message_fields in
   let constructor = 
     [ (0, "public " ^ class_name ^ "() {");
       (0, "}"); ] in
   let to_string = gen_to_string m in
-  let class_content = List.concat [
+  let class_content = concat_blocks [
     field_defs;
-    [ (0, ""); ];
     constructor;
-    [ (0, ""); ];
+    gen_message_constructor m;
+    gen_message_check m;
     to_string;
   ] in
   let content =
@@ -331,8 +377,12 @@ let gen_client_file conf source services =
   let content = concat_blocks [
     gen_package conf;
     gen_import types;
-    [(0, "import org.msgpack.rpc.Client;");
-     (0, "import org.msgpack.rpc.loop.EventLoop;")];
+    [
+      (0, "import java.net.UnknownHostException;");
+      (0, "import org.msgpack.rpc.Client;");
+      (0, "import org.msgpack.rpc.loop.EventLoop;");
+      (0, "import us.jubat.common.*;");
+    ];
     (concat_blocks clients)
   ]
   in make_header conf source path content

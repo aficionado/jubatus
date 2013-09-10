@@ -2,6 +2,8 @@ open OUnit
 open Java
 open Syntax
 
+let assert_equal = OUnit.assert_equal ~printer: Std.dump;;
+
 let _ = run_test_tt_main begin "java.ml" >::: [
 
   "test_rename_without_underbar" >:: begin fun() ->
@@ -177,16 +179,6 @@ let _ = run_test_tt_main begin "java.ml" >::: [
       (gen_call "f" ["10"]);
   end;
 
-  "test_gen_return" >:: begin fun() ->
-    assert_equal
-      "return iface_.f();"
-      (gen_return "f" []);
-
-    assert_equal
-      "return iface_.f(x, y);"
-      (gen_return "f" ["x"; "y"]);
-  end;
-
   "test_gen_public" >:: begin fun() ->
     assert_equal
       [ (0, "public String fun(int x) {");
@@ -251,7 +243,7 @@ let _ = run_test_tt_main begin "java.ml" >::: [
   end;
 
   "test_gen_to_string" >:: begin fun() ->
-    assert_equal ~printer: Std.dump
+    assert_equal
       [ (0, "public String toString() {");
         (1,   "MessageStringGenerator gen = new MessageStringGenerator();");
         (1,   "gen.open(\"m\");");
