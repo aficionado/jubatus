@@ -106,7 +106,7 @@ and gen_type names server = function
     if server then
       "jubatus::core::fv_converter::datum"
     else
-      "jubatus::common::datum"
+      "jubatus::client::common::datum"
   | Struct s ->
     if Hashtbl.mem names s then
       Hashtbl.find names s

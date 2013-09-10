@@ -7,6 +7,7 @@
 #include <msgpack.hpp>
 
 namespace jubatus {
+namespace client {
 namespace common {
 
 struct datum {
@@ -25,6 +26,7 @@ struct datum {
 };
 
 }  // namespace common
+}  // namespace client
 }  // namespace jubatus
 
 #endif  // JUBATUS_CLIENT_DATUM_HPP_
