@@ -142,10 +142,14 @@ let rec gen_type_class = function
     let t = rename_without_underbar s in
     Some (gen_call ("new " ^ gen_template "TUserDef" [t]) [])
   | List t ->
-    Some (gen_call ("new " ^ gen_template "TList" [gen_object_type t]) [gen_object_type_class t])
+    let tlist = gen_template "TList" [gen_object_type t] in
+    Some (gen_call ("new " ^ tlist) [gen_object_type_class t])
   | Map(key, value) ->
-    Some (gen_call ("new " ^ gen_template "TMap" [gen_object_type key; gen_object_type value]) [gen_object_type_class key; gen_object_type_class value])
-  | Nullable t -> Some (gen_call "new TNullable" [gen_object_type_class t])
+    let tmap = gen_template "TMap" [gen_object_type key; gen_object_type value] in
+    Some (gen_call ("new " ^ tmap) [gen_object_type_class key; gen_object_type_class value])
+  | Nullable t ->
+    let tnullable = gen_template "TNullable" [gen_object_type t] in
+    Some (gen_call ("new " ^ tnullable) [gen_object_type_class t])
 and gen_object_type_class = function
   | Bool -> "TBool.instance"
   | Int(_, n) -> if n <= 4 then "TInt.instance" else "TLong.instance"
