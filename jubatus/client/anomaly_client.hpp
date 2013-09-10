@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include <jubatus/client/datum.hpp>
+#include <jubatus/client/common/datum.hpp>
 #include "anomaly_types.hpp"
 
 namespace jubatus {
@@ -34,17 +34,19 @@ class anomaly {
     return f.get<bool>();
   }
 
-  id_with_score add(const jubatus::common::datum& row) {
+  id_with_score add(const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("add", name_, row);
     return f.get<id_with_score>();
   }
 
-  float update(const std::string& id, const jubatus::common::datum& row) {
+  float update(const std::string& id,
+       const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("update", name_, id, row);
     return f.get<float>();
   }
 
-  float overwrite(const std::string& id, const jubatus::common::datum& row) {
+  float overwrite(const std::string& id,
+       const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("overwrite", name_, id, row);
     return f.get<float>();
   }
@@ -54,7 +56,7 @@ class anomaly {
     return f.get<bool>();
   }
 
-  float calc_score(const jubatus::common::datum& row) {
+  float calc_score(const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("calc_score", name_, row);
     return f.get<float>();
   }

@@ -11,7 +11,7 @@
 #include <vector>
 #include <utility>
 
-#include <jubatus/client/datum.hpp>
+#include <jubatus/client/common/datum.hpp>
 #include <msgpack.hpp>
 
 namespace jubatus {
@@ -21,10 +21,10 @@ struct scored_datum {
  public:
   MSGPACK_DEFINE(score, data);
   float score;
-  jubatus::common::datum data;
+  jubatus::client::common::datum data;
   scored_datum() {
   }
-  scored_datum(float score, const jubatus::common::datum& data)
+  scored_datum(float score, const jubatus::client::common::datum& data)
     : score(score), data(data) {
   }
 };

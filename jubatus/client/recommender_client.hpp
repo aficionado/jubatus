@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include <jubatus/client/datum.hpp>
+#include <jubatus/client/common/datum.hpp>
 #include "recommender_types.hpp"
 
 namespace jubatus {
@@ -34,7 +34,8 @@ class recommender {
     return f.get<bool>();
   }
 
-  bool update_row(const std::string& id, const jubatus::common::datum& row) {
+  bool update_row(const std::string& id,
+       const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("update_row", name_, id, row);
     return f.get<bool>();
   }
@@ -44,15 +45,15 @@ class recommender {
     return f.get<bool>();
   }
 
-  jubatus::common::datum complete_row_from_id(const std::string& id) {
+  jubatus::client::common::datum complete_row_from_id(const std::string& id) {
     msgpack::rpc::future f = c_.call("complete_row_from_id", name_, id);
-    return f.get<jubatus::common::datum>();
+    return f.get<jubatus::client::common::datum>();
   }
 
-  jubatus::common::datum complete_row_from_datum(
-      const jubatus::common::datum& row) {
+  jubatus::client::common::datum complete_row_from_datum(
+      const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("complete_row_from_datum", name_, row);
-    return f.get<jubatus::common::datum>();
+    return f.get<jubatus::client::common::datum>();
   }
 
   std::vector<id_with_score> similar_row_from_id(const std::string& id,
@@ -62,15 +63,15 @@ class recommender {
   }
 
   std::vector<id_with_score> similar_row_from_datum(
-      const jubatus::common::datum& row, uint32_t size) {
+      const jubatus::client::common::datum& row, uint32_t size) {
     msgpack::rpc::future f = c_.call("similar_row_from_datum", name_, row,
          size);
     return f.get<std::vector<id_with_score> >();
   }
 
-  jubatus::common::datum decode_row(const std::string& id) {
+  jubatus::client::common::datum decode_row(const std::string& id) {
     msgpack::rpc::future f = c_.call("decode_row", name_, id);
-    return f.get<jubatus::common::datum>();
+    return f.get<jubatus::client::common::datum>();
   }
 
   std::vector<std::string> get_all_rows() {
@@ -78,13 +79,13 @@ class recommender {
     return f.get<std::vector<std::string> >();
   }
 
-  float calc_similarity(const jubatus::common::datum& lhs,
-       const jubatus::common::datum& rhs) {
+  float calc_similarity(const jubatus::client::common::datum& lhs,
+       const jubatus::client::common::datum& rhs) {
     msgpack::rpc::future f = c_.call("calc_similarity", name_, lhs, rhs);
     return f.get<float>();
   }
 
-  float calc_l2norm(const jubatus::common::datum& row) {
+  float calc_l2norm(const jubatus::client::common::datum& row) {
     msgpack::rpc::future f = c_.call("calc_l2norm", name_, row);
     return f.get<float>();
   }

@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include <jubatus/client/datum.hpp>
+#include <jubatus/client/common/datum.hpp>
 #include "classifier_types.hpp"
 
 namespace jubatus {
@@ -35,7 +35,7 @@ class classifier {
   }
 
   std::vector<std::vector<estimate_result> > classify(
-      const std::vector<jubatus::common::datum>& data) {
+      const std::vector<jubatus::client::common::datum>& data) {
     msgpack::rpc::future f = c_.call("classify", name_, data);
     return f.get<std::vector<std::vector<estimate_result> > >();
   }

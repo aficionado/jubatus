@@ -9,7 +9,7 @@
 #include <vector>
 #include <utility>
 #include <jubatus/msgpack/rpc/client.h>
-#include <jubatus/client/datum.hpp>
+#include <jubatus/client/common/datum.hpp>
 #include "regression_types.hpp"
 
 namespace jubatus {
@@ -35,7 +35,7 @@ class regression {
   }
 
   std::vector<float> estimate(
-      const std::vector<jubatus::common::datum>& estimate_data) {
+      const std::vector<jubatus::client::common::datum>& estimate_data) {
     msgpack::rpc::future f = c_.call("estimate", name_, estimate_data);
     return f.get<std::vector<float> >();
   }

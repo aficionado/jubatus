@@ -11,7 +11,7 @@
 #include <vector>
 #include <utility>
 
-#include <jubatus/client/datum.hpp>
+#include <jubatus/client/common/datum.hpp>
 #include <msgpack.hpp>
 
 namespace jubatus {
@@ -33,10 +33,11 @@ struct labeled_datum {
  public:
   MSGPACK_DEFINE(label, data);
   std::string label;
-  jubatus::common::datum data;
+  jubatus::client::common::datum data;
   labeled_datum() {
   }
-  labeled_datum(const std::string& label, const jubatus::common::datum& data)
+  labeled_datum(const std::string& label,
+       const jubatus::client::common::datum& data)
     : label(label), data(data) {
   }
 };
