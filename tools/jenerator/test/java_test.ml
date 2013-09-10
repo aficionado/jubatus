@@ -66,11 +66,11 @@ let _ = run_test_tt_main begin "java.ml" >::: [
       (gen_type Datum);
 
     assert_equal
-      "List<Float >"
+      "List<Float>"
       (gen_type (List(Float false)));
 
     assert_equal
-      "Map<String, Integer >"
+      "Map<String, Integer>"
       (gen_type (Map(String, Int(true, 4))));
 
     assert_equal
@@ -104,11 +104,11 @@ let _ = run_test_tt_main begin "java.ml" >::: [
       (gen_object_type String);
 
     assert_equal
-      "List<Float >"
+      "List<Float>"
       (gen_object_type (List(Float false)));
 
     assert_equal
-      "Map<String, Integer >"
+      "Map<String, Integer>"
       (gen_object_type (Map(String, Int(true, 4))));
   end;
 
@@ -159,50 +159,38 @@ let _ = run_test_tt_main begin "java.ml" >::: [
       (gen_args ["x"; "y"]);
   end;
 
-  "test_gen_args_with_type" >:: begin fun() ->
-    assert_equal
-      "()"
-      (gen_args_with_type []);
-
-    assert_equal
-      "(String x)"
-      (gen_args_with_type [("x", String)]);
-
-    assert_equal
-      "(String x, float y)"
-      (gen_args_with_type [("x", String); ("y", Float(false))]);
-  end;
-
   "test_gen_call" >:: begin fun() ->
     assert_equal
-      "f(10);"
+      "f(10)"
       (gen_call "f" ["10"]);
   end;
 
   "test_gen_public" >:: begin fun() ->
+    let f = {
+      field_number = 1;
+      field_type = Int(true, 4);
+      field_name = "x";
+    } in
     assert_equal
       [ (0, "public String fun(int x) {");
         (1,   "y = x;");
-        (0, "}");
-        (0, ""); ]
-      (gen_public (Some String) "fun" [("x", Int(true, 4))] "" [(1, "y = x;")]);
+        (0, "}"); ]
+      (gen_public (Some String) "fun" [f] "" [(1, "y = x;")]);
   end;
 
   "test_gen_client_method" >:: begin fun() ->
     assert_equal
       [ (0, "public void fun() {");
-        (1,   "iface_.fun();");
-        (0, "}");
-        (0, ""); ]
+        (1,   "iface.fun(this.name);");
+        (0, "}"); ]
       (gen_client_method { method_return_type = None;
                            method_name = "fun";
                            method_arguments = [];
                            method_decorators = []; });
     assert_equal
       [ (0, "public String fun() {");
-        (1,   "return iface_.fun();");
-        (0, "}");
-        (0, ""); ]
+        (1,   "return iface.fun(this.name);");
+        (0, "}"); ]
       (gen_client_method { method_return_type = Some String;
                            method_name = "fun";
                            method_arguments = [];
@@ -211,7 +199,7 @@ let _ = run_test_tt_main begin "java.ml" >::: [
 
   "test_gen_interface" >:: begin fun() ->
     assert_equal
-      "String f(int x, String s);"
+      "String f(String name, int x, String s);"
       (gen_interface { method_return_type = Some String;
                        method_name = "f";
                        method_arguments = [
@@ -226,7 +214,7 @@ let _ = run_test_tt_main begin "java.ml" >::: [
                      });
 
     assert_equal
-      "void f();"
+      "void f(String name);"
       (gen_interface { method_return_type = None;
                        method_name = "f";
                        method_arguments = [];
@@ -236,7 +224,7 @@ let _ = run_test_tt_main begin "java.ml" >::: [
 
   "test_gen_message_field"  >:: begin fun() ->
     assert_equal
-      (0, "public String name;")
+      (0, "public String name = \"\";")
       (gen_message_field { field_number = 1;
                            field_type = String;
                            field_name = "name"; })
