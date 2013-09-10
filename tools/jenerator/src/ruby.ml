@@ -82,20 +82,18 @@ let gen_client_call m =
 (* return : def func_name (args): *)
 let gen_def func = function
   | [] ->
-      "def " ^ func 
+    "def " ^ func 
   | args ->
-      "def " ^ func ^ "(" ^ (String.concat ", " args) ^ ")"
+    "def " ^ func ^ "(" ^ (String.concat ", " args) ^ ")"
 ;;
 
 let gen_client_method m =
   let name = m.method_name in
   let args = List.map (fun f -> f.field_name) m.method_arguments in 
-  let call =
-    [(0, gen_def name args);
-     (1,   gen_client_call m);
-     (0, "end")
-    ] 
-  in call
+  [ (0, gen_def name args);
+    (1,   gen_client_call m);
+    (0, "end");
+  ] 
 ;;
 
 let gen_client s =
@@ -104,27 +102,28 @@ let gen_client s =
     (1,   "@cli = MessagePack::RPC::Client.new(host, port)");
     (1,   "@jubatus_client = Jubatus::Common::Client.new(@cli, name)");
     (0, "end");
+    (0, "");
     (0, "def get_client");
     (1,   "@cli");
     (0, "end")
   ] in
   let methods = List.map gen_client_method s.service_methods in
-  let content = List.concat (constructor :: methods) in
-    List.concat [
-      [
-        (0, "class " ^ (String.capitalize s.service_name));
-        (1,   "include Jubatus::Common");
+  let content = concat_blocks (constructor :: methods) in
+  List.concat [
+    [
+      (0, "class " ^ (String.capitalize s.service_name));
+      (1,   "include Jubatus::Common");
     ];
     indent_lines 1 content;
-      [
-        (0, "end")
-      ]
+    [
+      (0, "end")
     ]
+  ]
 ;;
 
 
 let gen_self_with_equal field_names =
-  List.map (fun s -> (0, " @" ^ s ^ " = " ^ s ^ " ")) field_names
+  List.map (fun s -> (0, "@" ^ s ^ " = " ^ s)) field_names
 ;;
 
 let gen_initialize field_names = 
@@ -187,7 +186,7 @@ let gen_str name field_names =
 let gen_message m =
   let field_names = List.map (fun f -> f.field_name) m.message_fields in
   let field_types = List.map (fun f -> f.field_type) m.message_fields in
-  List.concat [
+  concat_blocks [
     [
       (0, "class " ^ (String.capitalize m.message_name));
       (1,   "include Jubatus::Common");
@@ -201,8 +200,9 @@ let gen_message m =
     indent_lines 1 (gen_from_msgpack field_names field_types m.message_name);
     indent_lines 1 (gen_str m.message_name field_names);
     indent_lines 1 (gen_attr field_names);
-    [(0, "end");
-     (0, "")];
+    [
+      (0, "end");
+    ];
   ]
 ;;
 
@@ -216,7 +216,20 @@ let gen_typedef = function
 let gen_client_file conf source services =
   let base = File_util.take_base source in
   let filename = Filename.concat base "client.rb" in
-  let clients = List.map gen_client services in
+  let clients = List.map (fun s ->
+    let module_name = String.capitalize s.service_name in
+    concat_blocks [
+      [
+        (0, "module " ^ module_name);
+        (0, "module Client");
+      ];
+      gen_client s;
+      [
+        (0, "end  # Client");
+        (0, "end  # " ^ module_name);
+      ];
+    ]
+  ) services in
 
   let content = concat_blocks [
     [
@@ -225,15 +238,13 @@ let gen_client_file conf source services =
       (0, "require 'jubatus/common'");
       (0, "require File.join(File.dirname(__FILE__), 'types')");
     ];
-    List.concat [
-      [(0, "module Jubatus")];
-      (List.map (fun s -> (0, "module " ^ (String.capitalize s.service_name))) services);
-      [(0, "module Client");]
+    [
+      (0, "module Jubatus");
     ];
-    (concat_blocks clients);
-    ((0, "end") :: 
-     (0, "end") :: 
-     (List.map (fun s -> (0, "end")) services));
+    concat_blocks clients;
+    [
+      (0, "end  # Jubatus");
+    ];
   ]
   in make_header conf source filename content
 ;;
@@ -246,21 +257,25 @@ let gen_type_file conf source idl =
     (0, "require 'rubygems'");
     (0, "require 'msgpack/rpc'");
     (0, "require 'jubatus/common'");
-    (0, "module Jubatus");
-    (0, ("module " ^ (String.capitalize base)));
   ] in
 
   let content = concat_blocks [
     includes;
-    (concat_blocks types);
-    [(0, "end"); (* for "module Jubatus" *)
-     (0, "end")] (* for "module " ^ (String.capitalize base) *)
+    [
+      (0, "module Jubatus");
+      (0, "module " ^ String.capitalize base);
+    ];
+    concat_blocks types;
+    [
+      (0, "end  # " ^ String.capitalize base);
+      (0, "end  # Jubatus");
+    ]
   ] in
   make_header conf source name content
 ;;
 
 let generate conf source idl =
   let services = get_services idl in
-    gen_client_file conf source services;
-    gen_type_file conf source idl 
+  gen_client_file conf source services;
+  gen_type_file conf source idl 
 ;;
