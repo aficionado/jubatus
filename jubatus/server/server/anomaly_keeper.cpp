@@ -20,18 +20,15 @@ int run_keeper(int argc, char* argv[]) {
     jubatus::server::framework::keeper k(
         jubatus::server::framework::keeper_argv(argc, argv, "anomaly"));
     k.register_async_random<std::string>("get_config");
-    k.register_async_cht<2, bool, std::string>("clear_row",
-         pfi::lang::function<bool(bool, bool)>(
-        &jubatus::server::framework::all_and));
+    k.register_async_cht<2, bool>("clear_row", pfi::lang::function<bool(bool,
+         bool)>(&jubatus::server::framework::all_and));
     k.register_async_random<id_with_score, jubatus::core::fv_converter::datum>(
         "add");
-    k.register_async_cht<2, float, std::string,
-         jubatus::core::fv_converter::datum>("update",
+    k.register_async_cht<2, float, jubatus::core::fv_converter::datum>("update",
          pfi::lang::function<float(float, float)>(
         &jubatus::server::framework::pass<float>));
-    k.register_async_cht<2, float, std::string,
-         jubatus::core::fv_converter::datum>("overwrite",
-         pfi::lang::function<float(float, float)>(
+    k.register_async_cht<2, float, jubatus::core::fv_converter::datum>(
+        "overwrite", pfi::lang::function<float(float, float)>(
         &jubatus::server::framework::pass<float>));
     k.register_async_broadcast<bool>("clear", pfi::lang::function<bool(bool,
          bool)>(&jubatus::server::framework::all_and));

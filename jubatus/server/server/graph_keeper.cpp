@@ -21,19 +21,18 @@ int run_keeper(int argc, char* argv[]) {
         jubatus::server::framework::keeper_argv(argc, argv, "graph"));
     k.register_async_random<std::string>("get_config");
     k.register_async_random<std::string>("create_node");
-    k.register_async_cht<2, bool, std::string>("remove_node",
-         pfi::lang::function<bool(bool, bool)>(
-        &jubatus::server::framework::pass<bool>));
-    k.register_async_cht<2, bool, std::string, std::map<std::string,
-         std::string> >("update_node", pfi::lang::function<bool(bool, bool)>(
+    k.register_async_cht<2, bool>("remove_node", pfi::lang::function<bool(bool,
+         bool)>(&jubatus::server::framework::pass<bool>));
+    k.register_async_cht<2, bool, std::map<std::string, std::string> >(
+        "update_node", pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::all_and));
-    k.register_async_cht<1, uint64_t, std::string, edge>("create_edge",
+    k.register_async_cht<1, uint64_t, edge>("create_edge",
          pfi::lang::function<uint64_t(uint64_t, uint64_t)>(
         &jubatus::server::framework::pass<uint64_t>));
-    k.register_async_cht<2, bool, std::string, uint64_t, edge>("update_edge",
+    k.register_async_cht<2, bool, uint64_t, edge>("update_edge",
          pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::all_and));
-    k.register_async_cht<2, bool, std::string, uint64_t>("remove_edge",
+    k.register_async_cht<2, bool, uint64_t>("remove_edge",
          pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::all_and));
     k.register_async_random<double, std::string, int32_t,
@@ -56,11 +55,11 @@ int run_keeper(int argc, char* argv[]) {
         bool, bool)>(&jubatus::server::framework::all_and));
     k.register_async_broadcast<bool>("clear", pfi::lang::function<bool(bool,
          bool)>(&jubatus::server::framework::all_and));
-    k.register_async_cht<2, jubatus::core::graph::node_info, std::string>(
-        "get_node", pfi::lang::function<jubatus::core::graph::node_info(
+    k.register_async_cht<2, jubatus::core::graph::node_info>("get_node",
+         pfi::lang::function<jubatus::core::graph::node_info(
         jubatus::core::graph::node_info, jubatus::core::graph::node_info)>(
         &jubatus::server::framework::pass<jubatus::core::graph::node_info>));
-    k.register_async_cht<2, edge, std::string, uint64_t>("get_edge",
+    k.register_async_cht<2, edge, uint64_t>("get_edge",
          pfi::lang::function<edge(edge, edge)>(
         &jubatus::server::framework::pass<edge>));
     k.register_async_broadcast<bool, std::string>("save",

@@ -20,25 +20,19 @@ int run_keeper(int argc, char* argv[]) {
     jubatus::server::framework::keeper k(
         jubatus::server::framework::keeper_argv(argc, argv, "stat"));
     k.register_async_random<std::string>("get_config");
-    k.register_async_cht<1, bool, std::string, double>("push",
-         pfi::lang::function<bool(bool, bool)>(
-        &jubatus::server::framework::all_and));
-    k.register_async_cht<1, double, std::string>("sum",
-         pfi::lang::function<double(double, double)>(
-        &jubatus::server::framework::pass<double>));
-    k.register_async_cht<1, double, std::string>("stddev",
-         pfi::lang::function<double(double, double)>(
-        &jubatus::server::framework::pass<double>));
-    k.register_async_cht<1, double, std::string>("max",
-         pfi::lang::function<double(double, double)>(
-        &jubatus::server::framework::pass<double>));
-    k.register_async_cht<1, double, std::string>("min",
-         pfi::lang::function<double(double, double)>(
-        &jubatus::server::framework::pass<double>));
-    k.register_async_cht<1, double, std::string>("entropy",
-         pfi::lang::function<double(double, double)>(
-        &jubatus::server::framework::pass<double>));
-    k.register_async_cht<1, double, std::string, int32_t, double>("moment",
+    k.register_async_cht<1, bool, double>("push", pfi::lang::function<bool(bool,
+         bool)>(&jubatus::server::framework::all_and));
+    k.register_async_cht<1, double>("sum", pfi::lang::function<double(double,
+         double)>(&jubatus::server::framework::pass<double>));
+    k.register_async_cht<1, double>("stddev", pfi::lang::function<double(double,
+         double)>(&jubatus::server::framework::pass<double>));
+    k.register_async_cht<1, double>("max", pfi::lang::function<double(double,
+         double)>(&jubatus::server::framework::pass<double>));
+    k.register_async_cht<1, double>("min", pfi::lang::function<double(double,
+         double)>(&jubatus::server::framework::pass<double>));
+    k.register_async_cht<1, double>("entropy", pfi::lang::function<double(
+        double, double)>(&jubatus::server::framework::pass<double>));
+    k.register_async_cht<1, double, int32_t, double>("moment",
          pfi::lang::function<double(double, double)>(
         &jubatus::server::framework::pass<double>));
     k.register_async_broadcast<bool>("clear", pfi::lang::function<bool(bool,

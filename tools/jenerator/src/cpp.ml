@@ -514,7 +514,8 @@ let gen_keeper_register names m ret_type =
     [ (0, call) ]
 
   | Cht i ->
-    let args = arg_types in
+    (* When a user use CHT, the first arguemnt is the hashing key *)
+    let args = List.tl arg_types in
     let arg_strs = List.map (gen_type names true) (ret_type::args) in
     (* TODO(unnonouno): Is this number really required to be a template argument? *)
     let num = string_of_int i in
