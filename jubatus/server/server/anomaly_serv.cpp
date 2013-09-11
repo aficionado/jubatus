@@ -169,10 +169,7 @@ id_with_score anomaly_serv::add(const datum& data) {
     event_model_updated();
     // TODO(unno): remove conversion code
     pair<string, float> res = anomaly_->add(id_str, data);
-    id_with_score result;
-    result.id = res.first;
-    result.score = res.second;
-    return result;
+    return id_with_score(res.first, res.second);
 #ifdef HAVE_ZOOKEEPER_H
   } else {
     return add_zk(id_str, data);
@@ -203,10 +200,7 @@ id_with_score anomaly_serv::add_zk(const string&id_str, const datum& d) {
     }
   }
   DLOG(INFO) << "point added: " << id_str;
-  id_with_score result;
-  result.id = id_str;
-  result.score = score;
-  return result;
+  return id_with_score(id_str, score);
 }
 
 float anomaly_serv::update(const string& id, const datum& data) {
