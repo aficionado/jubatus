@@ -8,20 +8,53 @@
 #include <pficommon/lang/shared_ptr.h>
 
 #include "../../server/framework.hpp"
-#include "nearest_neighbor_server.hpp"
 #include "nearest_neighbor_serv.hpp"
 
 namespace jubatus {
 namespace server {
 
-class nearest_neighbor_impl_ : public nearest_neighbor<nearest_neighbor_impl_> {
+class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server {
  public:
-  explicit nearest_neighbor_impl_(
+  explicit nearest_neighbor_impl(
       const jubatus::server::framework::server_argv& a):
-    nearest_neighbor<nearest_neighbor_impl_>(a.timeout),
+    rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<nearest_neighbor_serv>(a,
          true)) {
+    rpc_server::add<bool(std::string)>("init_table", pfi::lang::bind(
+        &nearest_neighbor_impl::init_table, this));
+    rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(
+        &nearest_neighbor_impl::clear, this));
+    rpc_server::add<bool(std::string, std::string,
+         jubatus::core::fv_converter::datum)>("set_row", pfi::lang::bind(
+        &nearest_neighbor_impl::set_row, this, pfi::lang::_2, pfi::lang::_3));
+    rpc_server::add<std::vector<std::pair<std::string, float> >(std::string,
+         std::string, uint32_t)>("neighbor_row_from_id", pfi::lang::bind(
+        &nearest_neighbor_impl::neighbor_row_from_id, this, pfi::lang::_2,
+         pfi::lang::_3));
+    rpc_server::add<std::vector<std::pair<std::string, float> >(std::string,
+         jubatus::core::fv_converter::datum, uint32_t)>(
+        "neighbor_row_from_data", pfi::lang::bind(
+        &nearest_neighbor_impl::neighbor_row_from_data, this, pfi::lang::_2,
+         pfi::lang::_3));
+    rpc_server::add<std::vector<std::pair<std::string, float> >(std::string,
+         std::string, int32_t)>("similar_row_from_id", pfi::lang::bind(
+        &nearest_neighbor_impl::similar_row_from_id, this, pfi::lang::_2,
+         pfi::lang::_3));
+    rpc_server::add<std::vector<std::pair<std::string, float> >(std::string,
+         jubatus::core::fv_converter::datum, int32_t)>("similar_row_from_data",
+         pfi::lang::bind(&nearest_neighbor_impl::similar_row_from_data, this,
+         pfi::lang::_2, pfi::lang::_3));
+    rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
+        &nearest_neighbor_impl::save, this, pfi::lang::_2));
+    rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
+        &nearest_neighbor_impl::load, this, pfi::lang::_2));
+    rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
+        std::string)>("get_status", pfi::lang::bind(
+        &nearest_neighbor_impl::get_status, this));
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &nearest_neighbor_impl::get_config, this));
   }
+
   bool init_table() {
     JWLOCK_(p_);
     return get_p()->init_table();
@@ -93,6 +126,6 @@ class nearest_neighbor_impl_ : public nearest_neighbor<nearest_neighbor_impl_> {
 
 int main(int argc, char* argv[]) {
   return
-    jubatus::server::framework::run_server<jubatus::server::nearest_neighbor_impl_>
+    jubatus::server::framework::run_server<jubatus::server::nearest_neighbor_impl>
       (argc, argv, "nearest_neighbor");
 }

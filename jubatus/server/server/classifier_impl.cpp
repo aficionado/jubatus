@@ -8,19 +8,35 @@
 #include <pficommon/lang/shared_ptr.h>
 
 #include "../../server/framework.hpp"
-#include "classifier_server.hpp"
 #include "classifier_serv.hpp"
 
 namespace jubatus {
 namespace server {
 
-class classifier_impl_ : public classifier<classifier_impl_> {
+class classifier_impl : public jubatus::server::common::mprpc::rpc_server {
  public:
-  explicit classifier_impl_(const jubatus::server::framework::server_argv& a):
-    classifier<classifier_impl_>(a.timeout),
+  explicit classifier_impl(const jubatus::server::framework::server_argv& a):
+    rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<classifier_serv>(a,
          false)) {
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &classifier_impl::get_config, this));
+    rpc_server::add<int32_t(std::string, std::vector<labeled_datum>)>("train",
+         pfi::lang::bind(&classifier_impl::train, this, pfi::lang::_2));
+    rpc_server::add<std::vector<std::vector<estimate_result> >(std::string,
+         std::vector<jubatus::core::fv_converter::datum>)>("classify",
+         pfi::lang::bind(&classifier_impl::classify, this, pfi::lang::_2));
+    rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(
+        &classifier_impl::clear, this));
+    rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
+        &classifier_impl::save, this, pfi::lang::_2));
+    rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
+        &classifier_impl::load, this, pfi::lang::_2));
+    rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
+        std::string)>("get_status", pfi::lang::bind(
+        &classifier_impl::get_status, this));
   }
+
   std::string get_config() {
     JRLOCK_(p_);
     return get_p()->get_config();
@@ -68,6 +84,6 @@ class classifier_impl_ : public classifier<classifier_impl_> {
 
 int main(int argc, char* argv[]) {
   return
-    jubatus::server::framework::run_server<jubatus::server::classifier_impl_>
+    jubatus::server::framework::run_server<jubatus::server::classifier_impl>
       (argc, argv, "classifier");
 }

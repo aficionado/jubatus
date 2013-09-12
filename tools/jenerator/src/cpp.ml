@@ -255,27 +255,18 @@ let gen_client names server s =
   let methods = List.map (gen_client_method names server) s.service_methods in
   let constructor = [
     (0, s.service_name ^ "(const std::string& host, uint64_t port, const std::string& name, unsigned int timeout_sec)");
-    (2,     ": c_(host, port), name_(name) {");
-    (1,   "c_.set_timeout(timeout_sec);");
+    (2,     ": client(host, port, name, timeout_sec) {");
     (0, "}");
   ] in
   let content = concat_blocks (constructor::methods) in
 
   List.concat [
     [
-      (0, "class " ^ s.service_name ^ " {");
+      (0, "class " ^ s.service_name ^ " : jubatus::client::common::client {");
       (0, " public:");
     ];
     indent_lines 1 content;
     [
-      (0, "");
-      (1, "msgpack::rpc::client& get_client() {");
-      (2, "return c_;");
-      (1, "}");
-      (0, "");
-      (0, " private:");
-      (1,   "msgpack::rpc::client c_;");
-      (1,   "std::string name_;");
       (0, "};")
     ]
   ]
@@ -357,7 +348,7 @@ let gen_client_file conf names server source services =
       (0, "#include <string>");
       (0, "#include <vector>");
       (0, "#include <utility>");
-      (0, "#include <jubatus/msgpack/rpc/client.h>");
+      (0, "#include <jubatus/client/common/client.h>");
       (0, gen_datum_include conf server);
       (0, "#include \"" ^ base ^ "_types.hpp\"");
     ];
@@ -412,66 +403,23 @@ let get_func_type names m =
   ret_type ^ args
 ;;
 
-let gen_bind m =
+let gen_bind s m =
   let num_args = List.length m.method_arguments in
-  let func = "&Impl::" ^ m.method_name in
-  let this = "impl" in
+  let func = "&" ^ s.service_name ^ "_impl::" ^ m.method_name in
+  let this = "this" in
   (* Ignore the first argument as it is cluster name *)
   let nums = Array.init num_args (fun n -> Printf.sprintf "pfi::lang::_%d" (n + 2)) in
   let args = func::this::(Array.to_list nums) in
   "pfi::lang::bind" ^ gen_args args
 ;;
 
-let gen_server_method names m =
+let gen_server_method names s m =
   let func_type = get_func_type names m in
   let method_name_str = gen_string_literal m.method_name in
-  let bind = gen_bind m in
+  let bind = gen_bind s m in
   let line = Printf.sprintf "rpc_server::add<%s>(%s, %s);"
     func_type method_name_str bind in
   (0, line)
-;;
-
-let gen_server names s =
-  let methods = List.map (gen_server_method names) s.service_methods in
-  List.concat [
-    [
-      (0, "template <class Impl>");
-      (0, "class " ^ s.service_name ^ " : public jubatus::server::common::mprpc::rpc_server {");
-      (0, " public:");
-      (1,   "explicit " ^ s.service_name ^ "(double timeout_sec) : rpc_server(timeout_sec) {");
-      (2,     "Impl* impl = static_cast<Impl*>(this);");
-    ];
-    indent_lines 2 methods;
-    [
-      (1,   "}");
-      (0, "};")
-    ]
-  ]
-;;
-
-let gen_server_file conf names source services =
-  let base = File_util.take_base source in
-  let filename = base ^ "_server.hpp" in
-
-  let namespace = parse_namespace conf.Config.namespace in
-  let namespace = List.append namespace ["server"] in
-  let servers = List.map (gen_server names) services in
-
-  let content = concat_blocks [
-    [
-      (0, "#include <map>");
-      (0, "#include <string>");
-      (0, "#include <vector>");
-      (0, "#include <utility>");
-      (0, "#include <pficommon/lang/bind.h>");
-      (0, "");
-      (0, gen_jubatus_include conf "server/common/mprpc/rpc_server.hpp");
-      (0, "#include \"" ^ base ^ "_types.hpp\"");
-    ];
-    make_namespace namespace (concat_blocks servers)
-  ] in
-  
-  make_header conf source filename content
 ;;
 
 let gen_aggregator names ret_type aggregator =
@@ -645,19 +593,24 @@ let include_cht_method s =
 ;;
 
 let gen_impl names s =
+  let register_methods = List.map (gen_server_method names s) s.service_methods in
   let methods = List.map (gen_impl_method names) s.service_methods in
   let name = s.service_name in
-  let impl_name = name ^ "_impl_" in
+  let impl_name = name ^ "_impl" in
   let serv_name = name ^ "_serv" in
   let use_cht = include_cht_method s in
   List.concat [
     [
-      (0, "class " ^ impl_name ^ " : public " ^ name ^ "<" ^ impl_name ^ "> {");
+      (0, "class " ^ impl_name ^ " : public jubatus::server::common::mprpc::rpc_server {");
       (0, " public:");
       (1,   "explicit " ^ impl_name ^ "(const jubatus::server::framework::server_argv& a):");
-      (2,     name ^ "<" ^ impl_name ^ ">(a.timeout),");
+      (2,     "rpc_server(a.timeout),");
       (2,     "p_(new jubatus::server::framework::server_helper<" ^ serv_name ^ ">(a, " ^ gen_bool_literal use_cht ^ ")) {");
-      (1,   "}")
+    ];
+    indent_lines 2 register_methods;
+    [
+      (1,   "}");
+      (0, "");
     ];
     indent_lines 1 (concat_blocks methods);
     [
@@ -689,7 +642,6 @@ let gen_impl_file conf names source services =
       (0, "#include <pficommon/lang/shared_ptr.h>");
       (0, "");
       (0, gen_jubatus_include conf "server/framework.hpp");
-      (0, "#include \"" ^ base ^ "_server.hpp\"");
       (0, "#include \"" ^ base ^ "_serv.hpp\"");
     ];
     make_namespace namespace (List.concat impls);
@@ -697,7 +649,7 @@ let gen_impl_file conf names source services =
       (0, "int main(int argc, char* argv[]) {");
       (1,   "return");
       (* TODO(unnonouno): does not work when service name is not equal to a source file*)
-      (2,     "jubatus::server::framework::run_server<" ^ namespace_str ^ "::" ^ base ^ "_impl_>");
+      (2,     "jubatus::server::framework::run_server<" ^ namespace_str ^ "::" ^ base ^ "_impl>");
       (3,       "(argc, argv, " ^ name_str ^ ");");
       (0, "}")
     ]
@@ -856,7 +808,6 @@ let generate_server conf source idl =
 
   gen_type_file conf names true source idl;
   gen_client_file conf names true source services;
-  gen_server_file conf names source services;
   gen_keeper_file conf names source services;
   gen_impl_file conf names source services;
   if conf.Config.default_template then begin

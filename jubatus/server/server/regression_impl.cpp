@@ -8,19 +8,35 @@
 #include <pficommon/lang/shared_ptr.h>
 
 #include "../../server/framework.hpp"
-#include "regression_server.hpp"
 #include "regression_serv.hpp"
 
 namespace jubatus {
 namespace server {
 
-class regression_impl_ : public regression<regression_impl_> {
+class regression_impl : public jubatus::server::common::mprpc::rpc_server {
  public:
-  explicit regression_impl_(const jubatus::server::framework::server_argv& a):
-    regression<regression_impl_>(a.timeout),
+  explicit regression_impl(const jubatus::server::framework::server_argv& a):
+    rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<regression_serv>(a,
          false)) {
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &regression_impl::get_config, this));
+    rpc_server::add<int32_t(std::string, std::vector<scored_datum>)>("train",
+         pfi::lang::bind(&regression_impl::train, this, pfi::lang::_2));
+    rpc_server::add<std::vector<float>(std::string,
+         std::vector<jubatus::core::fv_converter::datum>)>("estimate",
+         pfi::lang::bind(&regression_impl::estimate, this, pfi::lang::_2));
+    rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(
+        &regression_impl::clear, this));
+    rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
+        &regression_impl::save, this, pfi::lang::_2));
+    rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
+        &regression_impl::load, this, pfi::lang::_2));
+    rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
+        std::string)>("get_status", pfi::lang::bind(
+        &regression_impl::get_status, this));
   }
+
   std::string get_config() {
     JRLOCK_(p_);
     return get_p()->get_config();
@@ -68,6 +84,6 @@ class regression_impl_ : public regression<regression_impl_> {
 
 int main(int argc, char* argv[]) {
   return
-    jubatus::server::framework::run_server<jubatus::server::regression_impl_>
+    jubatus::server::framework::run_server<jubatus::server::regression_impl>
       (argc, argv, "regression");
 }
