@@ -557,19 +557,13 @@ let gen_impl_method names m =
     | Analysis -> "JRLOCK_"
     | Nolock -> "NOLOCK_" in
   let lock = gen_call lock_type ["p_"] in
-  (* TODO(unnonouno): think of generating this abnormal method, which calls the method of p_ rather than get_p(). *)
-  let pointer =
-    if name = "get_status" then
-      "p_"
-    else
-      "get_p()"
-  in
+  let call = gen_call ("get_p()->" ^ name) args in
   let call =
     match m.method_return_type with
     | None ->
-      gen_call (pointer ^ "->" ^ name) args
+      call
     | Some typ ->
-      gen_call ("return " ^ pointer ^ "->" ^ name) args
+      "return " ^ call
   in
 
   [
@@ -705,18 +699,8 @@ let gen_server_template_header_method names m =
   [ (0, Printf.sprintf "%s %s%s%s;" ret_type name args_def const) ]
 ;;
 
-(* TODO(unnonouno): These special methods are going to be removed from IDL *)
-let filter_methods methods =
-  List.filter (fun m ->
-    not (m.method_name = "save"
-         or m.method_name = "load"
-         or m.method_name = "get_status")
-  ) methods
-;;
-
 let gen_server_template_header names s =
-  let ms = filter_methods s.service_methods in
-  let methods = List.map (gen_server_template_header_method names) ms in
+  let methods = List.map (gen_server_template_header_method names) s.service_methods in
   let name = s.service_name in
   let serv_name = name ^ "_serv" in
   List.concat [
@@ -730,6 +714,7 @@ let gen_server_template_header names s =
       (0,   "");
       (1,   "virtual jubatus::server::framework::mixer::mixer* get_mixer() const;");
       (1,   "pfi::lang::shared_ptr<jubatus::core::framework::mixable_holder> get_mixable_holder() const;");
+      (1,   "void get_config() const;");
       (1,   "void get_status(status_t& status) const;");
       (1,   "void set_config(const std::string& config);");
       (0,   "");
@@ -778,8 +763,7 @@ let gen_server_template_source_method names s m =
 ;;
 
 let gen_server_template_source names s =
-  let ms = filter_methods s.service_methods in
-  let methods = List.map (gen_server_template_source_method names s) ms in
+  let methods = List.map (gen_server_template_source_method names s) s.service_methods in
   let name = s.service_name in
   let serv_name = name ^ "_serv" in
   concat_blocks [
@@ -801,6 +785,9 @@ let gen_server_template_source names s =
       (0, "");
       (0, "pfi::lang::shared_ptr<jubatus::core::framework::mixable_holder> "
         ^ serv_name ^ "::get_mixable_holder() const {");
+      (0, "}");
+      (0, "");
+      (0, "std::string " ^ serv_name ^ "::get_config() const {");
       (0, "}");
       (0, "");
       (0, "void " ^ serv_name ^ "::get_status(status_t& status) const {");
