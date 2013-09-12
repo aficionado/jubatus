@@ -24,16 +24,4 @@ service nearest_neighbor {
 
   #@random #@analysis #@pass
   list<scored_id> similar_row_from_data(0: datum query, 1: int ret_num)
-
-  #@broadcast #@nolock #@all_and
-  bool save(0: string id) # #@broadcast
-
-  #@broadcast #@update #@all_and
-  bool load(0: string id) # //@broadcast
-
-  #@broadcast #@analysis #@merge
-  map<string, map<string, string> >  get_status() # //@broadcast
-
-  #@random #@analysis #@pass
-  string get_config()
 }

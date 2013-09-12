@@ -598,7 +598,7 @@ let gen_impl names s =
   let impl_name = name ^ "_impl" in
   let serv_name = name ^ "_serv" in
   let use_cht = include_cht_method s in
-  List.concat [
+  concat_blocks [
     [
       (0, "class " ^ impl_name ^ " : public jubatus::server::common::mprpc::rpc_server {");
       (0, " public:");
@@ -608,10 +608,43 @@ let gen_impl names s =
     ];
     indent_lines 2 register_methods;
     [
+      (* TODO(unno): use base class? *)
+      (2,   "rpc_server::add<std::string(std::string)>(\"get_config\", pfi::lang::bind(&"
+        ^ impl_name ^ "::get_config, this));");
+      (2,   "rpc_server::add<bool(std::string, std::string)>(\"save\", pfi::lang::bind(&"
+        ^ impl_name ^ "::save, this, pfi::lang::_2));");
+      (2,   "rpc_server::add<bool(std::string, std::string)>(\"load\", pfi::lang::bind(&"
+        ^ impl_name ^ "::load, this, pfi::lang::_2));");
+      (2,    "rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(std::string)>(\"get_status\", pfi::lang::bind(&"
+        ^ impl_name ^ "::get_status, this));");
       (1,   "}");
-      (0, "");
     ];
     indent_lines 1 (concat_blocks methods);
+    [
+      (* TODO(unno): use base class? *)
+      (1,   "std::string get_config() {");
+      (2,     "JRLOCK_(p_);");
+      (2,     "return get_p()->get_config();");
+      (1,   "}");
+    ];
+    [
+      (1,   "bool save(const std::string& id) {");
+      (2,     "JWLOCK_(p_);");
+      (2,     "return get_p()->save(id);");
+      (1,   "}");
+    ];
+    [
+      (1,   "bool load(const std::string& id) {");
+      (2,     "JWLOCK_(p_);");
+      (2,     "return get_p()->load(id);");
+      (1,   "}");
+    ];
+    [
+      (1,   "std::map<std::string, std::map<std::string, std::string> > get_status() {");
+      (2,     "JRLOCK_(p_);");
+      (2,     "return p_->get_status();");
+      (1,   "}");
+    ];
     [
       (1,   "int run() { return p_->start(*this); }");
       (1,   "pfi::lang::shared_ptr<" ^ serv_name ^ "> get_p() { return p_->server(); }");

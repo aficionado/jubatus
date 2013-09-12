@@ -7,7 +7,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <utility>
 #include <jubatus/client/common/client.hpp>
 #include <jubatus/client/common/datum.hpp>
 #include "graph_types.hpp"
@@ -21,11 +20,6 @@ class graph : public jubatus::client::common::client {
   graph(const std::string& host, uint64_t port, const std::string& name,
        unsigned int timeout_sec)
       : client(host, port, name, timeout_sec) {
-  }
-
-  std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config", name_);
-    return f.get<std::string>();
   }
 
   std::string create_node() {
@@ -111,21 +105,6 @@ class graph : public jubatus::client::common::client {
   edge get_edge(const std::string& node_id, uint64_t edge_id) {
     msgpack::rpc::future f = c_.call("get_edge", name_, node_id, edge_id);
     return f.get<edge>();
-  }
-
-  bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", name_, id);
-    return f.get<bool>();
-  }
-
-  bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", name_, id);
-    return f.get<bool>();
-  }
-
-  std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status", name_);
-    return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 
   bool create_node_here(const std::string& node_id) {

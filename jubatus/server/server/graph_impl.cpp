@@ -18,8 +18,7 @@ class graph_impl : public jubatus::server::common::mprpc::rpc_server {
   explicit graph_impl(const jubatus::server::framework::server_argv& a):
     rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<graph_serv>(a, true)) {
-    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
-        &graph_impl::get_config, this));
+
     rpc_server::add<std::string(std::string)>("create_node", pfi::lang::bind(
         &graph_impl::create_node, this));
     rpc_server::add<bool(std::string, std::string)>("remove_node",
@@ -65,13 +64,6 @@ class graph_impl : public jubatus::server::common::mprpc::rpc_server {
     rpc_server::add<edge(std::string, std::string, uint64_t)>("get_edge",
          pfi::lang::bind(&graph_impl::get_edge, this, pfi::lang::_2,
          pfi::lang::_3));
-    rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
-        &graph_impl::save, this, pfi::lang::_2));
-    rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
-        &graph_impl::load, this, pfi::lang::_2));
-    rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
-        std::string)>("get_status", pfi::lang::bind(&graph_impl::get_status,
-         this));
     rpc_server::add<bool(std::string, std::string)>("create_node_here",
          pfi::lang::bind(&graph_impl::create_node_here, this, pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string)>("remove_global_node",
@@ -79,11 +71,16 @@ class graph_impl : public jubatus::server::common::mprpc::rpc_server {
     rpc_server::add<bool(std::string, uint64_t, edge)>("create_edge_here",
          pfi::lang::bind(&graph_impl::create_edge_here, this, pfi::lang::_2,
          pfi::lang::_3));
-  }
 
-  std::string get_config() {
-    JRLOCK_(p_);
-    return get_p()->get_config();
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &graph_impl::get_config, this));
+    rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
+        &graph_impl::save, this, pfi::lang::_2));
+    rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
+        &graph_impl::load, this, pfi::lang::_2));
+    rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
+        std::string)>("get_status", pfi::lang::bind(&graph_impl::get_status,
+         this));
   }
 
   std::string create_node() {
@@ -172,6 +169,26 @@ class graph_impl : public jubatus::server::common::mprpc::rpc_server {
     return get_p()->get_edge(node_id, edge_id);
   }
 
+  bool create_node_here(const std::string& node_id) {
+    JWLOCK_(p_);
+    return get_p()->create_node_here(node_id);
+  }
+
+  bool remove_global_node(const std::string& node_id) {
+    JWLOCK_(p_);
+    return get_p()->remove_global_node(node_id);
+  }
+
+  bool create_edge_here(uint64_t edge_id, const edge& e) {
+    JWLOCK_(p_);
+    return get_p()->create_edge_here(edge_id, e);
+  }
+
+  std::string get_config() {
+    JRLOCK_(p_);
+    return get_p()->get_config();
+  }
+
   bool save(const std::string& id) {
     JWLOCK_(p_);
     return get_p()->save(id);
@@ -187,20 +204,6 @@ class graph_impl : public jubatus::server::common::mprpc::rpc_server {
     return p_->get_status();
   }
 
-  bool create_node_here(const std::string& node_id) {
-    JWLOCK_(p_);
-    return get_p()->create_node_here(node_id);
-  }
-
-  bool remove_global_node(const std::string& node_id) {
-    JWLOCK_(p_);
-    return get_p()->remove_global_node(node_id);
-  }
-
-  bool create_edge_here(uint64_t edge_id, const edge& e) {
-    JWLOCK_(p_);
-    return get_p()->create_edge_here(edge_id, e);
-  }
   int run() { return p_->start(*this); }
   pfi::lang::shared_ptr<graph_serv> get_p() { return p_->server(); }
 

@@ -21,9 +21,6 @@ message id_with_score {
 
 service recommender {
 
-  #@random #@analysis #@pass
-  string get_config() # //@random
-
   #@cht #@update #@all_and
   bool clear_row(0: string id) # //@cht
 
@@ -57,12 +54,4 @@ service recommender {
   #@random #@analysis #@pass
   float calc_l2norm(0: datum row) # //@random
 
-  #@broadcast #@update #@all_and
-  bool save(0: string id) # //@broadcast
-
-  #@broadcast #@update #@all_and
-  bool load(0: string id) # //@broadcast
-
-  #@broadcast #@analysis #@merge
-  map<string, map<string, string> >  get_status() # //@broadcast
 }

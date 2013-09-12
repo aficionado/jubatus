@@ -20,6 +20,7 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
     rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<nearest_neighbor_serv>(a,
          true)) {
+
     rpc_server::add<bool(std::string)>("init_table", pfi::lang::bind(
         &nearest_neighbor_impl::init_table, this));
     rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(
@@ -44,6 +45,9 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
          jubatus::core::fv_converter::datum, int32_t)>("similar_row_from_data",
          pfi::lang::bind(&nearest_neighbor_impl::similar_row_from_data, this,
          pfi::lang::_2, pfi::lang::_3));
+
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &nearest_neighbor_impl::get_config, this));
     rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
         &nearest_neighbor_impl::save, this, pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
@@ -51,8 +55,6 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
     rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
         std::string)>("get_status", pfi::lang::bind(
         &nearest_neighbor_impl::get_status, this));
-    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
-        &nearest_neighbor_impl::get_config, this));
   }
 
   bool init_table() {
@@ -95,8 +97,13 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
     return get_p()->similar_row_from_data(query, ret_num);
   }
 
+  std::string get_config() {
+    JRLOCK_(p_);
+    return get_p()->get_config();
+  }
+
   bool save(const std::string& id) {
-    NOLOCK_(p_);
+    JWLOCK_(p_);
     return get_p()->save(id);
   }
 
@@ -110,10 +117,6 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
     return p_->get_status();
   }
 
-  std::string get_config() {
-    JRLOCK_(p_);
-    return get_p()->get_config();
-  }
   int run() { return p_->start(*this); }
   pfi::lang::shared_ptr<nearest_neighbor_serv> get_p() { return p_->server(); }
 

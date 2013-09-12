@@ -18,8 +18,7 @@ class stat_impl : public jubatus::server::common::mprpc::rpc_server {
   explicit stat_impl(const jubatus::server::framework::server_argv& a):
     rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<stat_serv>(a, true)) {
-    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
-        &stat_impl::get_config, this));
+
     rpc_server::add<bool(std::string, std::string, double)>("push",
          pfi::lang::bind(&stat_impl::push, this, pfi::lang::_2, pfi::lang::_3));
     rpc_server::add<double(std::string, std::string)>("sum", pfi::lang::bind(
@@ -37,6 +36,9 @@ class stat_impl : public jubatus::server::common::mprpc::rpc_server {
          pfi::lang::_4));
     rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(
         &stat_impl::clear, this));
+
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &stat_impl::get_config, this));
     rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
         &stat_impl::save, this, pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
@@ -44,11 +46,6 @@ class stat_impl : public jubatus::server::common::mprpc::rpc_server {
     rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
         std::string)>("get_status", pfi::lang::bind(&stat_impl::get_status,
          this));
-  }
-
-  std::string get_config() {
-    JRLOCK_(p_);
-    return get_p()->get_config();
   }
 
   bool push(const std::string& key, double value) {
@@ -91,6 +88,11 @@ class stat_impl : public jubatus::server::common::mprpc::rpc_server {
     return get_p()->clear();
   }
 
+  std::string get_config() {
+    JRLOCK_(p_);
+    return get_p()->get_config();
+  }
+
   bool save(const std::string& id) {
     JWLOCK_(p_);
     return get_p()->save(id);
@@ -105,6 +107,7 @@ class stat_impl : public jubatus::server::common::mprpc::rpc_server {
     JRLOCK_(p_);
     return p_->get_status();
   }
+
   int run() { return p_->start(*this); }
   pfi::lang::shared_ptr<stat_serv> get_p() { return p_->server(); }
 

@@ -7,7 +7,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <utility>
 #include <jubatus/client/common/client.hpp>
 #include <jubatus/client/common/datum.hpp>
 #include "regression_types.hpp"
@@ -21,11 +20,6 @@ class regression : public jubatus::client::common::client {
   regression(const std::string& host, uint64_t port, const std::string& name,
        unsigned int timeout_sec)
       : client(host, port, name, timeout_sec) {
-  }
-
-  std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config", name_);
-    return f.get<std::string>();
   }
 
   int32_t train(const std::vector<scored_datum>& train_data) {
@@ -42,21 +36,6 @@ class regression : public jubatus::client::common::client {
   bool clear() {
     msgpack::rpc::future f = c_.call("clear", name_);
     return f.get<bool>();
-  }
-
-  bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", name_, id);
-    return f.get<bool>();
-  }
-
-  bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", name_, id);
-    return f.get<bool>();
-  }
-
-  std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status", name_);
-    return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
 };
 

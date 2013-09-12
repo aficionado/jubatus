@@ -50,9 +50,6 @@ message shortest_path_query {
 
 service graph {
 
-  #@random #@analysis #@pass
-  string get_config()
-
   #@random #@nolock #@pass
   string create_node() # //@cht
 
@@ -99,14 +96,6 @@ service graph {
   #@cht #@analysis #@pass
   edge get_edge(0: string node_id, 1: ulong edge_id) # //@cht
 
-  #@broadcast #@update #@all_and
-  bool save(0: string id)
-
-  #@broadcast #@update #@all_and
-  bool load(0: string id)
-
-  #@broadcast #@analysis #@merge
-  map<string, map<string, string> >  get_status()
 
   #@internal #@update #@pass
   bool create_node_here(0: string node_id)

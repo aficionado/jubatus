@@ -19,8 +19,7 @@ class recommender_impl : public jubatus::server::common::mprpc::rpc_server {
     rpc_server(a.timeout),
     p_(new jubatus::server::framework::server_helper<recommender_serv>(a,
          true)) {
-    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
-        &recommender_impl::get_config, this));
+
     rpc_server::add<bool(std::string, std::string)>("clear_row",
          pfi::lang::bind(&recommender_impl::clear_row, this, pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string,
@@ -56,6 +55,9 @@ class recommender_impl : public jubatus::server::common::mprpc::rpc_server {
     rpc_server::add<float(std::string, jubatus::core::fv_converter::datum)>(
         "calc_l2norm", pfi::lang::bind(&recommender_impl::calc_l2norm, this,
          pfi::lang::_2));
+
+    rpc_server::add<std::string(std::string)>("get_config", pfi::lang::bind(
+        &recommender_impl::get_config, this));
     rpc_server::add<bool(std::string, std::string)>("save", pfi::lang::bind(
         &recommender_impl::save, this, pfi::lang::_2));
     rpc_server::add<bool(std::string, std::string)>("load", pfi::lang::bind(
@@ -63,11 +65,6 @@ class recommender_impl : public jubatus::server::common::mprpc::rpc_server {
     rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
         std::string)>("get_status", pfi::lang::bind(
         &recommender_impl::get_status, this));
-  }
-
-  std::string get_config() {
-    JRLOCK_(p_);
-    return get_p()->get_config();
   }
 
   bool clear_row(const std::string& id) {
@@ -131,6 +128,11 @@ class recommender_impl : public jubatus::server::common::mprpc::rpc_server {
     return get_p()->calc_l2norm(row);
   }
 
+  std::string get_config() {
+    JRLOCK_(p_);
+    return get_p()->get_config();
+  }
+
   bool save(const std::string& id) {
     JWLOCK_(p_);
     return get_p()->save(id);
@@ -145,6 +147,7 @@ class recommender_impl : public jubatus::server::common::mprpc::rpc_server {
     JRLOCK_(p_);
     return p_->get_status();
   }
+
   int run() { return p_->start(*this); }
   pfi::lang::shared_ptr<recommender_serv> get_p() { return p_->server(); }
 

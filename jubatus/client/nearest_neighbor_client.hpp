@@ -7,7 +7,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <utility>
 #include <jubatus/client/common/client.hpp>
 #include <jubatus/client/common/datum.hpp>
 #include "nearest_neighbor_types.hpp"
@@ -62,26 +61,6 @@ class nearest_neighbor : public jubatus::client::common::client {
     msgpack::rpc::future f = c_.call("similar_row_from_data", name_, query,
          ret_num);
     return f.get<std::vector<scored_id> >();
-  }
-
-  bool save(const std::string& id) {
-    msgpack::rpc::future f = c_.call("save", name_, id);
-    return f.get<bool>();
-  }
-
-  bool load(const std::string& id) {
-    msgpack::rpc::future f = c_.call("load", name_, id);
-    return f.get<bool>();
-  }
-
-  std::map<std::string, std::map<std::string, std::string> > get_status() {
-    msgpack::rpc::future f = c_.call("get_status", name_);
-    return f.get<std::map<std::string, std::map<std::string, std::string> > >();
-  }
-
-  std::string get_config() {
-    msgpack::rpc::future f = c_.call("get_config", name_);
-    return f.get<std::string>();
   }
 };
 

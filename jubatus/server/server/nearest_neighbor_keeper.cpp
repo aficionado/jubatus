@@ -36,20 +36,6 @@ int run_keeper(int argc, char* argv[]) {
          std::string, int32_t>("similar_row_from_id");
     k.register_async_random<std::vector<std::pair<std::string, float> >,
          jubatus::core::fv_converter::datum, int32_t>("similar_row_from_data");
-    k.register_async_broadcast<bool, std::string>("save",
-         pfi::lang::function<bool(bool, bool)>(
-        &jubatus::server::framework::all_and));
-    k.register_async_broadcast<bool, std::string>("load",
-         pfi::lang::function<bool(bool, bool)>(
-        &jubatus::server::framework::all_and));
-    k.register_async_broadcast<std::map<std::string, std::map<std::string,
-         std::string> > >("get_status",
-         pfi::lang::function<std::map<std::string, std::map<std::string,
-         std::string> >(std::map<std::string, std::map<std::string,
-         std::string> >, std::map<std::string, std::map<std::string,
-         std::string> >)>(&jubatus::server::framework::merge<std::string,
-         std::map<std::string, std::string> >));
-    k.register_async_random<std::string>("get_config");
     return k.run();
   } catch (const jubatus::core::common::exception::jubatus_exception& e) {
     LOG(FATAL) << e.diagnostic_information(true);
