@@ -110,7 +110,7 @@ void anomaly_serv::get_status(status_t& status) const {
   status.insert(my_status.begin(), my_status.end());
 }
 
-bool anomaly_serv::set_config(const std::string& config) {
+void anomaly_serv::set_config(const std::string& config) {
   core::common::jsonconfig::config conf_root(lexical_cast<json>(config));
   anomaly_serv_config conf =
     core::common::jsonconfig::config_cast_check<anomaly_serv_config>(conf_root);
@@ -140,7 +140,6 @@ bool anomaly_serv::set_config(const std::string& config) {
   mixer_->set_mixable_holder(anomaly_->get_mixable_holder());
 
   LOG(INFO) << "config loaded: " << config;
-  return true;
 }
 
 string anomaly_serv::get_config() const {

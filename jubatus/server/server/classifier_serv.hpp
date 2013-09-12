@@ -46,7 +46,7 @@ class classifier_serv : public framework::server_base {
 
   void get_status(status_t& status) const;
 
-  bool set_config(const std::string& config);
+  void set_config(const std::string& config);
   std::string get_config() const;
   int train(const std::vector<labeled_datum>& data);
   std::vector<std::vector<estimate_result> > classify(

@@ -47,6 +47,7 @@ class server_base {
       get_mixable_holder() const = 0;
   virtual std::string get_config() const = 0;
   virtual void get_status(status_t& status) const = 0;
+  virtual void set_config(const std::string& config) = 0;
 
   virtual bool save(const std::string& id);
   virtual bool load(const std::string& id);

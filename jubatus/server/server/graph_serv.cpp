@@ -129,7 +129,7 @@ graph_serv::graph_serv(
 graph_serv::~graph_serv() {
 }
 
-bool graph_serv::set_config(const std::string& config) {
+void graph_serv::set_config(const std::string& config) {
   core::common::jsonconfig::config conf_root(
       pfi::lang::lexical_cast<pfi::text::json::json>(config));
   graph_serv_config conf =
@@ -154,7 +154,6 @@ bool graph_serv::set_config(const std::string& config) {
   mixer_->set_mixable_holder(graph_->get_mixable_holder());
 
   LOG(INFO) << "config loaded: " << config;
-  return true;
 }
 
 std::string graph_serv::get_config() const {

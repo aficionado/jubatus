@@ -49,7 +49,7 @@ class anomaly_serv : public framework::server_base {
 
   void get_status(status_t& status) const;
 
-  bool set_config(const std::string& config);
+  void set_config(const std::string& config);
   std::string get_config() const;
 
   bool clear_row(const std::string& id);

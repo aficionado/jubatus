@@ -59,7 +59,7 @@ void stat_serv::get_status(status_t& status) const {
   status.insert(make_pair("storage", stat_->get_model()->type()));
 }
 
-bool stat_serv::set_config(const string& config) {
+void stat_serv::set_config(const string& config) {
   core::common::jsonconfig::config conf_root(lexical_cast<json>(config));
   stat_serv_config conf =
       core::common::jsonconfig::config_cast_check<stat_serv_config>(conf_root);
@@ -70,7 +70,6 @@ bool stat_serv::set_config(const string& config) {
   mixer_->set_mixable_holder(stat_->get_mixable_holder());
 
   LOG(INFO) << "config loaded: " << config;
-  return true;
 }
 
 string stat_serv::get_config() const {

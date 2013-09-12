@@ -84,7 +84,7 @@ void regression_serv::get_status(status_t& status) const {
   status.insert(my_status.begin(), my_status.end());
 }
 
-bool regression_serv::set_config(const string& config) {
+void regression_serv::set_config(const string& config) {
   core::common::jsonconfig::config config_root(lexical_cast<json>(config));
   regression_serv_config conf =
     core::common::jsonconfig::config_cast_check<regression_serv_config>(
@@ -110,7 +110,6 @@ bool regression_serv::set_config(const string& config) {
   // TODO(kuenishi): switch the function when set_config is done
   // because mixing method differs btwn PA, CW, etc...
   LOG(INFO) << "config loaded: " << config;
-  return true;
 }
 
 string regression_serv::get_config() const {

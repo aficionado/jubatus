@@ -89,7 +89,7 @@ void classifier_serv::get_status(status_t& status) const {
   status.insert(my_status.begin(), my_status.end());
 }
 
-bool classifier_serv::set_config(const string& config) {
+void classifier_serv::set_config(const string& config) {
   core::common::jsonconfig::config config_root(lexical_cast<json>(config));
   classifier_serv_config conf =
     core::common::jsonconfig::config_cast_check<classifier_serv_config>(
@@ -115,7 +115,6 @@ bool classifier_serv::set_config(const string& config) {
   // TODO(kuenishi): switch the function when set_config is done
   // because mixing method differs btwn PA, CW, etc...
   LOG(INFO) << "config loaded: " << config;
-  return true;
 }
 
 string classifier_serv::get_config() const {
