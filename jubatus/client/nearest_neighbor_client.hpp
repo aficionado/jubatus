@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <jubatus/msgpack/rpc/client.h>
+#include <jubatus/client/common/client.hpp>
 #include <jubatus/client/common/datum.hpp>
 #include "nearest_neighbor_types.hpp"
 
@@ -16,12 +16,11 @@ namespace jubatus {
 namespace nearest_neighbor {
 namespace client {
 
-class nearest_neighbor {
+class nearest_neighbor : public jubatus::client::common::client {
  public:
   nearest_neighbor(const std::string& host, uint64_t port,
        const std::string& name, unsigned int timeout_sec)
-      : c_(host, port), name_(name) {
-    c_.set_timeout(timeout_sec);
+      : client(host, port, name, timeout_sec) {
   }
 
   bool init_table() {
@@ -84,14 +83,6 @@ class nearest_neighbor {
     msgpack::rpc::future f = c_.call("get_config", name_);
     return f.get<std::string>();
   }
-
-  msgpack::rpc::client& get_client() {
-    return c_;
-  }
-
- private:
-  msgpack::rpc::client c_;
-  std::string name_;
 };
 
 }  // namespace client

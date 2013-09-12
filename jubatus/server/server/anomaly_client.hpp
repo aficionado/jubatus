@@ -8,19 +8,18 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <jubatus/msgpack/rpc/client.h>
+#include <jubatus/client/common/client.hpp>
 #include "jubatus/core/fv_converter/datum.hpp"
 #include "anomaly_types.hpp"
 
 namespace jubatus {
 namespace client {
 
-class anomaly {
+class anomaly : public jubatus::client::common::client {
  public:
   anomaly(const std::string& host, uint64_t port, const std::string& name,
        unsigned int timeout_sec)
-      : c_(host, port), name_(name) {
-    c_.set_timeout(timeout_sec);
+      : client(host, port, name, timeout_sec) {
   }
 
   std::string get_config() {
@@ -79,14 +78,6 @@ class anomaly {
     msgpack::rpc::future f = c_.call("get_status", name_);
     return f.get<std::map<std::string, std::map<std::string, std::string> > >();
   }
-
-  msgpack::rpc::client& get_client() {
-    return c_;
-  }
-
- private:
-  msgpack::rpc::client c_;
-  std::string name_;
 };
 
 }  // namespace client

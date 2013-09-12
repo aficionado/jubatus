@@ -262,7 +262,7 @@ let gen_client names server s =
 
   List.concat [
     [
-      (0, "class " ^ s.service_name ^ " : jubatus::client::common::client {");
+      (0, "class " ^ s.service_name ^ " : public jubatus::client::common::client {");
       (0, " public:");
     ];
     indent_lines 1 content;
@@ -347,8 +347,7 @@ let gen_client_file conf names server source services =
       (0, "#include <map>");
       (0, "#include <string>");
       (0, "#include <vector>");
-      (0, "#include <utility>");
-      (0, "#include <jubatus/client/common/client.h>");
+      (0, "#include <jubatus/client/common/client.hpp>");
       (0, gen_datum_include conf server);
       (0, "#include \"" ^ base ^ "_types.hpp\"");
     ];
