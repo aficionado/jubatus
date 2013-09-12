@@ -48,7 +48,7 @@ class regression_serv : public framework::server_base {
   void get_status(status_t& status) const;
 
   bool set_config(const std::string& config);
-  std::string get_config();
+  std::string get_config() const;
   int train(const std::vector<scored_datum>& data);
   std::vector<float> estimate(
       const std::vector<core::fv_converter::datum>& data) const;
