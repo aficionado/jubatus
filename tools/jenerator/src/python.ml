@@ -78,7 +78,7 @@ let rec gen_type = function
   | Raw -> "TRaw()"
   | String -> "TString()"
   | Datum -> "TDatum()"
-  | Struct s  -> gen_call "TUserDef" [s]
+  | Struct s  -> gen_call "TUserDef" [snake_to_upper s]
   | List t -> gen_call "TList" [gen_type t]
   | Map(key, value) -> gen_call "TMap" [gen_type key; gen_type value]
   | Nullable(t) -> gen_call "TNulallable" [gen_type t]
@@ -126,7 +126,7 @@ let gen_client s =
   let content = concat_blocks (constructor :: methods) in
     List.concat [
       [
-        (0, "class " ^ s.service_name ^ ":");
+        (0, "class " ^ snake_to_upper s.service_name ^ ":");
       ];
     indent_lines 1 content
     ]
@@ -178,7 +178,7 @@ let gen_from_msgpack field_names field_types s =
     (0, "@classmethod");
     (0, "def from_msgpack(cls, arg):");
     (1,   "val = cls.TYPE.from_msgpack(arg)");
-    (1,   "return " ^ gen_call s ["*val"]);
+    (1,   "return " ^ gen_call (snake_to_upper s) ["*val"]);
   ]
 ;;
 
@@ -187,7 +187,7 @@ let gen_message m =
   let field_types = List.map (fun f -> f.field_type) m.message_fields in
   List.concat [
     [
-      (0, "class " ^ m.message_name ^ ":");
+      (0, "class " ^ snake_to_upper m.message_name ^ ":");
       (1,   gen_message_type field_types);
       (0,   "");
       (1,   gen_def "__init__" field_names);
@@ -210,16 +210,6 @@ let gen_from_msgpack_for_typedef typ =
     (1,   "return " ^ gen_call t ["arg"]);
   ]
 ;;
-
-let gen_typedef' name typ = 
-  List.concat [
-    [
-      (0, "class " ^ name ^ ":");
-    ];
-    indent_lines 1 (gen_from_msgpack_for_typedef typ);
-  ]
-;;
-
 
 let gen_typedef = function
   | Message m ->
