@@ -27,23 +27,9 @@ let make_header conf source filename content =
   make_source conf source filename content comment_out_head
 ;;
 
-(* rename : e.g., "rename_without_underbar" -> "RenameWithoutUnderbar" *) 
-let rename_without_underbar st = 
-  let rec loop str b =
-    match str with
-    | "" -> ""
-    | _ -> 
-      let s = String.get str 0 in
-      let str' = String.sub str 1 ((String.length str) - 1) in
-      if s = '_' then (loop str' true)
-      else if b then (String.capitalize (Char.escaped s)) ^ (loop str' false)
-      else (Char.escaped s) ^ (loop str' false) in
-  loop st true
-;;
-
 let gen_public_class name content =
   List.concat [
-    [ (0, "public class " ^ (rename_without_underbar name) ^ " implements UserDefinedMessage {") ];
+    [ (0, "public class " ^ (snake_to_upper name) ^ " implements UserDefinedMessage {") ];
     indent_lines 1 content;
     [ (0, "};") ]
   ]
@@ -115,7 +101,7 @@ let rec gen_type = function
   | String -> "String"
   | Datum -> "Datum"
   | Struct s  ->
-    rename_without_underbar s
+    snake_to_upper s
   | List t ->
     gen_template "List" [gen_object_type t]
   | Map(key, value) -> 
@@ -139,7 +125,7 @@ let rec gen_type_class = function
   | String -> Some "TString.instance"
   | Datum -> Some "TDatum.instance"
   | Struct s ->
-    let t = rename_without_underbar s in
+    let t = snake_to_upper s in
     Some (gen_call ("new " ^ gen_template "TUserDef" [t]) [])
   | List t ->
     let tlist = gen_template "TList" [gen_object_type t] in
@@ -197,8 +183,12 @@ let gen_ret_type = function
   | Some typ -> gen_type typ
 ;;
 
+let gen_var_name f =
+  snake_to_lower f.field_name
+;;
+
 let gen_arg_def f =
-  gen_type f.field_type ^ " " ^ f.field_name
+  gen_type f.field_type ^ " " ^ gen_var_name f
 ;;
 
 let gen_string_literal s =
@@ -217,19 +207,19 @@ let gen_public ret_typ name args opt content =
 ;;
 
 let gen_client_method m =
-  let name = m.method_name in
+  let name = snake_to_lower m.method_name in
   let args = m.method_arguments in
   let checks = ExtList.List.filter_map (fun f ->
     match gen_type_class f.field_type with
     | None -> None
-    | Some t -> Some (1, gen_call (t ^ ".check") [f.field_name] ^ ";")) args in
-  let vars = "this.name":: (List.map (fun f -> f.field_name) m.method_arguments) in
+    | Some t -> Some (1, gen_call (t ^ ".check") [gen_var_name f] ^ ";")) args in
+  let vars = "this.name":: (List.map gen_var_name m.method_arguments) in
   let call = [
     match m.method_return_type with
     | None ->
-      (1, gen_call ("iface."^ name) vars ^ ";");
+      (1, gen_call ("iface."^ m.method_name) vars ^ ";");
     | Some ret ->
-      (1, "return " ^ gen_call ("iface."^ name)  vars ^ ";");
+      (1, "return " ^ gen_call ("iface."^ m.method_name)  vars ^ ";");
   ] in
   gen_public m.method_return_type name args ""  (checks @ call)
 ;;
@@ -243,10 +233,10 @@ let gen_interface m =
 
 let gen_client s name =
   let constructor = [
-    (0, "public " ^ name ^ "Client(String host, int port, String name, int timeout_sec) throws UnknownHostException {");
+    (0, "public " ^ name ^ "Client(String host, int port, String name, int timeoutSec) throws UnknownHostException {");
     (1,   "EventLoop loop = EventLoop.defaultEventLoop();"); 
     (1,   "this.client = new Client(host, port, loop);");
-    (1,   "this.client.setRequestTimeout(timeout_sec);");
+    (1,   "this.client.setRequestTimeout(timeoutSec);");
     (1,   "this.iface = this.client.proxy(RPCInterface.class);");
     (1,   "this.name = name;");
     (0, "}");
@@ -262,13 +252,13 @@ let gen_client s name =
   let content = concat_blocks methods in
   concat_blocks [
     [
-      (0, "public class " ^ (rename_without_underbar s.service_name) ^ "Client {");
+      (0, "public class " ^ (snake_to_upper s.service_name) ^ "Client {");
     ];
     indent_lines 1 constructor;
     indent_lines 1 interfaces;
     indent_lines 1 content;
     [
-      (1,   "public Client get_client() {");
+      (1,   "public Client getClient() {");
       (2,     "return client;");
       (1,   "}");
       (0, "");
@@ -287,7 +277,7 @@ let gen_message_field f =
 let gen_to_string m =
   let add_fields = List.map (fun f ->
     let key = gen_string_literal f.field_name in
-    gen_call "gen.add" [key; f.field_name] ^ ";"
+    gen_call "gen.add" [key; gen_var_name f] ^ ";"
   ) m.message_fields in
   let call_open = gen_call "gen.open" [gen_string_literal m.message_name] ^ ";" in
   List.concat [
@@ -307,7 +297,7 @@ let gen_message_check m =
     match gen_type_class f.field_type with
     | None -> None
     | Some t ->
-      Some (1, gen_call (t ^ ".check") [f.field_name] ^ ";")
+      Some (1, gen_call (t ^ ".check") [gen_var_name f] ^ ";")
   ) m.message_fields in
 
   List.concat [
@@ -318,10 +308,11 @@ let gen_message_check m =
 ;;
 
 let gen_message_constructor m =
-  let s = rename_without_underbar m.message_name in
+  let s = snake_to_upper m.message_name in
   let args = m.message_fields in
   let content = List.map (fun f ->
-    (1, "this." ^ f.field_name ^ " = " ^ f.field_name ^ ";")
+    let var = gen_var_name f in
+    (1, "this." ^ var ^ " = " ^ var ^ ";")
   ) args in
 
   let args = List.map gen_arg_def args in
@@ -334,7 +325,7 @@ let gen_message_constructor m =
 
 let gen_message m conf source =
   let field_types = List.map (fun f -> f.field_type) m.message_fields in
-  let class_name = rename_without_underbar m.message_name in
+  let class_name = snake_to_upper m.message_name in
   let filename = class_name ^ ".java" in
   let path = make_path conf filename in
   let header =
@@ -389,9 +380,9 @@ let collect_types_of_service s =
 
 let gen_client_file conf source services =
   let base = File_util.take_base source in
-  let filename = (rename_without_underbar base) ^ "Client.java" in
+  let filename = (snake_to_upper base) ^ "Client.java" in
   let path = make_path conf filename in
-  let clients = List.map (fun x -> gen_client x (rename_without_underbar base)) services  in
+  let clients = List.map (fun x -> gen_client x (snake_to_upper base)) services  in
   let types = List.concat (List.map collect_types_of_service services) in
   let content = concat_blocks [
     gen_package conf;

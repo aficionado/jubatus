@@ -6,18 +6,6 @@ let assert_equal = OUnit.assert_equal ~printer: Std.dump;;
 
 let _ = run_test_tt_main begin "java.ml" >::: [
 
-  "test_rename_without_underbar" >:: begin fun() ->
-    assert_equal
-      "HogeFugaFoo"
-      (rename_without_underbar "hoge_fuga_foo");
-    assert_equal
-      "A"
-      (rename_without_underbar "a__");
-    assert_equal
-      "A"
-      (rename_without_underbar "_a")
-  end;
-
   "test_include_list" >:: begin fun() ->
     assert_equal
       true
