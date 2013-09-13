@@ -59,7 +59,7 @@ let rec gen_type = function
   | Raw -> "TRaw.new"
   | String -> "TString.new"
   | Datum -> "TDatum.new"
-  | Struct s  -> gen_call "TUserDef.new" [String.capitalize s]
+  | Struct s  -> gen_call "TUserDef.new" [snake_to_upper s]
   | List t -> gen_call "TList.new" [gen_type t]
   | Map(key, value) -> gen_call "TMap.new" [gen_type key; gen_type value]
   | Nullable(t) -> gen_call "TNullable.new" [gen_type t]
@@ -111,7 +111,7 @@ let gen_client s =
   let content = concat_blocks (constructor :: methods) in
   List.concat [
     [
-      (0, "class " ^ (String.capitalize s.service_name));
+      (0, "class " ^ (snake_to_upper s.service_name));
       (1,   "include Jubatus::Common");
     ];
     indent_lines 1 content;
@@ -148,7 +148,7 @@ let gen_message_type field_types =
 ;;
 
 let gen_from_msgpack field_names field_types s =
-  let s = String.capitalize s in
+  let s = snake_to_upper s in
   [
     (0, "def " ^ s ^ ".from_msgpack(m)");
     (1,  "val = TYPE.from_msgpack(m)");
@@ -188,7 +188,7 @@ let gen_message m =
   let field_types = List.map (fun f -> f.field_type) m.message_fields in
   concat_blocks [
     [
-      (0, "class " ^ (String.capitalize m.message_name));
+      (0, "class " ^ (snake_to_upper m.message_name));
       (1,   "include Jubatus::Common");
       (1,   gen_message_type field_types);
     ];
@@ -217,7 +217,7 @@ let gen_client_file conf source services =
   let base = File_util.take_base source in
   let filename = Filename.concat base "client.rb" in
   let clients = List.map (fun s ->
-    let module_name = String.capitalize s.service_name in
+    let module_name = snake_to_upper s.service_name in
     concat_blocks [
       [
         (0, "module " ^ module_name);
@@ -263,11 +263,11 @@ let gen_type_file conf source idl =
     includes;
     [
       (0, "module Jubatus");
-      (0, "module " ^ String.capitalize base);
+      (0, "module " ^ snake_to_upper base);
     ];
     concat_blocks types;
     [
-      (0, "end  # " ^ String.capitalize base);
+      (0, "end  # " ^ snake_to_upper base);
       (0, "end  # Jubatus");
     ]
   ] in
