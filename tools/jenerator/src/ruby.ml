@@ -99,19 +99,15 @@ let gen_client_method m =
 let gen_client s =
   let constructor = [
     (0, "def initialize(host, port, name)");
-    (1,   "@cli = MessagePack::RPC::Client.new(host, port)");
-    (1,   "@jubatus_client = Jubatus::Common::Client.new(@cli, name)");
+    (1,   "super");
     (0, "end");
     (0, "");
-    (0, "def get_client");
-    (1,   "@cli");
-    (0, "end")
   ] in
   let methods = List.map gen_client_method s.service_methods in
   let content = concat_blocks (constructor :: methods) in
   List.concat [
     [
-      (0, "class " ^ (snake_to_upper s.service_name));
+      (0, "class " ^ (snake_to_upper s.service_name) ^ " < Jubatus::Common::ClientBase");
       (1,   "include Jubatus::Common");
     ];
     indent_lines 1 content;
