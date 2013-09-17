@@ -98,7 +98,7 @@ let gen_client_method m =
 
 let gen_client s =
   let constructor = [
-    (0, "def initialize(host, port, name)");
+    (0, "def initialize(host, port, name, timeout_sec=10)");
     (1,   "super");
     (0, "end");
     (0, "");
