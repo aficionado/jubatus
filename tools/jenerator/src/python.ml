@@ -116,17 +116,13 @@ let gen_client s =
   let methods = List.map gen_client_method s.service_methods in
   let constructor = [
     (0, "def __init__ (self, host, port, name, timeout=10):");
-    (1,   "address = msgpackrpc.Address(host, port)");
-    (1,   "self.client = msgpackrpc.Client(address, timeout=timeout)");
-    (1,   "self.jubatus_client = jubatus.common.Client(self.client, name)");
+    (1,   "jubatus.common.ClientBase.__init__(self, host, port, name, timeout)");
     (0, "");
-    (0, "def get_client (self):");
-    (1,   "return self.client")
   ] in
   let content = concat_blocks (constructor :: methods) in
     List.concat [
       [
-        (0, "class " ^ snake_to_upper s.service_name ^ ":");
+        (0, "class " ^ snake_to_upper s.service_name ^ "(jubatus.common.ClientBase):");
       ];
     indent_lines 1 content
     ]
