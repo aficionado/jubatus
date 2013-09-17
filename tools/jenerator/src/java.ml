@@ -234,38 +234,28 @@ let gen_interface m =
 let gen_client s name =
   let constructor = [
     (0, "public " ^ name ^ "Client(String host, int port, String name, int timeoutSec) throws UnknownHostException {");
-    (1,   "EventLoop loop = EventLoop.defaultEventLoop();"); 
-    (1,   "this.client = new Client(host, port, loop);");
-    (1,   "this.client.setRequestTimeout(timeoutSec);");
-    (1,   "this.iface = this.client.proxy(RPCInterface.class);");
-    (1,   "this.name = name;");
+    (1,   "super(RPCInterface.class, host, port, name, timeoutSec);");
     (0, "}");
     (0, "")
   ] in
   let interfaces = 
     List.concat [
-      [ (0, "public static interface RPCInterface {") ];
+      [ (0, "public static interface RPCInterface extends ClientBase.RPCInterfaceBase {") ];
       List.map (fun i -> (1, gen_interface i)) s.service_methods;
       [ (0, "}"); ]
     ] in
   let methods = List.map gen_client_method s.service_methods in
   let content = concat_blocks methods in
+  let name = snake_to_upper s.service_name ^ "Client" in
   concat_blocks [
     [
-      (0, "public class " ^ (snake_to_upper s.service_name) ^ "Client {");
+      (0, "public class " ^ name ^ " extends ClientBase<" ^ name ^ ".RPCInterface> {");
     ];
     indent_lines 1 constructor;
     indent_lines 1 interfaces;
     indent_lines 1 content;
     [
-      (1,   "public Client getClient() {");
-      (2,     "return client;");
-      (1,   "}");
-      (0, "");
-      (1,   "private Client client;");
-      (1,   "private RPCInterface iface;");
-      (1,   "private String name;");
-      (0, "};")
+      (0, "}")
     ]
   ]
 ;;
@@ -389,8 +379,7 @@ let gen_client_file conf source services =
     gen_import_for_client types;
     [
       (0, "import java.net.UnknownHostException;");
-      (0, "import org.msgpack.rpc.Client;");
-      (0, "import org.msgpack.rpc.loop.EventLoop;");
+      (0, "import us.jubat.common.ClientBase;");
       (0, "import us.jubat.common.type.*;");
     ];
     (concat_blocks clients)
