@@ -35,10 +35,15 @@ struct datum {
     string_values.push_back(std::make_pair(key, value));
   }
 
-  MSGPACK_DEFINE(string_values, num_values);
+  void add_binary(const std::string& key, const std::string& value) {
+    binary_values.push_back(std::make_pair(key, value));
+  }
+
+  MSGPACK_DEFINE(string_values, num_values, binary_values);
 
   std::vector<std::pair<std::string, std::string> > string_values;
   std::vector<std::pair<std::string, double> > num_values;
+  std::vector<std::pair<std::string, std::string> > binary_values;
 };
 
 }  // namespace common
