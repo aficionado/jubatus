@@ -214,12 +214,19 @@ let gen_client_method m =
     | None -> None
     | Some t -> Some (1, gen_call (t ^ ".check") [gen_var_name f] ^ ";")) args in
   let vars = "this.name":: (List.map gen_var_name m.method_arguments) in
-  let call = [
+  let call = 
     match m.method_return_type with
     | None ->
-      (1, gen_call ("iface."^ m.method_name) vars ^ ";");
+      gen_call ("iface."^ m.method_name) vars ^ ";"
     | Some ret ->
-      (1, "return " ^ gen_call ("iface."^ m.method_name)  vars ^ ";");
+      "return " ^ gen_call ("iface."^ m.method_name)  vars ^ ";"
+  in
+  let call = [
+    (1, "try {");
+    (2,   call);
+    (1, "} catch (RemoteError remoteError) {");
+    (2,   "throw super.translateError(remoteError);");
+    (1, "}")
   ] in
   gen_public m.method_return_type name args ""  (checks @ call)
 ;;
@@ -379,6 +386,7 @@ let gen_client_file conf source services =
     gen_import_for_client types;
     [
       (0, "import java.net.UnknownHostException;");
+      (0, "import org.msgpack.rpc.error.RemoteError;");
       (0, "import us.jubat.common.ClientBase;");
       (0, "import us.jubat.common.type.*;");
     ];
