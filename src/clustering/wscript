@@ -1,0 +1,43 @@
+import os;
+import re;
+
+def options(opt): pass
+def configure(conf): 
+    pass
+def build(bld):
+  bld.shlib(
+    source = [
+        'clustering.cpp',
+        'storage/storage.cpp',
+        'storage/compressive_storage.cpp',
+        'storage/simple_storage.cpp',
+        'storage/storage_factory.cpp',
+        'storage/compressor/kmeans_compressor.cpp',
+        'storage/compressor/gmm_compressor.cpp',
+        'clustering_method/kmeans_clustering_method.cpp',
+        'clustering_method/gmm_clustering_method.cpp',
+        'clustering_method/gmm/gmm.cpp',
+        'clustering_method/gmm/eigen_feature_mapper.cpp',
+        'clustering_method/clustering_method_factory.cpp',
+        'util/discrete_distribution.cpp',
+        'util/util.cpp'
+    ],
+    target = 'jubatus_clustering',
+    includes = '.',
+    use = 'EIGEN3 LIBGLOG PFICOMMON MSGPACK'
+    )
+  test_cases = os.listdir("src/clustering/test");
+  for t in test_cases:
+    ret = re.compile("^(\w+)_test.cpp$").match(t);
+    if ret is not None:
+      tname = ret.groups()[0];
+      target = "clustering_" + tname + "_test";
+      bld.program(
+        features="gtest",
+        source= [
+          "test/" + t,
+        ],
+        target=target,
+        includes=".",
+        use="PFICOMMON jubatus_clustering",
+      );

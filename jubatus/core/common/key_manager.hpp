@@ -21,6 +21,10 @@
 #include <string>
 #include <vector>
 #include <msgpack.hpp>
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <iostream>
 #include <pficommon/data/unordered_map.h>
 #include <pficommon/data/serialization.h>
 #include <pficommon/data/serialization/unordered_map.h>

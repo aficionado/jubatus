@@ -1,0 +1,21 @@
+# -*- python -*-
+import Options
+
+subdirs = '''
+anomaly common plugin stat clustering cluster_analysis
+classifier fv_converter recommender regression storage
+framework driver server
+cmd jubavisor
+graph third_party
+'''
+
+def options(opt):
+  opt.recurse(subdirs)
+
+def configure(conf):
+  conf.recurse(subdirs)
+
+def build(bld):
+  bld.recurse(subdirs)
+  bld.install_files('${PREFIX}/include/jubatus',
+                    ['config.hpp', 'client.hpp', 'plugin.hpp', 'framework.hpp'])
