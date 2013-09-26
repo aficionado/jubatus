@@ -113,16 +113,17 @@ let gen_client_method m =
 ;;
 
 let gen_client s =
+  let class_name = snake_to_upper s.service_name in
   let methods = List.map gen_client_method s.service_methods in
   let constructor = [
-    (0, "def __init__ (self, host, port, name, timeout=10):");
-    (1,   "jubatus.common.ClientBase.__init__(self, host, port, name, timeout)");
+    (0, "def __init__(self, host, port, name, timeout=10):");
+    (1,   "super(" ^ class_name ^ ", self).__init__(host, port, name, timeout)");
     (0, "");
   ] in
   let content = concat_blocks (constructor :: methods) in
     List.concat [
       [
-        (0, "class " ^ snake_to_upper s.service_name ^ "(jubatus.common.ClientBase):");
+        (0, "class " ^ class_name ^ "(jubatus.common.ClientBase):");
       ];
     indent_lines 1 content
     ]
@@ -139,7 +140,7 @@ let gen_self_without_comma field_names =
 let gen_to_msgpack field_names field_types =
   let vars = List.map (fun v -> "self." ^ v) field_names in
   [
-    (0, "def to_msgpack (self):");
+    (0, "def to_msgpack(self):");
     (1,   "t = " ^ gen_call "" vars);
     (1,   "return " ^ gen_call "self.__class__.TYPE.to_msgpack" ["t"]);
   ]
