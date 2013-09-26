@@ -157,7 +157,7 @@ let gen_attr field_names =
   let fs = List.map ((^) ":") field_names in
   match fs with
     | [] -> []
-    | lst -> [ (0, "attr_accessor " ^ String.concat ", " lst)]
+    | lst -> [ (0, "attr_reader " ^ String.concat ", " lst)]
 ;;
 
 let gen_str name field_names =
