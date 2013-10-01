@@ -714,7 +714,7 @@ let gen_server_template_header names s =
       (0,   "");
       (1,   "virtual jubatus::server::framework::mixer::mixer* get_mixer() const;");
       (1,   "pfi::lang::shared_ptr<jubatus::core::framework::mixable_holder> get_mixable_holder() const;");
-      (1,   "void get_config() const;");
+      (1,   "std::string get_config() const;");
       (1,   "void get_status(status_t& status) const;");
       (1,   "void set_config(const std::string& config);");
       (0,   "");
