@@ -70,12 +70,14 @@ bool cluster_analysis_serv::add_snapshot(const std::string& clustering_name) {
   return true;
 }
 
-std::vector<change_graph> cluster_analysis_serv::get_history() const {
+std::vector<core::cluster_analysis::change_graph>
+cluster_analysis_serv::get_history() const {
   check_set_config();
   return analyzer_->get_history();
 }
 
-std::vector<clustering_snapshot> cluster_analysis_serv::get_snapshots() const {
+std::vector<core::cluster_analysis::clustering_snapshot>
+cluster_analysis_serv::get_snapshots() const {
   check_set_config();
   return analyzer_->get_snapshots();
 }

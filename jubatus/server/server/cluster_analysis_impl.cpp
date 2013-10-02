@@ -33,12 +33,13 @@ class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
     return get_p()->add_snapshot(clustering_name);
   }
 
-  std::vector<change_graph> get_history(const std::string& name) {
+  std::vector<jubatus::core::cluster_analysis::change_graph> get_history(
+      const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_history();
   }
 
-  std::vector<clustering_snapshot> get_snapshots(const std::string& name) {
+  std::vector<jubatus::core::cluster_analysis::clustering_snapshot> get_snapshots(const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_snapshots();
   }

@@ -49,8 +49,8 @@ class cluster_analysis_serv : public framework::server_base {
   std::string get_config() const;
 
   bool add_snapshot(const std::string& clustering_name);
-  std::vector<change_graph> get_history() const;
-  std::vector<clustering_snapshot> get_snapshots() const;
+  std::vector<core::cluster_analysis::change_graph> get_history() const;
+  std::vector<core::cluster_analysis::clustering_snapshot> get_snapshots() const;
 
   void check_set_config() const;
 

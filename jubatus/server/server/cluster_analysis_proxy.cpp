@@ -23,8 +23,8 @@ int run_proxy(int argc, char* argv[]) {
     k.register_async_broadcast<bool, std::string>("add_snapshot",
          pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::all_and));
-    k.register_async_random<std::vector<change_graph> >("get_history");
-    k.register_async_random<std::vector<clustering_snapshot> >("get_snapshots");
+    k.register_async_random<std::vector<jubatus::core::cluster_analysis::change_graph> >("get_history");
+    k.register_async_random<std::vector<jubatus::core::cluster_analysis::clustering_snapshot> >("get_snapshots");
     return k.run();
   } catch (const jubatus::core::common::exception::jubatus_exception& e) {
     LOG(FATAL) << e.diagnostic_information(true);

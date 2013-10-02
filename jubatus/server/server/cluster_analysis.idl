@@ -15,25 +15,26 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 %include "../../core/fv_converter/datum.hpp"
+%include "../../core/cluster_analysis/cluster_analysis_types.hpp"
 
 message datum(jubatus::core::fv_converter::datum) {
   0: list<tuple<string, string> >  string_values
   1: list<tuple<string, double> >  num_values
 }
 
-message cluster_relation {
+message cluster_relation(jubatus::core::cluster_analysis::cluster_relation) {
   0: int cluster1
   1: int cluster2
   2: double similarity
 }
 
-message change_graph {
+message change_graph(jubatus::core::cluster_analysis::change_graph) {
   0: string snapshot_name1
   1: string snapshot_name2
   2: list<cluster_relation> related_pairs
 }
 
-message clustering_snapshot {
+message clustering_snapshot(jubatus::core::cluster_analysis::clustering_snapshot) {
   0: string name
   1: list<list<tuple<double, datum> > > clusters
 }

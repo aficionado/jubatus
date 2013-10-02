@@ -32,11 +32,13 @@ void cluster_analysis::add_snapshot(const std::string& clustering_name) {
   analyzer_->add_snapshot(clustering_name);
 }
 
-std::vector<change_graph> cluster_analysis::get_history() const {
+std::vector<core::cluster_analysis::change_graph>
+cluster_analysis::get_history() const {
   return analyzer_->get_history();
 }
 
-std::vector<clustering_snapshot> cluster_analysis::get_snapshots() const {
+std::vector<core::cluster_analysis::clustering_snapshot>
+cluster_analysis::get_snapshots() const {
   return analyzer_->get_snapshots();
 }
 

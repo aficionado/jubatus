@@ -14,36 +14,48 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef JUBATUS_CORE_DRIVER_CLUSTER_ANALYSIS_HPP_
-#define JUBATUS_CORE_DRIVER_CLUSTER_ANALYSIS_HPP_
 
+#ifndef JUBATUS_CORE_CLUSTER_ANALYSIS_CLUSTER_ANALYSIS_TYPES_HPP_
+#define JUBATUS_CORE_CLUSTER_ANALYSIS_CLUSTER_ANALYSIS_TYPES_HPP_
+
+#include <stdint.h>
+
+#include <map>
 #include <string>
 #include <vector>
-#include <pficommon/lang/shared_ptr.h>
-#include "../cluster_analysis/cluster_analysis.hpp"
+#include <utility>
+
+#include <msgpack.hpp>
+
+#include "../fv_converter/datum.hpp"
 
 namespace jubatus {
 namespace core {
-namespace driver {
+namespace cluster_analysis {
 
-class cluster_analysis {
- public:
-  explicit cluster_analysis(
-      pfi::lang::shared_ptr<core::cluster_analysis::cluster_analysis>
-      analyzer);
-
-  void add_snapshot(const std::string& clustering_name);
-  std::vector<core::cluster_analysis::change_graph> get_history() const;
-
-  std::vector<core::cluster_analysis::clustering_snapshot>
-  get_snapshots() const;
-
- private:
-  pfi::lang::shared_ptr<core::cluster_analysis::cluster_analysis> analyzer_;
+struct cluster_relation {
+  MSGPACK_DEFINE(cluster1, cluster2, similarity);
+  int32_t cluster1;
+  int32_t cluster2;
+  double similarity;
 };
 
-}  // namespace driver
+struct change_graph {
+  MSGPACK_DEFINE(snapshot_name1, snapshot_name2, related_pairs);
+  std::string snapshot_name1;
+  std::string snapshot_name2;
+  std::vector<cluster_relation> related_pairs;
+};
+
+struct clustering_snapshot {
+  MSGPACK_DEFINE(name, clusters);
+  std::string name;
+  std::vector<std::vector<std::pair<double,
+       jubatus::core::fv_converter::datum> > > clusters;
+};
+
+}  // namespace cluster_analysis
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CORE_DRIVER_CLUSTER_ANALYSIS_HPP_
+#endif  // JUBATUS_CORE_CLUSTER_ANALYSIS_CLUSTER_ANALYSIS_TYPES_HPP_
