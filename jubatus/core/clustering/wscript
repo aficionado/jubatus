@@ -26,7 +26,7 @@ def build(bld):
     includes = '.',
     use = 'EIGEN3 PFICOMMON MSGPACK'
     )
-  test_cases = os.listdir("src/clustering/test");
+  test_cases = os.listdir("jubatus/core/clustering/test");
   for t in test_cases:
     ret = re.compile("^(\w+)_test.cpp$").match(t);
     if ret is not None:

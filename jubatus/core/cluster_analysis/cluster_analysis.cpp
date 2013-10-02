@@ -21,6 +21,8 @@
 #include <utility>
 #include <vector>
 
+#include "../fv_converter/datum.hpp"
+
 using std::string;
 
 namespace jubatus {
@@ -40,12 +42,12 @@ void move_push_back(Container& c, T& t) {
   std::swap(c.back(), t);
 }
 
-bool is_same_datum(const datum& lhs, const datum& rhs) {
-  return lhs.string_values == rhs.string_values &&
-      lhs.num_values == rhs.num_values;
+bool is_same_datum(const fv_converter::datum& lhs, const fv_converter::datum& rhs) {
+  return lhs.string_values_ == rhs.string_values_ &&
+      lhs.num_values_ == rhs.num_values_;
 }
 
-double accumulate_weight(const std::vector<std::pair<double, datum> >& set) {
+double accumulate_weight(const std::vector<std::pair<double, fv_converter::datum> >& set) {
   double sum = 0;
   for (size_t i = 0; i < set.size(); ++i) {
     sum += set[i].first;
@@ -54,8 +56,8 @@ double accumulate_weight(const std::vector<std::pair<double, datum> >& set) {
 }
 
 double compute_jaccard_coefficient(
-    const std::vector<std::pair<double, datum> >& set1,
-    const std::vector<std::pair<double, datum> >& set2) {
+    const std::vector<std::pair<double, fv_converter::datum> >& set1,
+    const std::vector<std::pair<double, fv_converter::datum> >& set2) {
   if (set1.empty() || set2.empty()) {
     return 0;
   }
@@ -98,14 +100,14 @@ change_graph build_change_graph(
   return graph;
 }
 
-void convert(clustering::datum& src, datum& dst) {
-  src.string_values.swap(dst.string_values);
-  src.num_values.swap(dst.num_values);
+void convert(clustering::datum& src, fv_converter::datum& dst) {
+  src.string_values.swap(dst.string_values_);
+  src.num_values.swap(dst.num_values_);
 }
 
 void convert(
     std::vector<std::vector<std::pair<double, clustering::datum> > >& src,
-    std::vector<std::vector<std::pair<double, datum> > >& dst) {
+    std::vector<std::vector<std::pair<double, fv_converter::datum> > >& dst) {
   dst.resize(src.size());
   for (size_t i = 0; i < src.size(); ++i) {
     dst[i].resize(src[i].size());

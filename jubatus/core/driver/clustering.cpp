@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 #include <pficommon/lang/bind.h>
+
 #include "../common/vector_util.hpp"
 #include "../fv_converter/revert.hpp"
 
@@ -91,14 +92,14 @@ size_t clustering::get_revision() const {
 common::sfv_t clustering::to_sfv(const fv_converter::datum& dat) {
   common::sfv_t ret;
   converter_->convert_and_update_weight(dat, ret);
-  sort_and_merge(ret);
+  common::sort_and_merge(ret);
   return ret;
 }
 
 common::sfv_t clustering::to_sfv_const(const fv_converter::datum& dat) const {
   common::sfv_t ret;
   converter_->convert(dat, ret);
-  sort_and_merge(ret);
+  common::sort_and_merge(ret);
   return ret;
 }
 
@@ -108,8 +109,8 @@ fv_converter::datum clustering::to_datum(const common::sfv_t& src) const {
   return ret;
 }
 
-weighted_point core::clustering::to_weighted_point(const fv_converter::datum& src) {
-  weighted_point ret;
+core::clustering::weighted_point clustering::to_weighted_point(const fv_converter::datum& src) {
+  core::clustering::weighted_point ret;
   ret.data = to_sfv(src);
   ret.weight = 1;
   ret.free_long = 1;
@@ -119,12 +120,12 @@ weighted_point core::clustering::to_weighted_point(const fv_converter::datum& sr
 }
 
 std::pair<double, fv_converter::datum> clustering::to_weighted_datum(
-    const core::clustering::weighted_point& src) const {
+  const core::clustering::weighted_point& src) const {
   return std::make_pair(src.weight, src.original);
 }
 
 std::vector<fv_converter::datum> clustering::to_datum_vector(
-    const std::vector<common::sfv_t>& src) const {
+  const std::vector<common::sfv_t>& src) const {
   std::vector<fv_converter::datum> ret;
   ret.reserve(src.size());
   std::transform(src.begin(), src.end(), std::back_inserter(ret),

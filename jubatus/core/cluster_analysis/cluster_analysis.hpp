@@ -23,7 +23,7 @@
 #include <vector>
 #include <pficommon/data/unordered_map.h>
 #include "../../../client/clustering_client.hpp"
-#include "../../server/cluster_analysis_types.hpp"
+#include "../../server/server/cluster_analysis_types.hpp"
 #include "cluster_analysis_config.hpp"
 
 namespace jubatus {
