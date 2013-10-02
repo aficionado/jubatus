@@ -1,4 +1,4 @@
-idls = ['classifier.idl', 'regression.idl', 'recommender.idl', 'stat.idl', 'graph.idl', 'anomaly.idl', 'cluster.idl', 'cluster_analysis.idl']
+idls = ['classifier.idl', 'regression.idl', 'recommender.idl', 'stat.idl', 'graph.idl', 'anomaly.idl', 'clustering.idl', 'cluster_analysis.idl']
 
 def options(opt):
   pass
