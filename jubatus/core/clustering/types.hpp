@@ -21,10 +21,12 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <pficommon/data/serialization.h>
-#include "../common/type.hpp"
-#include "../../server/server/clustering_types.hpp"
 
+#include <msgpack.hpp>
+#include <pficommon/data/serialization.h>
+
+#include "../common/type.hpp"
+#include "../fv_converter/datum.hpp"
 
 namespace jubatus {
 namespace core {
