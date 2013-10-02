@@ -92,29 +92,32 @@ std::string clustering_serv::get_config() const {
   return config_;
 }
 
-bool clustering_serv::push(const std::vector<datum>& points) {
+bool clustering_serv::push(
+    const std::vector<core::fv_converter::datum>& points) {
   check_set_config();
   clustering_->push(points);
   return true;
 }
 
-datum clustering_serv::get_nearest_center(const datum& point) const {
+core::fv_converter::datum clustering_serv::get_nearest_center(
+    const core::fv_converter::datum& point) const {
   check_set_config();
   return clustering_->get_nearest_center(point);
 }
 
-std::vector<std::pair<double, datum> > clustering_serv::get_nearest_members(
-    const datum& point) const {
+std::vector<std::pair<double, core::fv_converter::datum> >
+    clustering_serv::get_nearest_members(
+        const core::fv_converter::datum& point) const {
   check_set_config();
   return clustering_->get_nearest_members(point);
 }
 
-std::vector<datum> clustering_serv::get_k_center() const {
+std::vector<core::fv_converter::datum> clustering_serv::get_k_center() const {
   check_set_config();
   return clustering_->get_k_center();
 }
 
-std::vector<std::vector<std::pair<double, datum> > >
+std::vector<std::vector<std::pair<double, core::fv_converter::datum> > >
 clustering_serv::get_core_members() const {
   check_set_config();
   return clustering_->get_core_members();

@@ -24,7 +24,7 @@ namespace core {
 namespace driver {
 
 cluster_analysis::cluster_analysis(
-    pfi::lang::shared_ptr<jubatus::cluster_analysis::cluster_analysis> analyzer)
+    pfi::lang::shared_ptr<core::cluster_analysis::cluster_analysis> analyzer)
     : analyzer_(analyzer) {
 }
 

@@ -34,7 +34,7 @@ struct weighted_point {
   MSGPACK_DEFINE(weight, data, original, free_double, free_long);
   double weight;
   common::sfv_t data;
-  datum original;
+  fv_converter::datum original;
   double free_double;
   uint64_t free_long;
 
@@ -42,8 +42,8 @@ struct weighted_point {
   void serialize(Ar& ar) {
     ar & MEMBER(weight)
         & MEMBER(data)
-        & MEMBER(original.num_values)
-        & MEMBER(original.string_values)
+        & MEMBER(original.num_values_)
+        & MEMBER(original.string_values_)
         & MEMBER(free_double)
         & MEMBER(free_long);
   }
@@ -53,8 +53,8 @@ inline void swap(weighted_point& p1, weighted_point& p2) {
   using std::swap;
   swap(p1.weight, p2.weight);
   swap(p1.data, p2.data);
-  swap(p1.original.string_values, p2.original.string_values);
-  swap(p1.original.num_values, p2.original.num_values);
+  swap(p1.original.string_values_, p2.original.string_values_);
+  swap(p1.original.num_values_, p2.original.num_values_);
   swap(p1.free_double, p2.free_double);
   swap(p1.free_long, p2.free_long);
 }

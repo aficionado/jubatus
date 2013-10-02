@@ -21,7 +21,7 @@
 #include <vector>
 #include <pficommon/lang/shared_ptr.h>
 #include "../cluster_analysis/cluster_analysis.hpp"
-#include "../server/cluster_analysis_types.hpp"
+#include "../../server/cluster_analysis_types.hpp"
 
 namespace jubatus {
 namespace core {

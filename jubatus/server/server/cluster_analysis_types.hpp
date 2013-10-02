@@ -15,36 +15,30 @@
 
 namespace jubatus {
 
-struct datum {
- public:
-  MSGPACK_DEFINE(string_values, num_values);
-  std::vector<std::pair<std::string, std::string> > string_values;
-  std::vector<std::pair<std::string, double> > num_values;
-};
-
 struct cluster_relation {
  public:
-  MSGPACK_DEFINE(cluster1, cluster2, similarity);
-  int32_t cluster1;
-  int32_t cluster2;
-  double similarity;
+	MSGPACK_DEFINE(cluster1, cluster2, similarity);
+	int32_t cluster1;
+	int32_t cluster2;
+	double similarity;
 };
 
 struct change_graph {
  public:
-  MSGPACK_DEFINE(snapshot_name1, snapshot_name2, related_pairs);
-  std::string snapshot_name1;
-  std::string snapshot_name2;
-  std::vector<cluster_relation> related_pairs;
+	MSGPACK_DEFINE(snapshot_name1, snapshot_name2, related_pairs);
+	std::string snapshot_name1;
+	std::string snapshot_name2;
+	std::vector<cluster_relation> related_pairs;
 };
 
 struct clustering_snapshot {
  public:
-  MSGPACK_DEFINE(name, clusters);
-  std::string name;
-  std::vector<std::vector<std::pair<double, datum> > > clusters;
+	MSGPACK_DEFINE(name, clusters);
+	std::string name;
+	std::vector<std::vector<std::pair<double, core::fv_converter::datum> > >
+			clusters;
 };
 
-}  // namespace jubatus
+}	 // namespace jubatus
 
-#endif  // JUBATUS_SERVER_SERVER_CLUSTER_ANALYSIS_TYPES_HPP_
+#endif	// JUBATUS_SERVER_SERVER_CLUSTER_ANALYSIS_TYPES_HPP_

@@ -46,14 +46,14 @@ class clustering_serv : public framework::server_base {
   bool set_config(const std::string& config);
   std::string get_config() const;
 
-  bool push(const std::vector<datum>& points);
+  bool push(const std::vector<core::fv_converter::datum>& points);
 
-  datum get_nearest_center(const datum& point) const;
-  std::vector<std::pair<double, datum> > get_nearest_members(
-      const datum& point) const;
+  core::fv_converter::datum get_nearest_center(const core::fv_converter::datum& point) const;
+  std::vector<std::pair<double, core::fv_converter::datum> > get_nearest_members(
+      const core::fv_converter::datum& point) const;
 
-  std::vector<datum> get_k_center() const;
-  std::vector<std::vector<std::pair<double, datum> > > get_core_members() const;
+  std::vector<core::fv_converter::datum> get_k_center() const;
+  std::vector<std::vector<std::pair<double, core::fv_converter::datum> > > get_core_members() const;
   size_t get_revision() const;
 
   void check_set_config() const;

@@ -73,28 +73,29 @@ class clustering {
 
   void push(const std::vector<fv_converter::datum>& points);
 
-  fv_converter::datum get_nearest_center(const datum& point) const;
-  std::vector<std::pair<double, datum> >  get_nearest_members(
+  fv_converter::datum get_nearest_center(const fv_converter::datum& point) const;
+  std::vector<std::pair<double, fv_converter::datum> >  get_nearest_members(
     const fv_converter::datum& point) const;
 
-  std::vector<datum> get_k_center() const;
-  std::vector<std::vector<std::pair<double, datum> > > get_core_members() const;
+  std::vector<fv_converter::datum> get_k_center() const;
+  std::vector<std::vector<std::pair<double, fv_converter::datum> > >
+      get_core_members() const;
 
   size_t get_revision() const;
 
   // TODO(beam2d): Implement clear().
 
  private:
-  common::sfv_t to_sfv(const datum& dat);
-  common::sfv_t to_sfv_const(const datum& dat) const;
-  datum to_datum(const common::sfv_t& src) const;
+  common::sfv_t to_sfv(const fv_converter::datum& dat);
+  common::sfv_t to_sfv_const(const fv_converter::datum& dat) const;
+  fv_converter::datum to_datum(const common::sfv_t& src) const;
   core::clustering::weighted_point to_weighted_point(const fv_converter::datum& src);
-  std::pair<double, datum>
+  std::pair<double, fv_converter::datum>
   to_weighted_datum(const core::clustering::weighted_point& src) const;
-  std::vector<datum> to_datum_vector(const std::vector<common::sfv_t>& src) const;
+  std::vector<fv_converter::datum> to_datum_vector(const std::vector<common::sfv_t>& src) const;
   std::vector<core::clustering::weighted_point> to_weighted_point_vector(
-      const std::vector<datum>& src);
-  std::vector<std::pair<double, datum> > to_weighted_datum_vector(
+      const std::vector<fv_converter::datum>& src);
+  std::vector<std::pair<double, fv_converter::datum> > to_weighted_datum_vector(
       const std::vector<core::clustering::weighted_point>& src) const;
 
   pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer_;
