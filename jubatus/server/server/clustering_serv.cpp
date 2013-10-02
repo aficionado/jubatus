@@ -83,7 +83,8 @@ bool clustering_serv::set_config(const std::string& config) {
           core::clustering::clustering_config>(param);
   clustering_.reset(new core::driver::clustering(
       new core::clustering::clustering(name, conf.method, cluster_conf),
-      mixer_, converter));
+      converter));
+  mixer_->set_mixable_holder(clustering_->get_mixable_holder());
 
   LOG(INFO) << "config loaded: " << config;
   return true;

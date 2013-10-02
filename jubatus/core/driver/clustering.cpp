@@ -34,17 +34,14 @@ using fv_converter::datum;
 
 clustering::clustering(
     core::clustering::clustering* clustering_method,
-    pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer,
     pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter)
-    : mixer_(mixer),
-      mixable_holder_(new framework::mixable_holder),
+    : mixable_holder_(new framework::mixable_holder),
       converter_(converter) {
   clustering_->set_model(mixable_clustering::model_ptr(clustering_method));
   wm_->set_model
       (pfi::lang::shared_ptr<fv_converter::weight_manager>(
           new fv_converter::weight_manager));
 
-  mixer_->set_mixable_holder(mixable_holder_);
   mixable_holder_->register_mixable(clustering_);
   mixable_holder_->register_mixable(wm_);
 

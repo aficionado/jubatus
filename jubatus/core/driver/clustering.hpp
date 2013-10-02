@@ -14,8 +14,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-#ifndef JUBATUS_DRIVER_CLUSTERING_HPP_
-#define JUBATUS_DRIVER_CLUSTERING_HPP_
+#ifndef JUBATUS_CORE_DRIVER_CLUSTERING_HPP_
+#define JUBATUS_CORE_DRIVER_CLUSTERING_HPP_
 
 #include <utility>
 #include <vector>
@@ -23,7 +23,6 @@
 #include "../clustering/types.hpp"
 #include "../clustering/clustering.hpp"
 #include "../framework/mixable.hpp"
-#include "../../server/framework/mixer/mixer.hpp"
 #include "../fv_converter/datum.hpp"
 #include "../fv_converter/datum_to_fv_converter.hpp"
 #include "../fv_converter/mixable_weight_manager.hpp"
@@ -59,13 +58,8 @@ class clustering {
  public:
   clustering(
       core::clustering::clustering* clustering_method,
-      pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer,
       pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter);
   virtual ~clustering();
-
-  server::framework::mixer::mixer* get_mixer() const {
-    return mixer_.get();
-  }
 
   pfi::lang::shared_ptr<framework::mixable_holder> get_mixable_holder() const {
     return mixable_holder_;
@@ -101,7 +95,6 @@ class clustering {
   std::vector<std::pair<double, fv_converter::datum> > to_weighted_datum_vector(
       const std::vector<core::clustering::weighted_point>& src) const;
 
-  pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer_;
   pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder_;
 
   pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter_;
@@ -113,4 +106,4 @@ class clustering {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_DRIVER_CLUSTERING_HPP_
+#endif  // JUBATUS_CORE_DRIVER_CLUSTERING_HPP_
