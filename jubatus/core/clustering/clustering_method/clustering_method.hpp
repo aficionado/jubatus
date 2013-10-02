@@ -33,8 +33,10 @@ class clustering_method {
   virtual void batch_update(wplist points) = 0;
   virtual void online_update(wplist points) = 0;
   virtual std::vector<common::sfv_t> get_k_center() const = 0;
-  virtual common::sfv_t get_nearest_center(const common::sfv_t& point) const = 0;
-  virtual int64_t get_nearest_center_index(const common::sfv_t& point) const = 0;
+  virtual common::sfv_t
+      get_nearest_center(const common::sfv_t& point) const = 0;
+  virtual int64_t
+      get_nearest_center_index(const common::sfv_t& point) const = 0;
   virtual wplist get_cluster(size_t cluster_id, const wplist& points) const = 0;
   virtual std::vector<wplist> get_clusters(const wplist& points) const = 0;
  private:

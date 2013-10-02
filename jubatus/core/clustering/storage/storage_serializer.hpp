@@ -37,7 +37,8 @@ class storage_serializer {
   static void do_serialize(Archive &ar, storage &storage) {
     Storage *s = dynamic_cast<Storage *>(&storage);
     if (s == NULL) {
-      throw JUBATUS_EXCEPTION(common::exception::runtime_error("Bad storage type"));
+      throw JUBATUS_EXCEPTION(
+          common::exception::runtime_error("Bad storage type"));
     }
     s->serialize<Archive>(ar);
   }

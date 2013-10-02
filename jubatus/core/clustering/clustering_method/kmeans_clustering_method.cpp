@@ -103,7 +103,8 @@ int64_t kmeans_clustering_method::get_nearest_center_index(
   return min_dist(point, kcenters_).first;
 }
 
-common::sfv_t kmeans_clustering_method::get_nearest_center(const common::sfv_t& point) const {
+common::sfv_t kmeans_clustering_method::get_nearest_center(
+    const common::sfv_t& point) const {
   return kcenters_[get_nearest_center_index(point)];
 }
 

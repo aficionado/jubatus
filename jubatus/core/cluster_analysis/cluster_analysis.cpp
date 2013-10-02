@@ -31,7 +31,9 @@ namespace cluster_analysis {
 namespace {
 
 struct more_similar {
-  bool operator()(const cluster_relation& l, const cluster_relation& r) const {
+  bool operator()(
+      const cluster_relation& l,
+      const cluster_relation& r) const {
     return l.similarity > r.similarity;
   }
 };
@@ -42,12 +44,15 @@ void move_push_back(Container& c, T& t) {
   std::swap(c.back(), t);
 }
 
-bool is_same_datum(const fv_converter::datum& lhs, const fv_converter::datum& rhs) {
+bool is_same_datum(
+    const fv_converter::datum& lhs,
+    const fv_converter::datum& rhs) {
   return lhs.string_values_ == rhs.string_values_ &&
       lhs.num_values_ == rhs.num_values_;
 }
 
-double accumulate_weight(const std::vector<std::pair<double, fv_converter::datum> >& set) {
+double accumulate_weight(
+    const std::vector<std::pair<double, fv_converter::datum> >& set) {
   double sum = 0;
   for (size_t i = 0; i < set.size(); ++i) {
     sum += set[i].first;

@@ -73,7 +73,8 @@ class clustering {
 
   void push(const std::vector<fv_converter::datum>& points);
 
-  fv_converter::datum get_nearest_center(const fv_converter::datum& point) const;
+  fv_converter::datum get_nearest_center(
+      const fv_converter::datum& point) const;
   std::vector<std::pair<double, fv_converter::datum> >  get_nearest_members(
     const fv_converter::datum& point) const;
 
@@ -89,10 +90,12 @@ class clustering {
   common::sfv_t to_sfv(const fv_converter::datum& dat);
   common::sfv_t to_sfv_const(const fv_converter::datum& dat) const;
   fv_converter::datum to_datum(const common::sfv_t& src) const;
-  core::clustering::weighted_point to_weighted_point(const fv_converter::datum& src);
+  core::clustering::weighted_point to_weighted_point(
+      const fv_converter::datum& src);
   std::pair<double, fv_converter::datum>
   to_weighted_datum(const core::clustering::weighted_point& src) const;
-  std::vector<fv_converter::datum> to_datum_vector(const std::vector<common::sfv_t>& src) const;
+  std::vector<fv_converter::datum> to_datum_vector(
+      const std::vector<common::sfv_t>& src) const;
   std::vector<core::clustering::weighted_point> to_weighted_point_vector(
       const std::vector<fv_converter::datum>& src);
   std::vector<std::pair<double, fv_converter::datum> > to_weighted_datum_vector(

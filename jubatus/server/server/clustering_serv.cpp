@@ -79,7 +79,8 @@ bool clustering_serv::set_config(const std::string& config) {
   const std::string name =
       argv().eth + pfi::lang::lexical_cast<std::string>(argv().port);
   core::clustering::clustering_config cluster_conf =
-      core::common::jsonconfig::config_cast_check<core::clustering::clustering_config>(param);
+      core::common::jsonconfig::config_cast_check<
+          core::clustering::clustering_config>(param);
   clustering_.reset(new core::driver::clustering(
       new core::clustering::clustering(name, conf.method, cluster_conf),
       mixer_, converter));

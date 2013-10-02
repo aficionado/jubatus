@@ -32,7 +32,10 @@ char digit(int num, int r, int n);
 double sum(const common::sfv_t& p);
 double sum2(const common::sfv_t& p);
 
-void scalar_mul_and_add(const common::sfv_t& left, float s, common::sfv_t& right);
+void scalar_mul_and_add(
+    const common::sfv_t& left,
+    float s,
+    common::sfv_t& right);
 common::sfv_t add(const common::sfv_t& p1, const common::sfv_t& p2);
 common::sfv_t sub(const common::sfv_t& p1, const common::sfv_t& p2);
 common::sfv_t scalar_dot(const common::sfv_t& p, double s);

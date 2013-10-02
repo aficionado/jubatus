@@ -60,7 +60,9 @@ double sum2(const common::sfv_t& p) {
   return s;
 }
 
-void scalar_mul_and_add(const common::sfv_t& left, float s, common::sfv_t& right) {
+void scalar_mul_and_add(
+    const common::sfv_t& left,
+    float s, common::sfv_t& right) {
   common::sfv_t::const_iterator l = left.begin();
   common::sfv_t::iterator       r = right.begin();
   while (l != left.end() && r != right.end()) {

@@ -62,7 +62,8 @@ void gmm::batch(const eigen_wsvec_list_t& data, int d, int k) {
     fill(covs_.begin(), covs_.end(), eigen_smat_t(d, d));
 
     for (data_iter i = data.begin(); i != data.end(); ++i) {
-      eigen_svec_t cps = cluster_probs(i->data, old_means, old_covs, old_solvers);
+      eigen_svec_t cps =
+          cluster_probs(i->data, old_means, old_covs, old_solvers);
       for (int c = 0; c < k; ++c) {
         double cp  = i->weight * cps.coeff(c);
         means_[c]  += cp * i->data;
@@ -121,18 +122,24 @@ void gmm::initialize(const eigen_wsvec_list_t& data, int d, int k) {
   }
 }
 
-bool gmm::is_converged(int64_t niter, const eigen_svec_list_t& means,
-                       const eigen_svec_list_t& old_means, double obj, double old_obj) {
+bool gmm::is_converged(
+    int64_t niter,
+    const eigen_svec_list_t& means,
+    const eigen_svec_list_t& old_means,
+    double obj,
+    double old_obj) {
   double max_dist = 0;
   for (int c = 0; c < k_; ++c) {
     max_dist = max(max_dist, (means[c] - old_means[c]).norm());
   }
-  LOG(INFO) << "----------------------------------------------------------------";
+  LOG(INFO) <<
+      "----------------------------------------------------------------";
   LOG(INFO) << "Executing EM algorithm";
   LOG(INFO) << " Iteration   : " << niter;
   LOG(INFO) << " Norm of Dif : " << max_dist;
   LOG(INFO) << " Objective Value" << obj;
-  LOG(INFO) << "----------------------------------------------------------------";
+  LOG(INFO) <<
+      "----------------------------------------------------------------";
   return (max_dist < 1e-09 || niter > 1e05);
 }
 

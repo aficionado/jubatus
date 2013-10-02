@@ -37,7 +37,8 @@ class clustering_serv : public framework::server_base {
     return clustering_->get_mixer();
   }
 
-  pfi::lang::shared_ptr<core::framework::mixable_holder> get_mixable_holder() const {
+  pfi::lang::shared_ptr<core::framework::mixable_holder>
+      get_mixable_holder() const {
     return clustering_->get_mixable_holder();
   }
 
@@ -48,12 +49,14 @@ class clustering_serv : public framework::server_base {
 
   bool push(const std::vector<core::fv_converter::datum>& points);
 
-  core::fv_converter::datum get_nearest_center(const core::fv_converter::datum& point) const;
-  std::vector<std::pair<double, core::fv_converter::datum> > get_nearest_members(
+  core::fv_converter::datum get_nearest_center(
       const core::fv_converter::datum& point) const;
+  std::vector<std::pair<double, core::fv_converter::datum> >
+      get_nearest_members(const core::fv_converter::datum& point) const;
 
   std::vector<core::fv_converter::datum> get_k_center() const;
-  std::vector<std::vector<std::pair<double, core::fv_converter::datum> > > get_core_members() const;
+  std::vector<std::vector<std::pair<double, core::fv_converter::datum> > >
+      get_core_members() const;
   size_t get_revision() const;
 
   void check_set_config() const;

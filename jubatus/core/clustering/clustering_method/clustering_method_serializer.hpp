@@ -34,7 +34,8 @@ class clustering_method_serializer {
   static void do_serialize(Archive &ar, clustering_method &method) {
     ConcreteMethodType *t = dynamic_cast<ConcreteMethodType *>(&method);
     if (t == NULL) {
-      throw JUBATUS_EXCEPTION(common::exception::runtime_error("Bad method type"));
+      throw JUBATUS_EXCEPTION(
+          common::exception::runtime_error("Bad method type"));
     }
     t->serialize(ar);
   }

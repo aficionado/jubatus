@@ -64,8 +64,9 @@ eigen_wsvec_t eigen_feature_mapper::convert(const weighted_point& src,
   return ret;
 }
 
-eigen_svec_list_t eigen_feature_mapper::convert(const vector<common::sfv_t>& src,
-                                                bool update_map) {
+eigen_svec_list_t eigen_feature_mapper::convert(
+    const vector<common::sfv_t>& src,
+    bool update_map) {
   eigen_svec_list_t ret(src.size());
   eigen_svec_list_t::iterator ob = ret.begin();
   vector<common::sfv_t>::const_iterator  ib = src.begin();

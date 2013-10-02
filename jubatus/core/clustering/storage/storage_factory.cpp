@@ -46,7 +46,8 @@ pfi::lang::shared_ptr<storage> storage_factory::create(
     simple_storage *s = new simple_storage(name, config);
     ret.reset(s);
   } else {
-    throw JUBATUS_EXCEPTION(common::unsupported_method(config.compressor_method));
+    throw JUBATUS_EXCEPTION(
+        common::unsupported_method(config.compressor_method));
   }
   return ret;
 }
