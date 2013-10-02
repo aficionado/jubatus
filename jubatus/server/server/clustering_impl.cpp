@@ -5,8 +5,9 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <pficommon/lang/shared_ptr.h>
 
-#include "../framework.hpp"
+#include "../../server/framework.hpp"
 #include "clustering_server.hpp"
 #include "clustering_serv.hpp"
 
@@ -15,67 +16,74 @@ namespace server {
 
 class clustering_impl_ : public clustering<clustering_impl_> {
  public:
-  explicit clustering_impl_(const framework::server_argv& a):
-      clustering<clustering_impl_>(a.timeout),
-      p_(new framework::server_helper<clustering_serv>(a, false)) {
+  explicit clustering_impl_(const jubatus::server::framework::server_argv& a):
+    clustering<clustering_impl_>(a.timeout),
+    p_(new jubatus::server::framework::server_helper<clustering_serv>(a,
+         false)) {
   }
-  std::string get_config(std::string name) {
+  std::string get_config(const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_config();
   }
-  
-  bool push(std::string name, std::vector<datum> points) {
+
+  bool push(const std::string& name,
+       const std::vector<jubatus::core::fv_converter::datum>& points) {
     JWLOCK_(p_);
     return get_p()->push(points);
   }
-  
-  uint32_t get_revision(std::string name) {
+
+  uint32_t get_revision(const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_revision();
   }
-  
-  std::vector<std::vector<std::pair<double, datum> > > get_core_members(
-      std::string name) {
+
+  std::vector<std::vector<std::pair<double,
+       jubatus::core::fv_converter::datum> > > get_core_members(
+      const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_core_members();
   }
-  
-  std::vector<datum> get_k_center(std::string name) {
+
+  std::vector<jubatus::core::fv_converter::datum> get_k_center(
+      const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_k_center();
   }
-  
-  datum get_nearest_center(std::string name, datum point) {
+
+  jubatus::core::fv_converter::datum get_nearest_center(const std::string& name,
+       const jubatus::core::fv_converter::datum& point) {
     JRLOCK_(p_);
     return get_p()->get_nearest_center(point);
   }
-  
-  std::vector<std::pair<double, datum> > get_nearest_members(std::string name,
-       datum point) {
+
+  std::vector<std::pair<double,
+       jubatus::core::fv_converter::datum> > get_nearest_members(
+      const std::string& name,
+       const jubatus::core::fv_converter::datum& point) {
     JRLOCK_(p_);
     return get_p()->get_nearest_members(point);
   }
-  
-  bool save(std::string name, std::string id) {
+
+  bool save(const std::string& name, const std::string& id) {
     JWLOCK_(p_);
     return get_p()->save(id);
   }
-  
-  bool load(std::string name, std::string id) {
+
+  bool load(const std::string& name, const std::string& id) {
     JWLOCK_(p_);
     return get_p()->load(id);
   }
-  
+
   std::map<std::string, std::map<std::string, std::string> > get_status(
-      std::string name) {
+      const std::string& name) {
     JRLOCK_(p_);
     return p_->get_status();
   }
   int run() { return p_->start(*this); }
   pfi::lang::shared_ptr<clustering_serv> get_p() { return p_->server(); }
-  
+
  private:
-  pfi::lang::shared_ptr<framework::server_helper<clustering_serv> > p_;
+  pfi::lang::shared_ptr<jubatus::server::framework::server_helper<clustering_serv> > p_;
 };
 
 }  // namespace server

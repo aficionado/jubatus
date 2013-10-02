@@ -1,8 +1,8 @@
 // This file is auto-generated from cluster_analysis.idl
 // *** DO NOT EDIT ***
 
-#ifndef JUBATUS_SERVER_CLUSTER_ANALYSIS_SERVER_HPP_
-#define JUBATUS_SERVER_CLUSTER_ANALYSIS_SERVER_HPP_
+#ifndef JUBATUS_SERVER_SERVER_CLUSTER_ANALYSIS_SERVER_HPP_
+#define JUBATUS_SERVER_SERVER_CLUSTER_ANALYSIS_SERVER_HPP_
 
 #include <map>
 #include <string>
@@ -10,14 +10,14 @@
 #include <utility>
 #include <pficommon/lang/bind.h>
 
-#include "../common/mprpc/rpc_server.hpp"
+#include "../../server/common/mprpc/rpc_server.hpp"
 #include "cluster_analysis_types.hpp"
 
 namespace jubatus {
 namespace server {
 
 template <class Impl>
-class cluster_analysis : public common::mprpc::rpc_server {
+class cluster_analysis : public jubatus::server::common::mprpc::rpc_server {
  public:
   explicit cluster_analysis(double timeout_sec) : rpc_server(timeout_sec) {
     Impl* impl = static_cast<Impl*>(this);
@@ -37,4 +37,4 @@ class cluster_analysis : public common::mprpc::rpc_server {
 }  // namespace server
 }  // namespace jubatus
 
-#endif  // JUBATUS_SERVER_CLUSTER_ANALYSIS_SERVER_HPP_
+#endif  // JUBATUS_SERVER_SERVER_CLUSTER_ANALYSIS_SERVER_HPP_

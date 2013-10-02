@@ -8,39 +8,45 @@
 
 #include <glog/logging.h>
 
-#include "../common/exception.hpp"
-#include "../framework/aggregators.hpp"
-#include "../framework/keeper.hpp"
+#include "jubatus/core/common/exception.hpp"
+#include "../../server/framework/aggregators.hpp"
+#include "../../server/framework/proxy.hpp"
 #include "clustering_types.hpp"
 
 namespace jubatus {
 
-int run_keeper(int argc, char* argv[]) {
+int run_proxy(int argc, char* argv[]) {
   try {
-    jubatus::framework::keeper k(
-        jubatus::framework::keeper_argv(argc, argv, "clustering"));
+    jubatus::server::framework::proxy k(
+        jubatus::server::framework::proxy_argv(argc, argv, "clustering"));
     k.register_async_random<std::string>("get_config");
-    k.register_async_random<bool, std::vector<datum> >("push");
+    k.register_async_random<bool,
+         std::vector<jubatus::core::fv_converter::datum> >("push");
     k.register_async_random<uint32_t>("get_revision");
     k.register_async_random<std::vector<std::vector<std::pair<double,
-         datum> > > >("get_core_members");
-    k.register_async_random<std::vector<datum> >("get_k_center");
-    k.register_async_random<datum, datum>("get_nearest_center");
-    k.register_async_random<std::vector<std::pair<double, datum> >, datum>(
-        "get_nearest_members");
+         jubatus::core::fv_converter::datum> > > >("get_core_members");
+    k.register_async_random<std::vector<jubatus::core::fv_converter::datum> >(
+        "get_k_center");
+    k.register_async_random<jubatus::core::fv_converter::datum,
+         jubatus::core::fv_converter::datum>("get_nearest_center");
+    k.register_async_random<std::vector<std::pair<double,
+         jubatus::core::fv_converter::datum> >,
+         jubatus::core::fv_converter::datum>("get_nearest_members");
     k.register_async_broadcast<bool, std::string>("save",
-         pfi::lang::function<bool(bool, bool)>(&jubatus::framework::all_and));
+         pfi::lang::function<bool(bool, bool)>(
+        &jubatus::server::framework::all_and));
     k.register_async_broadcast<bool, std::string>("load",
-         pfi::lang::function<bool(bool, bool)>(&jubatus::framework::all_and));
+         pfi::lang::function<bool(bool, bool)>(
+        &jubatus::server::framework::all_and));
     k.register_async_broadcast<std::map<std::string, std::map<std::string,
          std::string> > >("get_status",
          pfi::lang::function<std::map<std::string, std::map<std::string,
          std::string> >(std::map<std::string, std::map<std::string,
          std::string> >, std::map<std::string, std::map<std::string,
-         std::string> >)>(&jubatus::framework::merge<std::string,
+         std::string> >)>(&jubatus::server::framework::merge<std::string,
          std::map<std::string, std::string> >));
     return k.run();
-  } catch (const jubatus::exception::jubatus_exception& e) {
+  } catch (const jubatus::core::common::exception::jubatus_exception& e) {
     LOG(FATAL) << e.diagnostic_information(true);
     return -1;
   }
@@ -49,5 +55,5 @@ int run_keeper(int argc, char* argv[]) {
 }  // namespace jubatus
 
 int main(int argc, char* argv[]) {
-  jubatus::run_keeper(argc, argv);
+  jubatus::run_proxy(argc, argv);
 }

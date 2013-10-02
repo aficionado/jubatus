@@ -5,8 +5,9 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <pficommon/lang/shared_ptr.h>
 
-#include "../framework.hpp"
+#include "../../server/framework.hpp"
 #include "cluster_analysis_server.hpp"
 #include "cluster_analysis_serv.hpp"
 
@@ -15,27 +16,29 @@ namespace server {
 
 class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
  public:
-  explicit cluster_analysis_impl_(const framework::server_argv& a):
+  explicit cluster_analysis_impl_(
+      const jubatus::server::framework::server_argv& a):
     cluster_analysis<cluster_analysis_impl_>(a.timeout),
-    p_(new framework::server_helper<cluster_analysis_serv>(a, false)) {
+    p_(new jubatus::server::framework::server_helper<cluster_analysis_serv>(a,
+         false)) {
   }
-
-  std::string get_config(std::string name) {
+  std::string get_config(const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_config();
   }
-  
-  bool add_snapshot(std::string name, std::string clustering_name) {
+
+  bool add_snapshot(const std::string& name,
+       const std::string& clustering_name) {
     JWLOCK_(p_);
     return get_p()->add_snapshot(clustering_name);
   }
-  
-  std::vector<change_graph> get_history(std::string name) {
+
+  std::vector<change_graph> get_history(const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_history();
   }
-  
-  std::vector<clustering_snapshot> get_snapshots(std::string name) {
+
+  std::vector<clustering_snapshot> get_snapshots(const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_snapshots();
   }
@@ -43,7 +46,7 @@ class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
   pfi::lang::shared_ptr<cluster_analysis_serv> get_p() { return p_->server(); }
 
  private:
-  pfi::lang::shared_ptr<framework::server_helper<cluster_analysis_serv> > p_;
+  pfi::lang::shared_ptr<jubatus::server::framework::server_helper<cluster_analysis_serv> > p_;
 };
 
 }  // namespace server
