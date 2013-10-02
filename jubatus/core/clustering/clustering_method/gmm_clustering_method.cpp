@@ -28,11 +28,11 @@ using std::cout;
 using std::endl;
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 namespace clustering_method {
 
-gmm_clustering_method::gmm_clustering_method(size_t k)
-    : k_(k) {
+gmm_clustering_method::gmm_clustering_method(size_t k) : k_(k) {
 }
 
 gmm_clustering_method::~gmm_clustering_method() {
@@ -49,16 +49,17 @@ void gmm_clustering_method::batch_update(wplist points) {
 void gmm_clustering_method::online_update(wplist points) {
 }
 
-std::vector<sfv_t> gmm_clustering_method::get_k_center() const {
+std::vector<common::sfv_t> gmm_clustering_method::get_k_center() const {
   return kcenters_;
 }
 
 int64_t gmm_clustering_method::get_nearest_center_index(
-    const sfv_t& point) const {
+    const common::sfv_t& point) const {
   return gmm_.get_nearest_center_index(mapper_.convertc(point));
 }
 
-sfv_t gmm_clustering_method::get_nearest_center(const sfv_t& point) const {
+common::sfv_t gmm_clustering_method::get_nearest_center(
+    const common::sfv_t& point) const {
   return mapper_.revert(gmm_.get_nearest_center(mapper_.convertc(point)));
 }
 
@@ -80,4 +81,5 @@ std::vector<wplist> gmm_clustering_method::get_clusters(
 
 }  // namespace clustering_method
 }  // namespace clustering
+}  // namespace core
 }  // namespace jubatus

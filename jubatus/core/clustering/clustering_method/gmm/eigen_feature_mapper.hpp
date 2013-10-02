@@ -35,17 +35,17 @@ class eigen_feature_mapper {
   eigen_feature_mapper() : d_(0) {}
   void clear();
   int  get_dimension();
-  eigen_wsvec_list_t   convert(const wplist& src, bool update_map = true);
-  eigen_svec_list_t    convert(const std::vector<sfv_t>& src,
-                               bool update_map = true);
-  eigen_wsvec_t        convert(const weighted_point& src,
-                               bool update_map = true);
-  eigen_svec_t         convert(const sfv_t& src, bool update_map = true);
-  eigen_svec_t         convertc(const sfv_t& src) const;
-  wplist               revert(const eigen_wsvec_list_t& src) const;
-  std::vector<sfv_t>   revert(const eigen_svec_list_t& src) const;
-  sfv_t                revert(const eigen_svec_t& src) const;
-  weighted_point       revert(const eigen_wsvec_t& src) const;
+  eigen_wsvec_list_t convert(const wplist& src, bool update_map = true);
+  eigen_svec_list_t convert(const std::vector<common::sfv_t>& src,
+      bool update_map = true);
+  eigen_wsvec_t convert(const weighted_point& src,
+      bool update_map = true);
+  eigen_svec_t convert(const common::sfv_t& src, bool update_map = true);
+  eigen_svec_t convertc(const common::sfv_t& src) const;
+  wplist revert(const eigen_wsvec_list_t& src) const;
+  std::vector<common::sfv_t> revert(const eigen_svec_list_t& src) const;
+  common::sfv_t revert(const eigen_svec_t& src) const;
+  weighted_point revert(const eigen_wsvec_t& src) const;
 
  private:
   pfi::data::unordered_map<std::string, size_t> map_;
@@ -54,12 +54,12 @@ class eigen_feature_mapper {
                bool update_map, eigen_svec_t& dst);
   void insertc_(std::pair<std::string, float>,
                 eigen_svec_t& dst) const;
-  void rinsert_(std::pair<int, float>, sfv_t& dst) const;
+  void rinsert_(std::pair<int, float>, common::sfv_t& dst) const;
   int d_;
 };
 
 
-}  // namespace :gmm
+}  // namespace gmm
 }  // namespace clustering_method
 }  // namespace clustering
 }  // namespace core

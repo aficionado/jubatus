@@ -15,34 +15,35 @@ namespace server {
 
 class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
  public:
-  explicit cluster_analysis_impl_(const jubatus::framework::server_argv& a):
+  explicit cluster_analysis_impl_(const framework::server_argv& a):
     cluster_analysis<cluster_analysis_impl_>(a.timeout),
-    p_(new jubatus::framework::server_helper<cluster_analysis_serv>(a, false)) {
+    p_(new framework::server_helper<cluster_analysis_serv>(a, false)) {
   }
+
   std::string get_config(std::string name) {
-    JRLOCK__(p_);
+    JRLOCK_(p_);
     return get_p()->get_config();
   }
   
   bool add_snapshot(std::string name, std::string clustering_name) {
-    JWLOCK__(p_);
+    JWLOCK_(p_);
     return get_p()->add_snapshot(clustering_name);
   }
   
   std::vector<change_graph> get_history(std::string name) {
-    JRLOCK__(p_);
+    JRLOCK_(p_);
     return get_p()->get_history();
   }
   
   std::vector<clustering_snapshot> get_snapshots(std::string name) {
-    JRLOCK__(p_);
+    JRLOCK_(p_);
     return get_p()->get_snapshots();
   }
   int run() { return p_->start(*this); }
-  common::cshared_ptr<cluster_analysis_serv> get_p() { return p_->server(); }
+  pfi::lang::shared_ptr<cluster_analysis_serv> get_p() { return p_->server(); }
 
  private:
-  common::cshared_ptr<jubatus::framework::server_helper<cluster_analysis_serv> > p_;
+  pfi::lang::shared_ptr<framework::server_helper<cluster_analysis_serv> > p_;
 };
 
 }  // namespace server
@@ -50,6 +51,6 @@ class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
 
 int main(int argc, char* argv[]) {
   return
-    jubatus::framework::run_server<jubatus::server::cluster_analysis_impl_>
+    jubatus::server::framework::run_server<jubatus::server::cluster_analysis_impl_>
       (argc, argv, "cluster_analysis");
 }

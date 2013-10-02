@@ -34,6 +34,7 @@ using std::vector;
 
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 namespace clustering_method {
 namespace gmm {
@@ -157,7 +158,8 @@ eigen_svec_t gmm::cluster_probs(
   return ret;
 }
 
-}  // namespace jubatus::clustering::clustering_method::gmm
-}  // namespace jubatus::clustering::clustering_method
-}  // namespace jubatus::clustering
+}  // namespace gmm
+}  // namespace clustering_method
+}  // namespace clustering
+}  // namespace core
 }  // namespace jubatus

@@ -36,7 +36,7 @@ pfi::lang::shared_ptr<clustering_method> clustering_method_factory::create(
     return pfi::lang::shared_ptr<clustering_method>(
         new gmm_clustering_method(config.k));
   }
-  throw JUBATUS_EXCEPTION(unsupported_method(method));
+  throw JUBATUS_EXCEPTION(core::common::unsupported_method(method));
 }
 
 }  // namespace clustering_method

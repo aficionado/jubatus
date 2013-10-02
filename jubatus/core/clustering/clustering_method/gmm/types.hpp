@@ -24,6 +24,7 @@
 #include <pficommon/lang/shared_ptr.h>
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 namespace clustering_method {
 namespace gmm {
@@ -41,9 +42,10 @@ struct eigen_wsvec_t {
 };
 typedef std::vector<eigen_wsvec_t> eigen_wsvec_list_t;
 
-}  // namespace jubatus::clustering::clustering_method::gmm
-}  // namespace jubatus::clustering::clustering_method
-}  // namespace jubatus::clustering
+}  // namespace gmm
+}  // namespace clustering_method
+}  // namespace clustering
+}  // namespace core
 }  // namespace jubatus
 
 #endif  // JUBATUS_CLUSTERING_CLUSTERING_METHOD_GMM_TYPES_HPP_

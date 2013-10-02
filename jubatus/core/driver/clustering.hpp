@@ -20,34 +20,37 @@
 #include <utility>
 #include <vector>
 #include <pficommon/lang/shared_ptr.h>
+#include "../clustering/types.hpp"
 #include "../clustering/clustering.hpp"
 #include "../framework/mixable.hpp"
-#include "../framework/mixer/mixer.hpp"
+#include "../../server/framework/mixer/mixer.hpp"
+#include "../fv_converter/datum.hpp"
 #include "../fv_converter/datum_to_fv_converter.hpp"
 #include "../fv_converter/mixable_weight_manager.hpp"
 
 namespace jubatus {
+namespace core {
 namespace driver {
 
-class mixable_clustering : public framework::mixable<
-    jubatus::clustering::clustering,
-    jubatus::clustering::diff_t> {
+class mixable_clustering : public core::framework::mixable<
+    clustering::clustering,
+    clustering::diff_t> {
  public:
   void clear() {}
 
-  jubatus::clustering::diff_t get_diff_impl() const {
+  clustering::diff_t get_diff_impl() const {
     return get_model()->get_diff();
   }
 
   void mix_impl(
-      const jubatus::clustering::diff_t& lhs,
-      const jubatus::clustering::diff_t& rhs,
-      jubatus::clustering::diff_t& mixed) const {
+      const clustering::diff_t& lhs,
+      const clustering::diff_t& rhs,
+      clustering::diff_t& mixed) const {
     mixed = lhs;
     get_model()->reduce(rhs, mixed);
   }
 
-  void put_diff_impl(const jubatus::clustering::diff_t& v) {
+  void put_diff_impl(const clustering::diff_t& v) {
     get_model()->put_diff(v);
   }
 };
@@ -55,12 +58,12 @@ class mixable_clustering : public framework::mixable<
 class clustering {
  public:
   clustering(
-      jubatus::clustering::clustering* clustering_method,
-      pfi::lang::shared_ptr<framework::mixer::mixer> mixer,
+      core::clustering::clustering* clustering_method,
+      pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer,
       pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter);
   virtual ~clustering();
 
-  framework::mixer::mixer* get_mixer() const {
+  server::framework::mixer::mixer* get_mixer() const {
     return mixer_.get();
   }
 
@@ -68,11 +71,11 @@ class clustering {
     return mixable_holder_;
   }
 
-  void push(const std::vector<datum>& points);
+  void push(const std::vector<fv_converter::datum>& points);
 
-  datum get_nearest_center(const datum& point) const;
+  fv_converter::datum get_nearest_center(const datum& point) const;
   std::vector<std::pair<double, datum> >  get_nearest_members(
-      const datum& point) const;
+    const fv_converter::datum& point) const;
 
   std::vector<datum> get_k_center() const;
   std::vector<std::vector<std::pair<double, datum> > > get_core_members() const;
@@ -82,26 +85,28 @@ class clustering {
   // TODO(beam2d): Implement clear().
 
  private:
-  sfv_t to_sfv(const datum& dat);
-  sfv_t to_sfv_const(const datum& dat) const;
-  datum to_datum(const sfv_t& src) const;
-  weighted_point to_weighted_point(const datum& src);
-  std::pair<double, datum> to_weighted_datum(const weighted_point& src) const;
-  std::vector<datum> to_datum_vector(const std::vector<sfv_t>& src) const;
-  std::vector<weighted_point> to_weighted_point_vector(
+  common::sfv_t to_sfv(const datum& dat);
+  common::sfv_t to_sfv_const(const datum& dat) const;
+  datum to_datum(const common::sfv_t& src) const;
+  core::clustering::weighted_point to_weighted_point(const fv_converter::datum& src);
+  std::pair<double, datum>
+  to_weighted_datum(const core::clustering::weighted_point& src) const;
+  std::vector<datum> to_datum_vector(const std::vector<common::sfv_t>& src) const;
+  std::vector<core::clustering::weighted_point> to_weighted_point_vector(
       const std::vector<datum>& src);
   std::vector<std::pair<double, datum> > to_weighted_datum_vector(
-      const std::vector<weighted_point>& src) const;
+      const std::vector<core::clustering::weighted_point>& src) const;
 
-  pfi::lang::shared_ptr<framework::mixer::mixer> mixer_;
+  pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer_;
   pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder_;
 
   pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter_;
-  mixable_clustering clustering_;
-  mixable_weight_manager wm_;
+  pfi::lang::shared_ptr<mixable_clustering> clustering_;
+  pfi::lang::shared_ptr<fv_converter::mixable_weight_manager> wm_;
 };
 
 }  // namespace driver
+}  // namespace core
 }  // namespace jubatus
 
 #endif  // JUBATUS_DRIVER_CLUSTERING_HPP_

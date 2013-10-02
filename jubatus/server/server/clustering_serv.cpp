@@ -44,11 +44,11 @@ struct clustering_serv_config {
   }
 };
 
-}  // namespace
+}  // anonymous namespace
 
 clustering_serv::clustering_serv(
     const framework::server_argv& a,
-    const common::cshared_ptr<common::lock_service>& zk)
+    const pfi::lang::shared_ptr<common::lock_service>& zk)
     : server_base(a),
       mixer_(framework::mixer::create_mixer(a, zk)) {
 }
@@ -61,26 +61,27 @@ void clustering_serv::get_status(status_t& status) const {
 }
 
 bool clustering_serv::set_config(const std::string& config) {
-  jsonconfig::config config_root(
+  core::common::jsonconfig::config config_root(
       pfi::lang::lexical_cast<pfi::text::json::json>(config));
   clustering_serv_config conf =
-      jsonconfig::config_cast_check<clustering_serv_config>(config_root);
+      core::common::jsonconfig::config_cast_check<clustering_serv_config>(
+          config_root);
 
   config_ = config;
-  pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter =
-      fv_converter::make_fv_converter(conf.converter);
+  pfi::lang::shared_ptr<core::fv_converter::datum_to_fv_converter> converter =
+      core::fv_converter::make_fv_converter(conf.converter);
 
-  jsonconfig::config param;
+  core::common::jsonconfig::config param;
   if (conf.parameter) {
-    param = jsonconfig::config(*conf.parameter);
+    param = core::common::jsonconfig::config(*conf.parameter);
   }
 
   const std::string name =
       argv().eth + pfi::lang::lexical_cast<std::string>(argv().port);
-  clustering::clustering_config cluster_conf =
-      jsonconfig::config_cast_check<clustering::clustering_config>(param);
-  clustering_.reset(new driver::clustering(
-      new clustering::clustering(name, conf.method, cluster_conf),
+  core::clustering::clustering_config cluster_conf =
+      core::common::jsonconfig::config_cast_check<core::clustering::clustering_config>(param);
+  clustering_.reset(new core::driver::clustering(
+      new core::clustering::clustering(name, conf.method, cluster_conf),
       mixer_, converter));
 
   LOG(INFO) << "config loaded: " << config;
@@ -126,7 +127,7 @@ size_t clustering_serv::get_revision() const {
 
 void clustering_serv::check_set_config() const {
   if (!clustering_) {
-    throw JUBATUS_EXCEPTION(config_not_set());
+    throw JUBATUS_EXCEPTION(core::common::config_not_set());
   }
 }
 

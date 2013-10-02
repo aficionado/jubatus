@@ -24,6 +24,7 @@ using std::vector;
 using std::pair;
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 namespace clustering_method {
 namespace gmm {
@@ -38,18 +39,18 @@ int eigen_feature_mapper::get_dimension() {
   return d_;
 }
 
-eigen_svec_t eigen_feature_mapper::convert(const sfv_t& src,
+eigen_svec_t eigen_feature_mapper::convert(const common::sfv_t& src,
                                            bool update_map) {
   eigen_svec_t ret(d_);
-  for (sfv_t::const_iterator it = src.begin(); it != src.end(); ++it) {
+  for (common::sfv_t::const_iterator it = src.begin(); it != src.end(); ++it) {
     insert_(*it, update_map, ret);
   }
   return ret;
 }
 
-eigen_svec_t eigen_feature_mapper::convertc(const sfv_t& src) const {
+eigen_svec_t eigen_feature_mapper::convertc(const common::sfv_t& src) const {
   eigen_svec_t ret(d_);
-  for (sfv_t::const_iterator it = src.begin(); it != src.end(); ++it) {
+  for (common::sfv_t::const_iterator it = src.begin(); it != src.end(); ++it) {
     insertc_(*it, ret);
   }
   return ret;
@@ -63,11 +64,11 @@ eigen_wsvec_t eigen_feature_mapper::convert(const weighted_point& src,
   return ret;
 }
 
-eigen_svec_list_t eigen_feature_mapper::convert(const vector<sfv_t>& src,
+eigen_svec_list_t eigen_feature_mapper::convert(const vector<common::sfv_t>& src,
                                                 bool update_map) {
   eigen_svec_list_t ret(src.size());
   eigen_svec_list_t::iterator ob = ret.begin();
-  vector<sfv_t>::const_iterator  ib = src.begin();
+  vector<common::sfv_t>::const_iterator  ib = src.begin();
   while (ib != src.end()) {
     *ob = convert(*ib, update_map);
     ++ob;
@@ -99,8 +100,8 @@ eigen_wsvec_list_t eigen_feature_mapper::convert(const wplist& src,
   return ret;
 }
 
-sfv_t eigen_feature_mapper::revert(const eigen_svec_t& src) const {
-  sfv_t ret;
+common::sfv_t eigen_feature_mapper::revert(const eigen_svec_t& src) const {
+  common::sfv_t ret;
   for (eigen_svec_t::InnerIterator it(src); it; ++it) {
     rinsert_(std::make_pair(it.row(), static_cast<float>(it.value())), ret);
   }
@@ -115,11 +116,11 @@ weighted_point eigen_feature_mapper::revert(
   return ret;
 }
 
-std::vector<sfv_t> eigen_feature_mapper::revert(
+std::vector<common::sfv_t> eigen_feature_mapper::revert(
     const eigen_svec_list_t& src) const {
-  std::vector<sfv_t> ret(src.size());
+  std::vector<common::sfv_t> ret(src.size());
   eigen_svec_list_t::const_iterator  ib = src.begin();
-  std::vector<sfv_t>::iterator       ob = ret.begin();
+  std::vector<common::sfv_t>::iterator       ob = ret.begin();
   while (ib != src.end()) {
     *ob = revert(*ib);
     ++ob;
@@ -166,7 +167,7 @@ void eigen_feature_mapper::insertc_(pair<std::string, float> item,
 }
 
 void eigen_feature_mapper::rinsert_(pair<int, float> item,
-                                    sfv_t& dst) const {
+                                    common::sfv_t& dst) const {
   if (rmap_.find(item.first) != rmap_.end()) {
     dst.push_back(
         make_pair((rmap_.find(item.first))->second, item.second));
@@ -174,7 +175,8 @@ void eigen_feature_mapper::rinsert_(pair<int, float> item,
 }
 
 
-}  // namespace jubatus::clustering::clustering_method::gmm
-}  // namespace jubatus::clustering::clustering_method
-}  // namespace jubatus::clustering
+}  // namespace gmm
+}  // namespace clustering_method
+}  // namespace clustering
+}  // namespace core
 }  // namespace jubatus

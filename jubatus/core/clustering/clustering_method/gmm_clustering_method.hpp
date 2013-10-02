@@ -37,15 +37,15 @@ class gmm_clustering_method : public clustering_method {
 
   void batch_update(wplist points);
   void online_update(wplist points);
-  std::vector<sfv_t> get_k_center() const;
-  sfv_t get_nearest_center(const sfv_t& point) const;
-  int64_t get_nearest_center_index(const sfv_t& point) const;
+  std::vector<common::sfv_t> get_k_center() const;
+  common::sfv_t get_nearest_center(const common::sfv_t& point) const;
+  int64_t get_nearest_center_index(const common::sfv_t& point) const;
   wplist get_cluster(size_t cluster_id, const wplist& points) const;
   std::vector<wplist> get_clusters(const wplist& points) const;
 
  private:
   size_t k_;
-  std::vector<sfv_t> kcenters_;
+  std::vector<common::sfv_t> kcenters_;
   gmm::eigen_feature_mapper mapper_;
   gmm::gmm gmm_;
 

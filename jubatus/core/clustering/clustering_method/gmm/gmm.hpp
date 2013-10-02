@@ -20,6 +20,7 @@
 #include "types.hpp"
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 namespace clustering_method {
 namespace gmm {
@@ -57,9 +58,10 @@ class gmm {
   int k_;
 };
 
-}  // namespace jubatus::clustering::clustering_method::gmm
-}  // namespace jubatus::clustering::clustering_method
-}  // namespace jubatus::clustering
+}  // namespace gmm
+}  // namespace clustering_method
+}  // namespace clustering
+}  // namespace core
 }  // namespace jubatus
 
 #endif  // JUBATUS_CLUSTERING_CLUSTERING_METHOD_GMM_GMM_HPP_

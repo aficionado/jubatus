@@ -20,57 +20,58 @@
 #include <utility>
 #include <vector>
 #include <pficommon/lang/bind.h>
-#include "../common/shared_ptr.hpp"
 #include "../common/vector_util.hpp"
 #include "../fv_converter/revert.hpp"
 
 namespace jubatus {
+namespace core {
 namespace driver {
 
 clustering::clustering(
-    jubatus::clustering::clustering* clustering_method,
-    pfi::lang::shared_ptr<framework::mixer::mixer> mixer,
+    core::clustering::clustering* clustering_method,
+    pfi::lang::shared_ptr<server::framework::mixer::mixer> mixer,
     pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter)
     : mixer_(mixer),
       mixable_holder_(new framework::mixable_holder),
       converter_(converter) {
-  clustering_.set_model(mixable_clustering::model_ptr(clustering_method));
-  wm_.set_model(
-      mixable_weight_manager::model_ptr(new fv_converter::weight_manager));
+  clustering_->set_model(mixable_clustering::model_ptr(clustering_method));
+  wm_->set_model
+      (pfi::lang::shared_ptr<fv_converter::weight_manager>(
+          new fv_converter::weight_manager));
 
   mixer_->set_mixable_holder(mixable_holder_);
-  mixable_holder_->register_mixable(&clustering_);
-  mixable_holder_->register_mixable(&wm_);
+  mixable_holder_->register_mixable(clustering_);
+  mixable_holder_->register_mixable(wm_);
 
-  converter_->set_weight_manager(wm_.get_model());
+  converter_->set_weight_manager(wm_->get_model());
 }
 
 clustering::~clustering() {
 }
 
 void clustering::push(const std::vector<datum>& points) {
-  clustering_.get_model()->push(to_weighted_point_vector(points));
+  clustering_->get_model()->push(to_weighted_point_vector(points));
 }
 
 datum clustering::get_nearest_center(const datum& point) const {
   return to_datum(
-      clustering_.get_model()->get_nearest_center(to_sfv_const(point)));
+      clustering_->get_model()->get_nearest_center(to_sfv_const(point)));
 }
 
 std::vector<std::pair<double, datum> > clustering::get_nearest_members(
     const datum& point) const {
   return to_weighted_datum_vector(
-      clustering_.get_model()->get_nearest_members(to_sfv_const(point)));
+      clustering_->get_model()->get_nearest_members(to_sfv_const(point)));
 }
 
 std::vector<datum> clustering::get_k_center() const {
-  return to_datum_vector(clustering_.get_model()->get_k_center());
+  return to_datum_vector(clustering_->get_model()->get_k_center());
 }
 
 std::vector<std::vector<std::pair<double, datum> > >
 clustering::get_core_members() const {
-  std::vector<std::vector<weighted_point> > src =
-      clustering_.get_model()->get_core_members();
+  std::vector<std::vector<core::clustering::weighted_point> > src =
+      clustering_->get_model()->get_core_members();
 
   std::vector<std::vector<std::pair<double, datum> > >  ret;
   ret.reserve(src.size());
@@ -82,30 +83,30 @@ clustering::get_core_members() const {
 }
 
 size_t clustering::get_revision() const {
-  return clustering_.get_model()->get_revision();
+  return clustering_->get_model()->get_revision();
 }
 
 // private
 
-sfv_t clustering::to_sfv(const datum& dat) {
+common::sfv_t clustering::to_sfv(const datum& dat) {
   fv_converter::datum dat_internal;
   framework::convert<datum, fv_converter::datum>(dat, dat_internal);
-  sfv_t ret;
+  common::sfv_t ret;
   converter_->convert_and_update_weight(dat_internal, ret);
   sort_and_merge(ret);
   return ret;
 }
 
-sfv_t clustering::to_sfv_const(const datum& dat) const {
+common::sfv_t clustering::to_sfv_const(const datum& dat) const {
   fv_converter::datum dat_internal;
   framework::convert<datum, fv_converter::datum>(dat, dat_internal);
-  sfv_t ret;
+  common::sfv_t ret;
   converter_->convert(dat_internal, ret);
   sort_and_merge(ret);
   return ret;
 }
 
-datum clustering::to_datum(const sfv_t& src) const {
+datum clustering::to_datum(const common::sfv_t& src) const {
   fv_converter::datum ret_internal;
   datum ret;
   fv_converter::revert_feature(src, ret_internal);
@@ -129,7 +130,7 @@ std::pair<double, datum> clustering::to_weighted_datum(
 }
 
 std::vector<datum> clustering::to_datum_vector(
-    const std::vector<sfv_t>& src) const {
+    const std::vector<common::sfv_t>& src) const {
   std::vector<datum> ret;
   ret.reserve(src.size());
   std::transform(src.begin(), src.end(), std::back_inserter(ret),
@@ -156,4 +157,5 @@ std::vector<std::pair<double, datum> > clustering::to_weighted_datum_vector(
 }
 
 }  // namespace driver
+}  // namespace core
 }  // namespace jubatus

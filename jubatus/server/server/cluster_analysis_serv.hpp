@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include "../../core/framework/mixable.hpp"
 #include "../../core/driver/cluster_analysis.hpp"
 #include "../framework/server_base.hpp"
 #include "cluster_analysis_types.hpp"
@@ -30,14 +31,15 @@ class cluster_analysis_serv : public framework::server_base {
  public:
   cluster_analysis_serv(
       const framework::server_argv& a,
-      const common::cshared_ptr<common::lock_service>& zk);
+      const pfi::lang::shared_ptr<common::lock_service>& zk);
   virtual ~cluster_analysis_serv();
 
   framework::mixer::mixer* get_mixer() const {
     return mixer_.get();
   }
 
-  pfi::lang::shared_ptr<framework::mixable_holder> get_mixable_holder() const {
+  pfi::lang::shared_ptr<core::framework::mixable_holder>
+      get_mixable_holder() const {
     return mixable_holder_;
   }
 
@@ -54,8 +56,8 @@ class cluster_analysis_serv : public framework::server_base {
 
  private:
   pfi::lang::shared_ptr<framework::mixer::mixer> mixer_;
-  pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder_;
-  pfi::lang::shared_ptr<driver::cluster_analysis> analyzer_;
+  pfi::lang::shared_ptr<core::framework::mixable_holder> mixable_holder_;
+  pfi::lang::shared_ptr<core::driver::cluster_analysis> analyzer_;
   std::string config_;
 };
 

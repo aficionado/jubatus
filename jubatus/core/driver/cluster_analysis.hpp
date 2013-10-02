@@ -24,12 +24,13 @@
 #include "../server/cluster_analysis_types.hpp"
 
 namespace jubatus {
+namespace core {
 namespace driver {
 
 class cluster_analysis {
  public:
   explicit cluster_analysis(
-      pfi::lang::shared_ptr<jubatus::cluster_analysis::cluster_analysis>
+      pfi::lang::shared_ptr<core::cluster_analysis::cluster_analysis>
       analyzer);
 
   void add_snapshot(const std::string& clustering_name);
@@ -38,10 +39,11 @@ class cluster_analysis {
   std::vector<clustering_snapshot> get_snapshots() const;
 
  private:
-  pfi::lang::shared_ptr<jubatus::cluster_analysis::cluster_analysis> analyzer_;
+  pfi::lang::shared_ptr<core::cluster_analysis::cluster_analysis> analyzer_;
 };
 
 }  // namespace driver
+}  // namespace core
 }  // namespace jubatus
 
 #endif  // JUBATUS_DRIVER_CLUSTER_ANALYSIS_HPP_

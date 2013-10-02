@@ -24,7 +24,7 @@ def build(bld):
     ],
     target = 'jubatus_clustering',
     includes = '.',
-    use = 'EIGEN3 LIBGLOG PFICOMMON MSGPACK'
+    use = 'EIGEN3 PFICOMMON MSGPACK'
     )
   test_cases = os.listdir("src/clustering/test");
   for t in test_cases:

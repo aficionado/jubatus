@@ -114,7 +114,7 @@ size_t clustering::get_revision() const {
 
 void clustering::register_mixables(
   pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder) {
-  mixable_storage *ms = new mixable_storage();
+  pfi::lang::shared_ptr<mixable_storage> ms(new mixable_storage());
   ms->set_model(
     pfi::lang::shared_ptr<storage>(storage_.get()));
   mixable_holder->register_mixable(ms);

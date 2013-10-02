@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <glog/logging.h>
+#include "../../core/framework/mixable.hpp"
 #include "../../core/common/exception.hpp"
 #include "../../core/common/jsonconfig.hpp"
 #include "../framework/mixer/mixer_factory.hpp"
@@ -26,12 +27,15 @@
 namespace jubatus {
 namespace server {
 
+using core::common::jsonconfig::config_cast_check;
+using core::cluster_analysis::cluster_analysis_config;
+
 cluster_analysis_serv::cluster_analysis_serv(
     const framework::server_argv& a,
     const pfi::lang::shared_ptr<common::lock_service>& zk)
     : server_base(a),
       mixer_(framework::mixer::create_mixer(a, zk)),
-      mixable_holder_(new framework::mixable_holder) {
+      mixable_holder_(new core::framework::mixable_holder) {
 }
 
 cluster_analysis_serv::~cluster_analysis_serv() {
@@ -42,15 +46,15 @@ void cluster_analysis_serv::get_status(status_t& status) const {
 }
 
 bool cluster_analysis_serv::set_config(const std::string& config) {
-  jsonconfig::config config_root(
+  core::common::jsonconfig::config config_root(
       pfi::lang::lexical_cast<pfi::text::json::json>(config));
-  cluster_analysis::cluster_analysis_config conf =
-      jsonconfig::config_cast_check<cluster_analysis::cluster_analysis_config>(
+  cluster_analysis_config conf =
+      config_cast_check<cluster_analysis_config>(
           config_root);
   config_ = config;
-  analyzer_.reset(new driver::cluster_analysis(
-      pfi::lang::shared_ptr<cluster_analysis::cluster_analysis>(
-          new cluster_analysis::cluster_analysis(conf))));
+  analyzer_.reset(new core::driver::cluster_analysis(
+      pfi::lang::shared_ptr<core::cluster_analysis::cluster_analysis>(
+      new core::cluster_analysis::cluster_analysis(conf))));
 
   LOG(INFO) << "config loaded: " << config;
   return true;
@@ -78,7 +82,7 @@ std::vector<clustering_snapshot> cluster_analysis_serv::get_snapshots() const {
 
 void cluster_analysis_serv::check_set_config() const {
   if (!analyzer_) {
-    throw JUBATUS_EXCEPTION(config_not_set());
+    throw JUBATUS_EXCEPTION(core::common::config_not_set());
   }
 }
 

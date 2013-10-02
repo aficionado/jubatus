@@ -20,6 +20,7 @@
 #include <vector>
 
 namespace jubatus {
+namespace core {
 namespace driver {
 
 cluster_analysis::cluster_analysis(
@@ -40,4 +41,5 @@ std::vector<clustering_snapshot> cluster_analysis::get_snapshots() const {
 }
 
 }  // namespace driver
+}  // namespace core
 }  // namespace jubatus

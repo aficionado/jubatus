@@ -17,7 +17,7 @@ namespace jubatus {
 namespace server {
 
 template <class Impl>
-class clustering : public jubatus::common::mprpc::rpc_server {
+class clustering : public common::mprpc::rpc_server {
  public:
   explicit clustering(double timeout_sec) : rpc_server(timeout_sec) {
     Impl* impl = static_cast<Impl*>(this);
