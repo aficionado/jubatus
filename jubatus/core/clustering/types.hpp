@@ -23,8 +23,6 @@
 #include <vector>
 #include <pficommon/data/serialization.h>
 #include "../common/type.hpp"
-#include "../../server/server/clustering_types.hpp"
-
 
 namespace jubatus {
 namespace core {
