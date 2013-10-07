@@ -4,9 +4,6 @@ message scored_id("std::pair<std::string, float>") {
 }
 
 service nearest_neighbor {
-  #@broadcast #@update #@pass
-  bool init_table()
-
   #@broadcast #@update #@all_and
   bool clear()
 

@@ -31,6 +31,11 @@ def options(opt):
                  action='store_true', default=False, 
                  dest='zktest', help='zk should run in localhost:2181')
 
+  # use (base + 10) ports for RPC module tests
+  opt.add_option('--rpc-test-port-base',
+                 default=60023, choices=map(str, xrange(1024, 65535 - 10)),
+                 help='base port number for RPC module tests')
+
   opt.recurse(subdirs)
 
 def configure(conf):
@@ -100,6 +105,9 @@ def configure(conf):
     conf.env.append_value('CXXFLAGS', '-ftest-coverage')
     conf.env.append_value('LINKFLAGS', '-lgcov')
 
+  if Options.options.rpc_test_port_base:
+    conf.define('JUBATUS_RPC_TEST_PORT_BASE', int(Options.options.rpc_test_port_base))
+
   conf.define('BUILD_DIR',  conf.bldnode.abspath())
 
   conf.recurse(subdirs)
@@ -134,11 +142,17 @@ def cpplint(ctx):
   excludes = ['jubatus/server/third_party/*', \
               'jubatus/server/server/*_server.hpp', \
               'jubatus/server/server/*_impl.cpp', \
-              'jubatus/server/server/*_keeper.cpp', \
+              'jubatus/server/server/*_proxy.cpp', \
               'jubatus/server/server/*_client.hpp', \
               'jubatus/server/server/*_types.hpp', \
               'jubatus/client/*_client.hpp', \
-              'jubatus/client/*_types.hpp']
+              'jubatus/client/*_types.hpp', \
+              'jubatus/util/*.h', \
+              'jubatus/util/*.cpp', \
+              'jubatus/util/*/*.h', \
+              'jubatus/util/*/*.cpp', \
+              'jubatus/util/*/*/*.h', \
+              'jubatus/util/*/*/*.cpp']
   for file in src_dir.ant_glob('**/*.cpp **/*.cc **/*.hpp **/*.h'):
     file_list += [file.path_from(ctx.path)]
   for exclude in excludes:

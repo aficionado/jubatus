@@ -22,11 +22,6 @@ class nearest_neighbor : public jubatus::client::common::client {
       : client(host, port, name, timeout_sec) {
   }
 
-  bool init_table() {
-    msgpack::rpc::future f = c_.call("init_table", name_);
-    return f.get<bool>();
-  }
-
   bool clear() {
     msgpack::rpc::future f = c_.call("clear", name_);
     return f.get<bool>();

@@ -21,8 +21,6 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
     p_(new jubatus::server::framework::server_helper<nearest_neighbor_serv>(a,
          true)) {
 
-    rpc_server::add<bool(std::string)>("init_table", pfi::lang::bind(
-        &nearest_neighbor_impl::init_table, this));
     rpc_server::add<bool(std::string)>("clear", pfi::lang::bind(
         &nearest_neighbor_impl::clear, this));
     rpc_server::add<bool(std::string, std::string,
@@ -55,11 +53,6 @@ class nearest_neighbor_impl : public jubatus::server::common::mprpc::rpc_server 
     rpc_server::add<std::map<std::string, std::map<std::string, std::string> >(
         std::string)>("get_status", pfi::lang::bind(
         &nearest_neighbor_impl::get_status, this));
-  }
-
-  bool init_table() {
-    JWLOCK_(p_);
-    return get_p()->init_table();
   }
 
   bool clear() {
