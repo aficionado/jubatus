@@ -6,31 +6,16 @@ let assert_equal = OUnit.assert_equal ~printer: Std.dump;;
 
 let _ = run_test_tt_main begin "ruby.ml" >::: [
 
-  "test_gen_retval'" >:: begin fun() ->
-    assert_equal "@cli.call(:func)" (gen_retval' "func" []);
-    assert_equal "@cli.call(:func, arg1)" (gen_retval' "func" ["arg1"]);
-    assert_equal "@cli.call(:func, arg1, arg2)" (gen_retval' "func" ["arg1"; "arg2"]);
+  "test_gen_list" >:: begin fun() ->
+    assert_equal "[]" (gen_list []);
+    assert_equal "[1]" (gen_list ["1"]);
+    assert_equal "[1, 2]" (gen_list ["1"; "2"]);
   end;
 
-  "test_gen_retval" >:: begin fun() ->
-    assert_equal
-      "T.from_tuple(@cli.call(:func))"
-      (gen_retval "func" [] (Some (Struct "t")));
-    assert_equal
-      "Jubatus::Common::Datum.from_tuple(@cli.call(:func))"
-      (gen_retval "func" [] (Some Datum));
-    assert_equal
-      "@cli.call(:func)"
-      (gen_retval "func" [] (Some String));
-    assert_equal
-      "@cli.call(:func)"
-      (gen_retval "func" [] None);
-  end;
-
-  "test_gen_def" >:: begin fun() ->
-    assert_equal "def func" (gen_def "func" []);
-    assert_equal "def func(arg1)" (gen_def "func" ["arg1"]);
-    assert_equal "def func(arg1, arg2)" (gen_def "func" ["arg1"; "arg2"])
+  "test_gen_type" >:: begin fun () ->
+    assert_equal "TObject.new" (gen_type Object);
+    assert_equal "TList.new(TBool.new)" (gen_type (List Bool));
+    assert_equal "TMap.new(TString.new, TFloat.new)" (gen_type (Map(String, Float false)));
   end;
 
 ] end
