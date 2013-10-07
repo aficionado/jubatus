@@ -17,14 +17,14 @@
 namespace jubatus {
 namespace nearest_neighbor {
 
-struct scored_id {
+struct id_with_score {
  public:
   MSGPACK_DEFINE(id, score);
   std::string id;
   float score;
-  scored_id() {
+  id_with_score() {
   }
-  scored_id(const std::string& id, float score)
+  id_with_score(const std::string& id, float score)
     : id(id), score(score) {
   }
 };

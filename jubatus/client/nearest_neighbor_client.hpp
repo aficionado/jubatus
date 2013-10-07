@@ -32,30 +32,30 @@ class nearest_neighbor : public jubatus::client::common::client {
     return f.get<bool>();
   }
 
-  std::vector<scored_id> neighbor_row_from_id(const std::string& id,
+  std::vector<id_with_score> neighbor_row_from_id(const std::string& id,
        uint32_t size) {
     msgpack::rpc::future f = c_.call("neighbor_row_from_id", name_, id, size);
-    return f.get<std::vector<scored_id> >();
+    return f.get<std::vector<id_with_score> >();
   }
 
-  std::vector<scored_id> neighbor_row_from_data(
+  std::vector<id_with_score> neighbor_row_from_data(
       const jubatus::client::common::datum& query, uint32_t size) {
     msgpack::rpc::future f = c_.call("neighbor_row_from_data", name_, query,
          size);
-    return f.get<std::vector<scored_id> >();
+    return f.get<std::vector<id_with_score> >();
   }
 
-  std::vector<scored_id> similar_row_from_id(const std::string& id,
+  std::vector<id_with_score> similar_row_from_id(const std::string& id,
        int32_t ret_num) {
     msgpack::rpc::future f = c_.call("similar_row_from_id", name_, id, ret_num);
-    return f.get<std::vector<scored_id> >();
+    return f.get<std::vector<id_with_score> >();
   }
 
-  std::vector<scored_id> similar_row_from_data(
+  std::vector<id_with_score> similar_row_from_data(
       const jubatus::client::common::datum& query, int32_t ret_num) {
     msgpack::rpc::future f = c_.call("similar_row_from_data", name_, query,
          ret_num);
-    return f.get<std::vector<scored_id> >();
+    return f.get<std::vector<id_with_score> >();
   }
 };
 

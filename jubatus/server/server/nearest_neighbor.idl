@@ -1,4 +1,4 @@
-message scored_id("std::pair<std::string, float>") {
+message id_with_score("std::pair<std::string, float>") {
   0: string id
   1: float score
 }
@@ -11,14 +11,14 @@ service nearest_neighbor {
   bool set_row(0: string id, 1: datum d)
 
   #@random #@analysis #@pass
-  list<scored_id> neighbor_row_from_id(0: string id, 1: uint size)
+  list<id_with_score> neighbor_row_from_id(0: string id, 1: uint size)
 
   #@random #@analysis #@pass
-  list<scored_id> neighbor_row_from_data(0: datum query, 1: uint size)
+  list<id_with_score> neighbor_row_from_data(0: datum query, 1: uint size)
 
   #@random #@analysis #@pass
-  list<scored_id> similar_row_from_id(0: string id, 1: int ret_num)
+  list<id_with_score> similar_row_from_id(0: string id, 1: int ret_num)
 
   #@random #@analysis #@pass
-  list<scored_id> similar_row_from_data(0: datum query, 1: int ret_num)
+  list<id_with_score> similar_row_from_data(0: datum query, 1: int ret_num)
 }
