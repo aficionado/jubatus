@@ -53,4 +53,4 @@ void dump_wplist(const wplist& src);
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_UTIL_UTIL_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_UTIL_UTIL_HPP_

@@ -64,4 +64,4 @@ class gmm {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTERING_METHOD_GMM_GMM_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_METHOD_GMM_GMM_HPP_

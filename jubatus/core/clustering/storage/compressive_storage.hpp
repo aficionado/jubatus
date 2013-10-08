@@ -59,4 +59,4 @@ class compressive_storage : public storage {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_STORAGE_COMPRESSIVE_STORAGE_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_STORAGE_COMPRESSIVE_STORAGE_HPP_

@@ -76,4 +76,4 @@ class storage : public event_dispatcher<storage_event_type, wplist> {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_STORAGE_STORAGE_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_STORAGE_STORAGE_HPP_

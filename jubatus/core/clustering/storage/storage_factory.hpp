@@ -37,4 +37,4 @@ class storage_factory {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_STORAGE_STORAGE_FACTORY_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_STORAGE_STORAGE_FACTORY_HPP_

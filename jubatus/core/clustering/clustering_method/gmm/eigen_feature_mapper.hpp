@@ -65,4 +65,4 @@ class eigen_feature_mapper {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTERING_METHOD_GMM_EIGEN_FEATURE_MAPPER_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_METHOD_GMM_EIGEN_FEATURE_MAPPER_HPP_

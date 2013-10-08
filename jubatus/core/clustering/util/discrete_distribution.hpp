@@ -43,4 +43,4 @@ class discrete_distribution {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_UTIL_DISCRETE_DISTRIBUTION_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_UTIL_DISCRETE_DISTRIBUTION_HPP_

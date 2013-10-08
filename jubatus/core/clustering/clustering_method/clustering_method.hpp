@@ -50,4 +50,4 @@ class clustering_method {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTER_MANAGER_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_METHOD_CLUSTERING_METHOD_HPP_

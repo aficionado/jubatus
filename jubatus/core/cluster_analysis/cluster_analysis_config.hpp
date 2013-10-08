@@ -45,4 +45,4 @@ struct cluster_analysis_config {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTER_ANALYSIS_CLUSTER_ANALYSIS_CONFIG_HPP_
+#endif  // JUBATUS_CORE_CLUSTER_ANALYSIS_CLUSTER_ANALYSIS_CONFIG_HPP_

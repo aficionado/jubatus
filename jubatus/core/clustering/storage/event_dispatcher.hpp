@@ -64,4 +64,4 @@ void event_dispatcher<EventType, EventData>::dispatch(
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_STORAGE_EVENT_DISPATCHER_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_STORAGE_EVENT_DISPATCHER_HPP_

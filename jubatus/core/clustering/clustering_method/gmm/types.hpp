@@ -48,4 +48,4 @@ typedef std::vector<eigen_wsvec_t> eigen_wsvec_list_t;
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTERING_METHOD_GMM_TYPES_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_METHOD_GMM_TYPES_HPP_

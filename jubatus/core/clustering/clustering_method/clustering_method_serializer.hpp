@@ -55,4 +55,4 @@ class clustering_method_serializer {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTERING_METHOD_SERIALIZER_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_METHOD_CLUSTERING_METHOD_SERIALIZER_HPP_

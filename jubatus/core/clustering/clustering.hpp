@@ -115,4 +115,4 @@ class clustering {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTERING_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_HPP_

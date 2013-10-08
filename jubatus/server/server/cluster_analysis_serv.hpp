@@ -65,4 +65,4 @@ class cluster_analysis_serv : public framework::server_base {
 }  // namespace server
 }  // namespace jubatus
 
-#endif  // JUBATUS_SERVER_CLUSTER_ANALYSIS_SERV_HPP_
+#endif  // JUBATUS_SERVER_SERVER_CLUSTER_ANALYSIS_SERV_HPP_

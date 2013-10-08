@@ -39,4 +39,4 @@ class clustering_method_factory {
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_CLUSTER_MANAGER_FACTORY_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_CLUSTERING_METHOD_CLUSTERING_METHOD_FACTORY_HPP_

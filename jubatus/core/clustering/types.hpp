@@ -71,4 +71,4 @@ typedef uint64_t csize_t;
 }  // namespace core
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_TYPES_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_TYPES_HPP_

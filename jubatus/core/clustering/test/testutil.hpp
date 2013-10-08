@@ -81,4 +81,4 @@ inline std::vector<weighted_point> get_points(size_t n, size_t d,
 }  // namespace clustering
 }  // namespace jubatus
 
-#endif  // JUBATUS_CLUSTERING_TEST_TESTUTIL_HPP_
+#endif  // JUBATUS_CORE_CLUSTERING_TEST_TESTUTIL_HPP_
