@@ -69,3 +69,12 @@ def build(bld):
       use = 'RE2 jubaconverter core_headers',
       )
     make_test(bld, 're2_splitter', 're2_splitter_test.cpp')
+
+  if bld.env.HAVE_ONIGURUMA:
+    bld.shlib(
+      source = 'onig_splitter.cpp',
+      target = 'onig_splitter',
+      install_path = bld.env.JUBATUS_PLUGIN_DIR,
+      use = 'ONIG jubaconverter core_headers',
+      )
+    make_test(bld, 'onig_splitter', 're2_splitter_test.cpp')

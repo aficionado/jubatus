@@ -11,7 +11,7 @@ def configure(conf):
     conf.check_cxx(lib = 're2', define_name = 'HAVE_RE2',
                    errmsg = 'not found')
   else:
-    conf.check_cxx(lib = 'onig')
+    conf.check_cxx(lib = 'onig', define_name = 'HAVE_ONIGURUMA')
 
   libpat = conf.env.cxxshlib_PATTERN
   conf.define('LIBSPLITTER_SAMPLE', libpat % 'splitter_sample')

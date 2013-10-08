@@ -14,13 +14,22 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+// Use this test re2_splitter and onig_splitter
+#ifdef HAVE_ONIGURUMA
+#define GTEST_HAS_POSIX_RE 0
+#include "onig_splitter.hpp"
+#define re2_splitter onig_splitter
+#endif
+#ifdef HAVE_RE2
+#include "re2_splitter.hpp"
+#endif
+
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
 #include <gtest/gtest.h>
 #include "jubatus/core/fv_converter/exception.hpp"
-#include "re2_splitter.hpp"
 
 using jubatus::core::fv_converter::converter_exception;
 
