@@ -36,7 +36,9 @@ clustering::clustering(
     core::clustering::clustering* clustering_method,
     pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter)
     : mixable_holder_(new framework::mixable_holder),
-      converter_(converter) {
+      converter_(converter),
+      clustering_(new mixable_clustering),
+      wm_(new fv_converter::mixable_weight_manager) {
   clustering_->set_model(mixable_clustering::model_ptr(clustering_method));
   wm_->set_model
       (pfi::lang::shared_ptr<fv_converter::weight_manager>(
