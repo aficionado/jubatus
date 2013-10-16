@@ -18,7 +18,6 @@
 
 #include <string>
 #include <vector>
-#include <glog/logging.h>
 #include "compressor/gmm_compressor.hpp"
 #include "compressor/kmeans_compressor.hpp"
 

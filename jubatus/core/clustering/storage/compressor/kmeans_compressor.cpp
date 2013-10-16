@@ -24,7 +24,6 @@
 #include <utility>
 #include <vector>
 #include <stack>
-#include <glog/logging.h>
 
 using std::min;
 using std::max;
@@ -103,7 +102,6 @@ void kmeans_compressor::compress(
     concat(src, dst);
     return;
   }
-  LOG(INFO) << "Compression Begin :";
   timer_start();
   wplist bicriteria;
   timer_start();
@@ -113,10 +111,8 @@ void kmeans_compressor::compress(
     timer_start();
     bicriteria_to_coreset(srcclone, bicriteria,
                           dstsize - bicriteria.size(), dst);
-    LOG(INFO) << "    Coreset Sampling: " << timer_end() << " sec";
   }
   bicriteria_as_coreset(src, bicriteria, dstsize, dst);
-  LOG(INFO) << "Compressin End: " << timer_end() << " sec";
 
   return;
 }
@@ -124,7 +120,6 @@ void kmeans_compressor::compress(
 void kmeans_compressor::get_bicriteria(
     const wplist& src, csize_t bsize, csize_t dstsize, wplist& dst) {
   timer_start();
-  LOG(INFO) << "Bicriteria Begin : ";
   dst.clear();
   wplist resid = src;
   vector<double> weights(src.size());
@@ -132,7 +127,6 @@ void kmeans_compressor::get_bicriteria(
   r = max(0.1, r);
   std::vector<size_t> ind(bsize);
   while (resid.size() > 1 && dst.size() < dstsize) {
-    LOG(INFO) << "    Loop : ";
     timer_start();
     weights.resize(resid.size());
     for (wplist::iterator it = resid.begin(); it != resid.end(); ++it) {
@@ -162,9 +156,7 @@ void kmeans_compressor::get_bicriteria(
     }
 
     resid.resize(size);
-    LOG(INFO) << "    end : " << timer_end() << " sec";
   }
-  LOG(INFO) << "BICRITERIA END : " << timer_end() << " sec";
 }
 
 double kmeans_compressor::get_probability(

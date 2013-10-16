@@ -22,7 +22,6 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <glog/logging.h>
 #include <pficommon/math/random.h>
 
 
@@ -132,14 +131,6 @@ bool gmm::is_converged(
   for (int c = 0; c < k_; ++c) {
     max_dist = max(max_dist, (means[c] - old_means[c]).norm());
   }
-  LOG(INFO) <<
-      "----------------------------------------------------------------";
-  LOG(INFO) << "Executing EM algorithm";
-  LOG(INFO) << " Iteration   : " << niter;
-  LOG(INFO) << " Norm of Dif : " << max_dist;
-  LOG(INFO) << " Objective Value" << obj;
-  LOG(INFO) <<
-      "----------------------------------------------------------------";
   return (max_dist < 1e-09 || niter > 1e05);
 }
 

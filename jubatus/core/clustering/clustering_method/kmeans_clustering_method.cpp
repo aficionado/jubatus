@@ -19,7 +19,6 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <glog/logging.h>
 #include "../../common/exception.hpp"
 #include "../util/util.hpp"
 
