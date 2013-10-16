@@ -67,6 +67,6 @@ service anomaly {
   float calc_score(0: datum row) # //@random
 
   #@broadcast #@analysis #@concat
-  list<string>  get_all_rows() # //@broadcast
+  list<string> get_all_rows() # //@broadcast
 
 }

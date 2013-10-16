@@ -46,7 +46,7 @@ service recommender {
   datum decode_row(0: string id) # //@cht
 
   #@broadcast #@analysis #@concat
-  list<string>  get_all_rows() # //@broadcast
+  list<string> get_all_rows() # //@broadcast
 
   #@random #@analysis #@pass
   float calc_similarity(0: datum lhs, 1:datum rhs) # //@random
