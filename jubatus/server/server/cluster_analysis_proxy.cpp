@@ -21,7 +21,7 @@ int run_proxy(int argc, char* argv[]) {
         jubatus::server::framework::proxy_argv(argc, argv, "cluster_analysis"));
     k.register_async_random<std::string>("get_config");
     k.register_async_broadcast<bool, std::string>("add_snapshot",
-         pfi::lang::function<bool(bool, bool)>(
+        pfi::lang::function<bool(bool, bool)>(
         &jubatus::server::framework::all_and));
     k.register_async_random<std::vector<jubatus::core::cluster_analysis::change_graph> >("get_history");
     k.register_async_random<std::vector<jubatus::core::cluster_analysis::clustering_snapshot> >("get_snapshots");

@@ -19,7 +19,7 @@ class classifier_impl_ : public classifier<classifier_impl_> {
   explicit classifier_impl_(const jubatus::server::framework::server_argv& a):
     classifier<classifier_impl_>(a.timeout),
     p_(new jubatus::server::framework::server_helper<classifier_serv>(a,
-         false)) {
+        false)) {
   }
   std::string get_config(const std::string& name) {
     JRLOCK_(p_);
@@ -27,14 +27,14 @@ class classifier_impl_ : public classifier<classifier_impl_> {
   }
 
   int32_t train(const std::string& name,
-       const std::vector<std::pair<std::string,
-       jubatus::core::fv_converter::datum> >& data) {
+      const std::vector<std::pair<std::string,
+      jubatus::core::fv_converter::datum> >& data) {
     JWLOCK_(p_);
     return get_p()->train(data);
   }
 
   std::vector<std::vector<estimate_result> > classify(const std::string& name,
-       const std::vector<jubatus::core::fv_converter::datum>& data) {
+      const std::vector<jubatus::core::fv_converter::datum>& data) {
     JRLOCK_(p_);
     return get_p()->classify(data);
   }
