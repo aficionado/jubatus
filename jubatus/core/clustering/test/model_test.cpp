@@ -26,6 +26,7 @@
 using std::vector;
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 
 class model_test : public ::testing::Test {
@@ -49,7 +50,7 @@ class model_test : public ::testing::Test {
 };
 
 TEST_F(model_test, initial_centers) {
-  vector<sfv_t> centers = model_->get_k_center();
+  vector<common::sfv_t> centers = model_->get_k_center();
   ASSERT_EQ(centers.size(), 0ul);
 }
 
@@ -61,7 +62,7 @@ TEST_F(model_test, push_small) {
   ASSERT_EQ(coreset.size(), N);
   ASSERT_EQ(coreset.front().data.size(), D);
 
-  vector<sfv_t> centers = model_->get_k_center();
+  vector<common::sfv_t> centers = model_->get_k_center();
   ASSERT_EQ(centers.size(), 0ul);
 }
 
@@ -74,7 +75,7 @@ TEST_F(model_test, compression_and_clusteringing) {
   ASSERT_EQ(
       coreset.size(), static_cast<size_t>(config_.compressed_backet_size));
 
-  vector<sfv_t> centers = model_->get_k_center();
+  vector<common::sfv_t> centers = model_->get_k_center();
   ASSERT_EQ(centers.size(), static_cast<size_t>(config_.k));
 
   vector<wplist> core_members = model_->get_core_members();
@@ -83,7 +84,7 @@ TEST_F(model_test, compression_and_clusteringing) {
   wplist nearest_members = model_->get_nearest_members(get_point(D).data);
   ASSERT_GT(nearest_members.size(), 0ul);
 
-  sfv_t nearest_center = model_->get_nearest_center(get_point(D).data);
+  common::sfv_t nearest_center = model_->get_nearest_center(get_point(D).data);
 }
 
 
@@ -102,4 +103,5 @@ TEST_F(model_test, backet_management_and_forgetting) {
 }
 
 }  // namespace clustering
+}  // namespace core
 }  // namespace jubatus

@@ -66,6 +66,15 @@ class clustering {
   size_t get_revision() const;
 
   void set_storage(pfi::lang::shared_ptr<storage> storage);
+
+  // these two function should be deleted
+  diff_t get_diff() const {
+    return storage_->get_diff_impl();
+  }
+  void put_diff(const diff_t& diff) {
+    storage_->put_diff_impl(diff);
+  }
+
   void set_clustering_method(
       pfi::lang::shared_ptr<clustering_method::clustering_method>
           clustering_method);

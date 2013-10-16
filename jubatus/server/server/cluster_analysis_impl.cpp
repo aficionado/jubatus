@@ -20,7 +20,7 @@ class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
       const jubatus::server::framework::server_argv& a):
     cluster_analysis<cluster_analysis_impl_>(a.timeout),
     p_(new jubatus::server::framework::server_helper<cluster_analysis_serv>(a,
-         false)) {
+        false)) {
   }
   std::string get_config(const std::string& name) {
     JRLOCK_(p_);
@@ -28,7 +28,7 @@ class cluster_analysis_impl_ : public cluster_analysis<cluster_analysis_impl_> {
   }
 
   bool add_snapshot(const std::string& name,
-       const std::string& clustering_name) {
+      const std::string& clustering_name) {
     JWLOCK_(p_);
     return get_p()->add_snapshot(clustering_name);
   }

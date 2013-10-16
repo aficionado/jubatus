@@ -19,7 +19,7 @@ class clustering_impl_ : public clustering<clustering_impl_> {
   explicit clustering_impl_(const jubatus::server::framework::server_argv& a):
     clustering<clustering_impl_>(a.timeout),
     p_(new jubatus::server::framework::server_helper<clustering_serv>(a,
-         false)) {
+        false)) {
   }
   std::string get_config(const std::string& name) {
     JRLOCK_(p_);
@@ -27,7 +27,7 @@ class clustering_impl_ : public clustering<clustering_impl_> {
   }
 
   bool push(const std::string& name,
-       const std::vector<jubatus::core::fv_converter::datum>& points) {
+      const std::vector<jubatus::core::fv_converter::datum>& points) {
     JWLOCK_(p_);
     return get_p()->push(points);
   }
@@ -38,7 +38,7 @@ class clustering_impl_ : public clustering<clustering_impl_> {
   }
 
   std::vector<std::vector<std::pair<double,
-       jubatus::core::fv_converter::datum> > > get_core_members(
+      jubatus::core::fv_converter::datum> > > get_core_members(
       const std::string& name) {
     JRLOCK_(p_);
     return get_p()->get_core_members();
@@ -51,15 +51,15 @@ class clustering_impl_ : public clustering<clustering_impl_> {
   }
 
   jubatus::core::fv_converter::datum get_nearest_center(const std::string& name,
-       const jubatus::core::fv_converter::datum& point) {
+      const jubatus::core::fv_converter::datum& point) {
     JRLOCK_(p_);
     return get_p()->get_nearest_center(point);
   }
 
   std::vector<std::pair<double,
-       jubatus::core::fv_converter::datum> > get_nearest_members(
+      jubatus::core::fv_converter::datum> > get_nearest_members(
       const std::string& name,
-       const jubatus::core::fv_converter::datum& point) {
+      const jubatus::core::fv_converter::datum& point) {
     JRLOCK_(p_);
     return get_p()->get_nearest_members(point);
   }
