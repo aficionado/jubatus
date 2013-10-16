@@ -26,6 +26,7 @@
 using std::vector;
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 
 class model_gmm_test : public ::testing::Test {
@@ -102,4 +103,5 @@ TEST_F(model_gmm_test, backet_management_and_forgetting) {
 }
 
 }  // namespace clustering
+}  // namespace core
 }  // namespace jubatus

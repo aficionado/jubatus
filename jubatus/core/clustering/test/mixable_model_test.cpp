@@ -22,6 +22,7 @@
 #include "testutil.hpp"
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 
 class mixable_model_test : public ::testing::Test {
@@ -95,4 +96,5 @@ TEST_F(mixable_model_test, put_diff) {
 }
 
 }  // namespace clustering
+}  // namespace core
 }  // namespace jubatus

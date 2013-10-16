@@ -32,6 +32,7 @@ using std::make_pair;
 using std::string;
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 
 inline weighted_point get_point(size_t d) {
@@ -79,6 +80,7 @@ inline std::vector<weighted_point> get_points(size_t n, size_t d,
 }
 
 }  // namespace clustering
+}  // namespace core
 }  // namespace jubatus
 
 #endif  // JUBATUS_CORE_CLUSTERING_TEST_TESTUTIL_HPP_

@@ -24,8 +24,10 @@
 #include "testutil.hpp"
 
 using std::vector;
+using jubatus::core::common::sfv_t;
 
 namespace jubatus {
+namespace core {
 namespace clustering {
 
 class model_test : public ::testing::Test {
@@ -102,4 +104,5 @@ TEST_F(model_test, backet_management_and_forgetting) {
 }
 
 }  // namespace clustering
+}  // namespace core
 }  // namespace jubatus
