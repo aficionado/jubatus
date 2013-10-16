@@ -74,6 +74,10 @@ class clustering {
   void put_diff(const diff_t& diff) {
     storage_->put_diff_impl(diff);
   }
+  void reduce(const diff_t& l, diff_t& r) const {
+    diff_t m = r;
+    storage_->mix_impl(l, m, r);
+  }
 
   void set_clustering_method(
       pfi::lang::shared_ptr<clustering_method::clustering_method>
