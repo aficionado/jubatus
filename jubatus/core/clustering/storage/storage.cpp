@@ -46,14 +46,13 @@ wplist storage::get_common() const {
   return ret;
 }
 
-diff_t storage::get_diff() const {
-  diff_t ret;
+void storage::get_diff(diff_t& d) const {
+  d.clear();
   wplist coreset = get_mine();
-  ret.push_back(make_pair(name_, coreset));
-  return ret;
+  d.push_back(make_pair(name_, coreset));
 }
 
-void storage::put_diff(const diff_t& diff) {
+void storage::set_mixed_and_clear_diff(const diff_t& diff) {
   common_.clear();
   for (diff_t::const_iterator it = diff.begin(); it != diff.end(); ++it) {
     if (it->first != name_) {
@@ -64,7 +63,7 @@ void storage::put_diff(const diff_t& diff) {
   increment_revision();
 }
 
-void storage::reduce(const diff_t& lhs, diff_t& ret) {
+void storage::mix(const diff_t& lhs, diff_t& ret) {
   diff_t::const_iterator lb = lhs.begin(), le =  lhs.end();
   diff_t::iterator b = ret.begin(), e = ret.end();
   while (lb != le && b != e) {

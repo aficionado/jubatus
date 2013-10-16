@@ -31,29 +31,6 @@ namespace jubatus {
 namespace core {
 namespace driver {
 
-class mixable_clustering : public core::framework::mixable<
-    clustering::clustering,
-    clustering::diff_t> {
- public:
-  void clear() {}
-
-  clustering::diff_t get_diff_impl() const {
-    return get_model()->get_diff();
-  }
-
-  void mix_impl(
-      const clustering::diff_t& lhs,
-      const clustering::diff_t& rhs,
-      clustering::diff_t& mixed) const {
-    mixed = lhs;
-    get_model()->reduce(rhs, mixed);
-  }
-
-  void put_diff_impl(const clustering::diff_t& v) {
-    get_model()->put_diff(v);
-  }
-};
-
 class clustering {
  public:
   clustering(
@@ -98,8 +75,7 @@ class clustering {
   pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder_;
 
   pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter_;
-  pfi::lang::shared_ptr<mixable_clustering> clustering_;
-  pfi::lang::shared_ptr<fv_converter::mixable_weight_manager> wm_;
+  pfi::lang::shared_ptr<core::clustering::clustering> clustering_;
 };
 
 }  // namespace driver

@@ -41,7 +41,8 @@ clustering::clustering(
     const clustering_config& cfg)
     : config_(cfg),
       name_(name),
-      method_(method) {
+      method_(method),
+      storage_(new mixable_storage) {
   init();
 }
 
@@ -55,12 +56,12 @@ void clustering::init() {
 }
 
 void clustering::set_storage(shared_ptr<storage> storage) {
-  storage_ = storage;
-  storage_->add_event_listener(REVISION_CHANGE,
+  storage->add_event_listener(REVISION_CHANGE,
       pfi::lang::bind(&clustering::update_clusters, this, pfi::lang::_1, true));
-  storage_->add_event_listener(UPDATE,
+  storage->add_event_listener(UPDATE,
       pfi::lang::bind(&clustering::update_clusters,
           this, pfi::lang::_1, false));
+  storage_->set_model(storage);
 }
 
 void clustering::update_clusters(const wplist& points, bool batch) {
@@ -77,15 +78,16 @@ void clustering::set_clustering_method(
 }
 
 bool clustering::push(const std::vector<weighted_point>& points) {
+  pfi::lang::shared_ptr<storage> sto = storage_->get_model();
   for (std::vector<weighted_point>::const_iterator it = points.begin();
        it != points.end(); ++it) {
-    storage_->add(*it);
+    sto->add(*it);
   }
   return true;
 }
 
 wplist clustering::get_coreset() const {
-  return storage_->get_all();
+  return storage_->get_model()->get_all();
 }
 
 std::vector<common::sfv_t> clustering::get_k_center() const {
@@ -109,15 +111,12 @@ std::vector<wplist> clustering::get_core_members() const {
 }
 
 size_t clustering::get_revision() const {
-  return storage_->get_revision();
+  return storage_->get_model()->get_revision();
 }
 
-void clustering::register_mixables(
-  pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder) {
-  pfi::lang::shared_ptr<mixable_storage> ms(new mixable_storage());
-  ms->set_model(
-    pfi::lang::shared_ptr<storage>(storage_.get()));
-  mixable_holder->register_mixable(ms);
+void clustering::register_mixables_to_holder(
+    framework::mixable_holder& mixable_holder) {
+  mixable_holder.register_mixable(storage_);
 }
 
 bool clustering::save(std::ostream& os) {
@@ -134,18 +133,6 @@ bool clustering::load(std::istream& is) {
 
 std::string clustering::type() const {
   return "clustering";
-}
-
-diff_t clustering::get_diff() const {
-  return storage_->get_diff();
-}
-
-void clustering::put_diff(const diff_t& diff) {
-  storage_->put_diff(diff);
-}
-
-void clustering::reduce(const diff_t& diff, diff_t& mixed) {
-  storage_->reduce(diff, mixed);
 }
 
 }  // namespace clustering

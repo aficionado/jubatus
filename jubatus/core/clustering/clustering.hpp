@@ -33,7 +33,6 @@
 #include "clustering_method/clustering_method.hpp"
 #include "clustering_method/clustering_method_serializer.hpp"
 #include "clustering_config.hpp"
-#include "storage/mixable_storage.hpp"
 #include "storage/storage.hpp"
 #include "storage/storage_serializer.hpp"
 #include "types.hpp"
@@ -71,12 +70,7 @@ class clustering {
       pfi::lang::shared_ptr<clustering_method::clustering_method>
           clustering_method);
 
-  diff_t get_diff() const;
-  void put_diff(const diff_t& diff);
-  void reduce(const diff_t& diff, diff_t& mixed);
-
-  void register_mixables(
-      pfi::lang::shared_ptr<framework::mixable_holder> mixable_holder);
+  void register_mixables_to_holder(framework::mixable_holder& mixable_holder);
   bool save(std::ostream& os);
   bool load(std::istream& is);
   std::string type() const;
@@ -92,7 +86,7 @@ class clustering {
 
   pfi::lang::shared_ptr<clustering_method::clustering_method>
       clustering_method_;
-  pfi::lang::shared_ptr<storage> storage_;
+  pfi::lang::shared_ptr<mixable_storage> storage_;
 
   friend class pfi::data::serialization::access;
   template <class Archive>
@@ -100,11 +94,13 @@ class clustering {
     ar & config_;
     if (ar.is_read) {
       init();
-      storage_serializer::serialize<Archive>(config_, ar, *storage_);
+      storage_serializer::serialize<Archive>(
+          config_, ar, *storage_->get_model());
       clustering_method::clustering_method_serializer::serialize<Archive>(
           method_, ar, *clustering_method_);
     } else {
-      storage_serializer::serialize<Archive>(config_, ar, *storage_);
+      storage_serializer::serialize<Archive>(
+          config_, ar, *storage_->get_model());
       clustering_method::clustering_method_serializer::serialize<Archive>(
           method_, ar, *clustering_method_);
     }

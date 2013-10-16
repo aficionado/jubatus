@@ -37,46 +37,38 @@ clustering::clustering(
     pfi::lang::shared_ptr<fv_converter::datum_to_fv_converter> converter)
     : mixable_holder_(new framework::mixable_holder),
       converter_(converter),
-      clustering_(new mixable_clustering),
-      wm_(new fv_converter::mixable_weight_manager) {
-  clustering_->set_model(mixable_clustering::model_ptr(clustering_method));
-  wm_->set_model
-      (pfi::lang::shared_ptr<fv_converter::weight_manager>(
-          new fv_converter::weight_manager));
-
-  mixable_holder_->register_mixable(clustering_);
-  mixable_holder_->register_mixable(wm_);
-
-  converter_->set_weight_manager(wm_->get_model());
+      clustering_(clustering_method) {
+  clustering_->register_mixables_to_holder(*mixable_holder_);
+  converter_->register_mixables_to_holder(*mixable_holder_);
 }
 
 clustering::~clustering() {
 }
 
 void clustering::push(const vector<datum>& points) {
-  clustering_->get_model()->push(to_weighted_point_vector(points));
+  clustering_->push(to_weighted_point_vector(points));
 }
 
 datum clustering::get_nearest_center(
     const datum& point) const {
   return to_datum(
-      clustering_->get_model()->get_nearest_center(to_sfv_const(point)));
+      clustering_->get_nearest_center(to_sfv_const(point)));
 }
 
 vector<pair<double, datum> >
     clustering::get_nearest_members(const datum& point) const {
   return to_weighted_datum_vector(
-      clustering_->get_model()->get_nearest_members(to_sfv_const(point)));
+      clustering_->get_nearest_members(to_sfv_const(point)));
 }
 
 vector<datum> clustering::get_k_center() const {
-  return to_datum_vector(clustering_->get_model()->get_k_center());
+  return to_datum_vector(clustering_->get_k_center());
 }
 
 vector<vector<pair<double, datum> > >
 clustering::get_core_members() const {
   vector<vector<core::clustering::weighted_point> > src =
-      clustering_->get_model()->get_core_members();
+      clustering_->get_core_members();
 
   vector<vector<pair<double, datum> > >  ret;
   ret.reserve(src.size());
@@ -88,7 +80,7 @@ clustering::get_core_members() const {
 }
 
 size_t clustering::get_revision() const {
-  return clustering_->get_model()->get_revision();
+  return clustering_->get_revision();
 }
 
 // private
