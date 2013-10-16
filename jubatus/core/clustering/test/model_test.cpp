@@ -24,6 +24,7 @@
 #include "testutil.hpp"
 
 using std::vector;
+using jubatus::core::common::sfv_t;
 
 namespace jubatus {
 namespace core {
