@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include <msgpack.hpp>
 #include "storage.hpp"
 #include "compressor.hpp"
 
@@ -38,6 +39,7 @@ class compressive_storage : public storage {
   void set_compressor(
       pfi::lang::shared_ptr<compressor::compressor> compressor);
 
+  MSGPACK_DEFINE(mine_, status_, *compressor_);
  private:
   void carry_up(size_t r);
   bool is_next_backet_full(size_t backet_number);
