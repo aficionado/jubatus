@@ -36,8 +36,8 @@ class model_gmm_test : public ::testing::Test {
   model_gmm_test() {
     config_.k = k_;
     config_.compressor_method = "compressive_kmeans";
-    config_.backet_size = 10000;
-    config_.compressed_backet_size = 100;
+    config_.backet_size = 100;
+    config_.compressed_backet_size = 5;
     config_.forgetting_threshold = 0.05;
     config_.forgetting_factor = 2;
     config_.backet_length = 4;
@@ -55,7 +55,7 @@ TEST_F(model_gmm_test, initial_centers) {
 }
 
 TEST_F(model_gmm_test, push_small) {
-  static const size_t N = 100;
+  static const size_t N = 99;
   static const size_t D = 2;
   model_->push(get_points(N, D));
   vector<weighted_point> coreset = model_->get_coreset();
