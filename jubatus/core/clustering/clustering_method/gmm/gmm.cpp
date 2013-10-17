@@ -110,12 +110,15 @@ void gmm::initialize(const eigen_wsvec_list_t& data, int d, int k) {
   cov_solvers_ = eigen_solver_list_t(k);
   eye_ = eigen_smat_t(d, d);
 
+  for (int i = 0; i < d; ++i) {
+    eye_.insert(i, i) = 1;
+  }
+
   pfi::math::random::mtrand r(time(NULL));
   for (int c = 0; c < k; ++c) {
     means_[c] = data[r.next_int(0, data.size()-1)].data;
     for (int i = 0; i < d; ++i) {
       covs_[c].insert(i, i) = 1;
-      eye_.insert(i, i) = 1;
     }
     cov_solvers_[c] = shared_ptr<eigen_solver_t>(new eigen_solver_t(covs_[c]));
   }
