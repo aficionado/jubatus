@@ -18,6 +18,7 @@
 #define JUBATUS_CLUSTERING_CLUSTERING_CONFIG_HPP_
 
 #include <string>
+#include <msgpack.hpp>
 #include <pficommon/data/serialization.h>
 #include <pficommon/text/json.h>
 
@@ -67,6 +68,16 @@ struct clustering_config {
   int compressed_backet_size;
   double forgetting_factor;
   double forgetting_threshold;
+
+  MSGPACK_DEFINE(
+      k,
+      compressor_method,
+      backet_size,
+      backet_length,
+      bicriteria_base_size,
+      compressed_backet_size,
+      forgetting_factor,
+      forgetting_threshold);
 
   template<typename Ar>
   void serialize(Ar& ar) {

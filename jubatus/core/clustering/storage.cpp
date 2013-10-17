@@ -93,10 +93,10 @@ void storage::increment_revision() {
 
 
 void storage::pack(msgpack::packer<msgpack::sbuffer>& packer) const {
-  // do nothing
+  packer.pack(*this);
 }
 void storage::unpack(msgpack::object o) {
-  // do nothing
+  o.convert(this);
 }
 
 }  // namespace clustering

@@ -22,6 +22,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <msgpack.hpp>
 #include "../framework/mixable.hpp"
 #include "clustering_config.hpp"
 #include "types.hpp"
@@ -57,6 +58,7 @@ class storage : public event_dispatcher<storage_event_type, wplist> {
   virtual void pack(msgpack::packer<msgpack::sbuffer>& packer) const;
   virtual void unpack(msgpack::object o);
 
+  MSGPACK_DEFINE(revision_, name_, config_, common_);
  protected:
   void increment_revision();
 
