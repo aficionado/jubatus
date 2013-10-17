@@ -35,7 +35,7 @@ def build(bld):
       bld.program(
         features="gtest",
         source= [
-          "test/" + t,
+          t,
         ],
         target=target,
         includes=".",
