@@ -10,4 +10,4 @@ def build(bld):
         target='jubatus_cluster_analysis',
         name='jubatus_cluster_analysis',
         includes='',
-        use='PFICOMMON jubacommon')
+        use='PFICOMMON jubacommon JUBATUS_MSGPACK-RPC')
