@@ -30,11 +30,11 @@
 #include "../common/exception.hpp"
 #include "../common/type.hpp"
 #include "../framework/mixable.hpp"
-#include "clustering_method/clustering_method.hpp"
-#include "clustering_method/clustering_method_serializer.hpp"
+#include "clustering_method.hpp"
+#include "clustering_method_serializer.hpp"
 #include "clustering_config.hpp"
-#include "storage/storage.hpp"
-#include "storage/storage_serializer.hpp"
+#include "storage.hpp"
+#include "storage_serializer.hpp"
 #include "types.hpp"
 
 namespace jubatus {
@@ -66,6 +66,7 @@ class clustering {
   size_t get_revision() const;
 
   void set_storage(pfi::lang::shared_ptr<storage> storage);
+  pfi::lang::shared_ptr<storage> get_storage();
 
   // these two function should be deleted
   diff_t get_diff() const {
@@ -84,8 +85,6 @@ class clustering {
           clustering_method);
 
   void register_mixables_to_holder(framework::mixable_holder& mixable_holder);
-  bool save(std::ostream& os);
-  bool load(std::istream& is);
   std::string type() const;
 
  private:

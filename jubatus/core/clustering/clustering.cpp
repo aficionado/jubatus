@@ -26,8 +26,8 @@
 #include <pficommon/lang/bind.h>
 
 #include "../common/jsonconfig.hpp"
-#include "clustering_method/clustering_method_factory.hpp"
-#include "storage/storage_factory.hpp"
+#include "clustering_method_factory.hpp"
+#include "storage_factory.hpp"
 
 using pfi::lang::shared_ptr;
 
@@ -62,6 +62,10 @@ void clustering::set_storage(shared_ptr<storage> storage) {
       pfi::lang::bind(&clustering::update_clusters,
           this, pfi::lang::_1, false));
   storage_->set_model(storage);
+}
+
+pfi::lang::shared_ptr<storage> clustering::get_storage() {
+  return storage_->get_model();
 }
 
 void clustering::update_clusters(const wplist& points, bool batch) {
@@ -117,18 +121,6 @@ size_t clustering::get_revision() const {
 void clustering::register_mixables_to_holder(
     framework::mixable_holder& mixable_holder) {
   mixable_holder.register_mixable(storage_);
-}
-
-bool clustering::save(std::ostream& os) {
-  pfi::data::serialization::binary_oarchive oa(os);
-  oa << *this;
-  return true;
-}
-
-bool clustering::load(std::istream& is) {
-  pfi::data::serialization::binary_iarchive ia(is);
-  ia >> *this;
-  return true;
 }
 
 std::string clustering::type() const {

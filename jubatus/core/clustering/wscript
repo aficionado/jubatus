@@ -8,25 +8,25 @@ def build(bld):
   bld.shlib(
     source = [
         'clustering.cpp',
-        'storage/storage.cpp',
-        'storage/compressive_storage.cpp',
-        'storage/simple_storage.cpp',
-        'storage/storage_factory.cpp',
-        'storage/compressor/kmeans_compressor.cpp',
-        'storage/compressor/gmm_compressor.cpp',
-        'clustering_method/kmeans_clustering_method.cpp',
-        'clustering_method/gmm_clustering_method.cpp',
-        'clustering_method/gmm/gmm.cpp',
-        'clustering_method/gmm/eigen_feature_mapper.cpp',
-        'clustering_method/clustering_method_factory.cpp',
-        'util/discrete_distribution.cpp',
-        'util/util.cpp'
+        'storage.cpp',
+        'compressive_storage.cpp',
+        'simple_storage.cpp',
+        'storage_factory.cpp',
+        'kmeans_compressor.cpp',
+        'gmm_compressor.cpp',
+        'kmeans_clustering_method.cpp',
+        'gmm_clustering_method.cpp',
+        'gmm.cpp',
+        'eigen_feature_mapper.cpp',
+        'clustering_method_factory.cpp',
+        'discrete_distribution.cpp',
+        'util.cpp'
     ],
     target = 'jubatus_clustering',
     includes = '.',
     use = 'EIGEN3 PFICOMMON MSGPACK'
     )
-  test_cases = os.listdir("jubatus/core/clustering/test");
+  test_cases = os.listdir("jubatus/core/clustering");
   for t in test_cases:
     ret = re.compile("^(\w+)_test.cpp$").match(t);
     if ret is not None:

@@ -45,6 +45,10 @@ void cluster_analysis_serv::get_status(status_t& status) const {
   // TODO(beam2d): Add some status
 }
 
+uint64_t cluster_analysis_serv::user_data_version() const {
+  return 1;
+}
+
 bool cluster_analysis_serv::set_config(const std::string& config) {
   core::common::jsonconfig::config config_root(
       pfi::lang::lexical_cast<pfi::text::json::json>(config));
