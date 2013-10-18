@@ -39,7 +39,17 @@ class compressive_storage : public storage {
   void set_compressor(
       pfi::lang::shared_ptr<compressor::compressor> compressor);
 
-  MSGPACK_DEFINE(mine_, status_, *compressor_);
+  void pack(msgpack::packer<msgpack::sbuffer>& packer) const;
+  void unpack(msgpack::object o);
+
+  // hide storage::msgpack_pack and msgpack_unpack
+  void msgpack_pack(msgpack::packer<msgpack::sbuffer>& packer) const {
+    pack(packer);
+  }
+  void msgpack_unpack(msgpack::object o) {
+    unpack(o);
+  }
+
  private:
   void carry_up(size_t r);
   bool is_next_backet_full(size_t backet_number);
@@ -47,7 +57,7 @@ class compressive_storage : public storage {
   void forget_weight(wplist& points);
 
   std::vector<wplist> mine_;
-  size_t status_;
+  uint64_t status_;
   pfi::lang::shared_ptr<compressor::compressor> compressor_;
 
   friend class storage_serializer;
