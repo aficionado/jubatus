@@ -41,6 +41,21 @@ wplist simple_storage::get_mine() const {
   return mine_;
 }
 
+void simple_storage::pack(msgpack::packer<msgpack::sbuffer>& packer) const {
+  packer.pack_array(2);
+  packer.pack(static_cast<const storage&>(*this));
+  packer.pack(mine_);
+}
+void simple_storage::unpack(msgpack::object o) {
+  std::vector<msgpack::object> mems;
+  o.convert(&mems);
+  if (mems.size() != 2) {
+    throw msgpack::type_error();
+  }
+  mems[0].convert(static_cast<storage*>(this));
+  mems[1].convert(&mine_);
+}
+
 }  // namespace clustering
 }  // namespace core
 }  // namespace jubatus
